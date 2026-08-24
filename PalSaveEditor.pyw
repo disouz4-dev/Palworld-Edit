@@ -6,7 +6,7 @@ Le e grava o Level.sav de dentro dos containers WGS, com backup automatico.
 """
 import os, sys, json, queue, random, threading, traceback, webbrowser
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import sv_ttk
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -66,6 +66,8 @@ class App(tk.Tk):
         self.meta_comp = None
         self.containers = []
         self.nomes = {}
+        self.map_mundo = {}
+        self.nome_mundo = {}
         self.pendentes = {}       # {guid: {sid: qtd}}  (itens, aplicados ao salvar)
         self.dirty = False        # edicoes de pal/personagem ja aplicadas ao level
         self.catalogo = self._carregar_catalogo()
@@ -184,42 +186,119 @@ class App(tk.Tk):
         self.tela.pack(fill="both", expand=True)
         self.btn_inicio.configure(state=("disabled" if nome == "inicio" else "normal"))
 
-    # ---------- carregar mundo ----------
+    # ---------- localizar a pasta do save ----------
+    def _conta_salva(self):
+        c = self.cfg.get("conta")
+        if c and os.path.isfile(os.path.join(c, "containers.index")):
+            return c
+        return None
+
+    def _descobrir_ou_perguntar(self):
+        """Acha a pasta-conta do save (com containers.index). Ordem: escolha salva ->
+        locais padrao (automatico) -> perguntar ao usuario e varrer subpastas.
+        Retorna o caminho, ou None se o usuario desistir."""
+        c = self._conta_salva()
+        if c:
+            return c
+        self.status("procurando o save do Palworld...")
+        c = wgs.descobrir_save()
+        if c:
+            self.cfg["conta"] = c; _gravar_config(self.cfg)
+            return c
+        while True:
+            messagebox.showinfo(
+                "Onde esta o save?",
+                "Nao encontrei o save do Palworld automaticamente.\n\n"
+                "Na proxima janela, aponte a PASTA DE INSTALACAO DO JOGO (ex.: "
+                "E:\\Jogos\\Palworld) ou a pasta do save.\n\n"
+                "Vou procurar nas subpastas ate achar o save (o arquivo containers.index).")
+            d = filedialog.askdirectory(title="Selecione a pasta do Palworld ou do save")
+            if not d:
+                if messagebox.askretrycancel("Sem pasta", "Voce nao escolheu nenhuma pasta.\n\nTentar de novo?"):
+                    continue
+                return None
+            self.status("procurando o save em %s ..." % d); self.update_idletasks()
+            c = wgs.procurar_conta(d, max_prof=8) or wgs.descobrir_save()
+            if c:
+                self.cfg["conta"] = c; _gravar_config(self.cfg)
+                return c
+            if not messagebox.askretrycancel(
+                    "Save nao encontrado",
+                    "Nao achei o save (containers.index) dentro de:\n%s\n\n"
+                    "A pasta do save geralmente fica em:\n"
+                    "%%LOCALAPPDATA%%\\Packages\\PocketpairInc.Palworld_...\\SystemAppData\\wgs\n\n"
+                    "Tentar outra pasta?" % d):
+                return None
+
+    def trocar_pasta_save(self):
+        d = filedialog.askdirectory(title="Selecione a pasta do Palworld ou do save")
+        if not d:
+            return
+        self.status("procurando o save em %s ..." % d); self.update_idletasks()
+        c = wgs.procurar_conta(d, max_prof=8) or wgs.descobrir_save()
+        if not c:
+            messagebox.showerror("Save nao encontrado", "Nao achei containers.index nessa pasta.")
+            return
+        self.cfg["conta"] = c; _gravar_config(self.cfg)
+        self.root_wgs = c; self.level = None
+        self.status("save trocado, recarregando..."); self.pb.start(12)
+        threading.Thread(target=self._iniciar_th, daemon=True).start()
+
+    # ---------- carregar mundos (em segundo plano, sem travar a janela) ----------
     def _iniciar(self):
-        try:
-            self.root_wgs = wgs.find_wgs_root(WGS_DIR)
-        except Exception as ex:
+        conta = self._descobrir_ou_perguntar()
+        if not conta:
             messagebox.showerror("Save nao encontrado",
-                                 "Nao achei os saves do Palworld.\n\n%s\n\nProcurei em:\n%s" % (ex, WGS_DIR))
+                                 "Nao foi possivel localizar o save do Palworld.\n\nO editor sera fechado.")
             self.destroy(); return
-        self.bm = backup.BackupManager(self.root_wgs, BACKUP_DIR)
-        self.index = wgs.parse_index(self.root_wgs)
-        opcoes, self.map_mundo, self.nome_mundo = [], {}, {}
-        for wid, partes in wgs.worlds(self.index).items():
-            lvl = partes.get("Level-01") or partes.get("Level")
-            if not lvl:
-                continue
-            try:
-                _, raw = wgs.read_blob(self.root_wgs, lvl); palz.decompress(raw)
-            except Exception:
-                continue
-            info = {"mundo": None, "jogador": None}
-            lm = partes.get("LevelMeta")
-            if lm:
+        self.root_wgs = conta
+        self.status("lendo os mundos do save...")
+        self.pb.start(12)
+        threading.Thread(target=self._iniciar_th, daemon=True).start()
+
+    def _iniciar_th(self):
+        try:
+            self.bm = backup.BackupManager(self.root_wgs, BACKUP_DIR)
+            self.index = wgs.parse_index(self.root_wgs)
+            itens = list(wgs.worlds(self.index).items())
+            opcoes, map_mundo, nome_mundo = [], {}, {}
+            for i, (wid, partes) in enumerate(itens):
+                lvl = partes.get("Level-01") or partes.get("Level")
+                if not lvl:
+                    continue
+                self._na_ui(self.status, "verificando mundos (%d/%d)..." % (i + 1, len(itens)))
                 try:
-                    info = meta.ler_meta(wgs.read_blob(self.root_wgs, lm)[1])
+                    _, raw = wgs.read_blob(self.root_wgs, lvl); palz.decompress(raw)
                 except Exception:
-                    pass
-            nome = info["mundo"] or ("mundo " + wid[:8])
-            rot = "%s  (%s%.1f MB)" % (nome, (info["jogador"] + " - ") if info["jogador"] else "",
-                                       lvl["size"] / 1048576.0)
-            if rot in self.map_mundo:
-                rot += "  [%s]" % wid[:8]
-            opcoes.append(rot); self.map_mundo[rot] = lvl; self.nome_mundo[rot] = nome
-        if not opcoes:
-            messagebox.showerror("Nada para editar", "Nenhum mundo com Level.sav legivel.")
-            self.destroy(); return
-        opcoes.sort(key=lambda r: -self.map_mundo[r]["size"])
+                    continue
+                info = {"mundo": None, "jogador": None}
+                lm = partes.get("LevelMeta")
+                if lm:
+                    try:
+                        info = meta.ler_meta(wgs.read_blob(self.root_wgs, lm)[1])
+                    except Exception:
+                        pass
+                nome = info["mundo"] or ("mundo " + wid[:8])
+                rot = "%s  (%s%.1f MB)" % (nome, (info["jogador"] + " - ") if info["jogador"] else "",
+                                           lvl["size"] / 1048576.0)
+                if rot in map_mundo:
+                    rot += "  [%s]" % wid[:8]
+                opcoes.append(rot); map_mundo[rot] = lvl; nome_mundo[rot] = nome
+            if not opcoes:
+                self._na_ui(self._iniciar_falhou, "Nenhum mundo com Level.sav legivel.")
+                return
+            opcoes.sort(key=lambda r: -map_mundo[r]["size"])
+            self._na_ui(self._iniciar_pronto, opcoes, map_mundo, nome_mundo)
+        except Exception:
+            self._na_ui(self._iniciar_falhou, traceback.format_exc()[-1500:])
+
+    def _iniciar_falhou(self, msg):
+        self.pb.stop(); self.status("falha ao abrir o save", "#ff8080")
+        messagebox.showerror("Nada para editar", msg)
+        self.destroy()
+
+    def _iniciar_pronto(self, opcoes, map_mundo, nome_mundo):
+        self.map_mundo = map_mundo; self.nome_mundo = nome_mundo
         self.cb_mundo["values"] = opcoes
         self.cb_mundo.current(0)
         self.status("fazendo backup do save original...")
@@ -410,6 +489,8 @@ class TelaInicio(Tela):
         ttk.Button(bar, text="Restaurar backup...",
                    command=lambda: JanelaRestaurar(app)).pack(side="left", padx=4)
         ttk.Button(bar, text="Pasta de backups", command=app.abrir_pasta_backup).pack(side="left", padx=4)
+        ttk.Button(bar, text="Trocar pasta do save...",
+                   command=app.trocar_pasta_save).pack(side="left", padx=4)
 
         from palsave import atualizacao
         bar2 = ttk.Frame(wrap); bar2.pack(pady=(12, 0))

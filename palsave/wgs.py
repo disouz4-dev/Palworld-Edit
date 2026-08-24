@@ -6,7 +6,50 @@ Estrutura:
   wgs/<conta>/<GUID>/container.N    aponta para o arquivo de dados
   wgs/<conta>/<GUID>/<GUID2>        o arquivo de dados em si (o save comprimido)
 """
-import os, struct, io, uuid, time
+import os, struct, io, uuid, time, glob
+
+# --------------------------------------------------------------------------
+# Descoberta do save: acha sozinho a pasta-conta (a que tem containers.index),
+# mesmo que o sufixo do pacote mude ou o save esteja em outro lugar.
+# --------------------------------------------------------------------------
+def candidatos_padrao():
+    """Locais tipicos do save da versao Xbox/Microsoft Store."""
+    la = os.environ.get("LOCALAPPDATA", "")
+    pats = [
+        os.path.join(la, "Packages", "PocketpairInc.Palworld_*", "SystemAppData", "wgs"),
+        os.path.join(la, "Packages", "*Palworld*", "SystemAppData", "wgs"),
+        os.path.join(la, "Packages", "*Palworld*"),
+    ]
+    out = []
+    for p in pats:
+        out.extend(glob.glob(p))
+    return out
+
+def procurar_conta(raiz, max_prof=6):
+    """Varre 'raiz' e suas subpastas ate achar uma que contenha containers.index.
+    Retorna o caminho dessa pasta (a 'conta' WGS) ou None."""
+    if not raiz or not os.path.isdir(raiz):
+        return None
+    raiz = os.path.abspath(raiz)
+    base = raiz.rstrip("\\/").count(os.sep)
+    for dirpath, dirnames, filenames in os.walk(raiz):
+        if "containers.index" in filenames:
+            return dirpath
+        if dirpath.count(os.sep) - base >= max_prof:
+            dirnames[:] = []          # nao desce mais fundo
+    return None
+
+def localizar_conta(dirs, max_prof=4):
+    """Primeira pasta-conta valida encontrada a partir de uma lista de candidatos."""
+    for d in dirs:
+        c = procurar_conta(d, max_prof)
+        if c:
+            return c
+    return None
+
+def descobrir_save():
+    """Tenta achar o save automaticamente nos locais padrao. None se nao achar."""
+    return localizar_conta(candidatos_padrao())
 
 def _now_filetime():
     """FILETIME do Windows: intervalos de 100ns desde 1601-01-01 UTC."""

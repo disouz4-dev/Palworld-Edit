@@ -5,7 +5,7 @@
 <h1 align="center">Palworld Editor</h1>
 
 <p align="center">
-  <b>🪟 Windows only</b> — save editor for <b>Palworld (Xbox / Microsoft Store / Game Pass build)</b>.
+  <b>🪟 Windows only / Só Windows</b> — save editor for <b>Palworld (Xbox / Microsoft Store / Game Pass build)</b>.
   <br>
   <b>Languages / Idiomas:</b> <a href="#english">🇺🇸 English</a> · <a href="#portugues">🇧🇷 Português</a>
 </p>
@@ -27,6 +27,8 @@
 - **Pals** — level, gender, IVs (HP/Attack/Defense), soul rank and the 4 passive skills, with a "suggest best passives" helper.
 - **Day / night** modern theme (Windows 11 Fluent).
 - **Automatic backups** and one-click restore. An untouched copy of your original save is kept forever.
+- **Finds your save by itself**, and if it can't, it asks for the game folder and searches the subfolders until it locates it.
+- **Check for updates** right on the home screen: downloads and installs the new version from GitHub in one click, keeping your backups and settings.
 
 This targets the **Xbox/GDK** build, which the common Steam editors do not read.
 
@@ -40,6 +42,9 @@ powershell -ExecutionPolicy Bypass -File install.ps1
 The installer checks for **Python** (installs it if missing), installs the dependencies and
 creates a **Desktop shortcut** with the app icon. Then open **Palworld Editor** from your Desktop.
 
+> **Important:** run the three lines above **in order**. The `powershell ... install.ps1` line
+> only works from **inside** the `Palworld-Edit` folder (the `cd` line puts you there).
+>
 > No git? Download the ZIP from the green **Code** button on GitHub, extract it, then run `install.ps1`.
 
 ### Usage
@@ -51,7 +56,8 @@ creates a **Desktop shortcut** with the app icon. Then open **Palworld Editor** 
 ### How it works
 The Xbox save is four nested layers, all decoded from scratch in Python:
 `containers.index (WGS) → container.N → CNK0 → PlZ2 (double zlib) → GVAS`. The reader/writer
-round-trips the save **byte-for-byte** when nothing is edited. Names and icons are read directly
+round-trips the save **byte-for-byte** when nothing is edited, and writes the same way the game
+itself does (a new container per save) so it never corrupts. Names and icons are read directly
 from the game's IoStore (`.utoc`/`.ucas`) via the Oodle decompressor — no FModel export needed.
 
 ### License
@@ -63,19 +69,21 @@ from the game's IoStore (`.utoc`/`.ucas`) via the Oodle decompressor — no FMod
 
 ## 🇧🇷 Português (PT-BR)
 
-> **Somente Windows.** Aplicativo de desktop para Windows 10/11 que le o save da versao
-> Xbox/Game Pass em `%LOCALAPPDATA%\Packages\PocketpairInc.Palworld_*`. Nao roda em macOS nem Linux.
+> **Somente Windows.** Aplicativo de desktop para Windows 10/11 que lê o save da versão
+> Xbox/Game Pass em `%LOCALAPPDATA%\Packages\PocketpairInc.Palworld_*`. Não roda em macOS nem Linux.
 >
-> **Ferramenta nao oficial**, sem vinculo com a Pocketpair. Use so com um save de um jogo que voce possui. Veja o [AVISO](NOTICE.md).
+> **Ferramenta não oficial**, sem vínculo com a Pocketpair. Use só com um save de um jogo que você possui. Veja o [AVISO](NOTICE.md).
 
 ### Recursos
-- **Itens** — altere qualquer quantidade, adicione itens que voce nao tem, por bau / armazem / inventario, com os **nomes e icones do jogo**.
-- **Personagem** — nivel, experiencia e pontos de atributo.
-- **Pals** — nivel, sexo, IVs (Vida/Ataque/Defesa), rank de alma e as 4 passivas, com o botao **"sugerir melhores passivas"**.
+- **Itens** — altere qualquer quantidade, adicione itens que você não tem, por baú / armazém / inventário, com os **nomes e ícones do jogo**.
+- **Personagem** — nível, experiência e pontos de atributo.
+- **Pals** — nível, sexo, IVs (Vida/Ataque/Defesa), rank de alma e as 4 passivas, com o botão **"sugerir melhores passivas"**.
 - **Tema claro / escuro** moderno (Fluent do Windows 11).
-- **Backups automaticos** e restauracao com um clique. Uma copia intocada do seu save original fica guardada para sempre.
+- **Backups automáticos** e restauração com um clique. Uma cópia intocada do seu save original fica guardada para sempre.
+- **Acha o seu save sozinho** e, se não achar, pergunta a pasta do jogo e **procura nas subpastas** até localizar.
+- **Verificar atualização** direto na tela inicial: baixa e instala a versão nova do GitHub com um clique, mantendo seus backups e configurações.
 
-Feito para a versao **Xbox/GDK**, que os editores comuns de Steam nao conseguem ler.
+Feito para a versão **Xbox/GDK**, que os editores comuns de Steam não conseguem ler.
 
 ### Instalar
 Abra o **PowerShell** e rode:
@@ -84,10 +92,14 @@ git clone https://github.com/disouz4-dev/Palworld-Edit.git
 cd Palworld-Edit
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
-O instalador verifica o **Python** (instala se faltar), instala as dependencias e cria um
-**atalho na Area de Trabalho** com o icone. Depois e so abrir o **Palworld Editor** pela Area de Trabalho.
+O instalador verifica o **Python** (instala se faltar), instala as dependências e cria um
+**atalho na Área de Trabalho** com o ícone. Depois é só abrir o **Palworld Editor** pela Área de Trabalho.
 
-> Sem git? Baixe o ZIP no botao verde **Code** do GitHub, extraia e rode o `install.ps1`.
+> **Importante:** rode as três linhas **na ordem**. A linha `powershell ... install.ps1` só
+> funciona de **dentro** da pasta `Palworld-Edit` (a linha `cd` te leva pra lá). Se rodar de
+> `C:\Windows\system32` dá erro de "arquivo não existe".
+>
+> Sem git? Baixe o ZIP no botão verde **Code** do GitHub, extraia e rode o `install.ps1`.
 
 ### Como usar
 1. **Feche o Palworld** antes de salvar (o jogo reescreve o save ao sair).
@@ -96,10 +108,11 @@ O instalador verifica o **Python** (instala se faltar), instala as dependencias 
 4. Se algo der errado no jogo, use **Restaurar backup** na tela inicial.
 
 ### Como funciona
-O save do Xbox tem quatro camadas, todas decodificadas na mao em Python:
+O save do Xbox tem quatro camadas, todas decodificadas na mão em Python:
 `containers.index (WGS) → container.N → CNK0 → PlZ2 (zlib duplo) → GVAS`. O leitor/escritor
-devolve o save **byte a byte identico** quando nada e editado. Nomes e icones sao lidos direto
+devolve o save **byte a byte idêntico** quando nada é editado, e grava do mesmo jeito que o
+próprio jogo (novo container a cada save) para não corromper. Nomes e ícones são lidos direto
 do IoStore do jogo (`.utoc`/`.ucas`) usando o Oodle — sem precisar exportar no FModel.
 
-### Licenca
-[MIT](LICENSE). Nomes e arte pertencem a Pocketpair — veja o [AVISO](NOTICE.md).
+### Licença
+[MIT](LICENSE). Nomes e arte pertencem à Pocketpair — veja o [AVISO](NOTICE.md).
