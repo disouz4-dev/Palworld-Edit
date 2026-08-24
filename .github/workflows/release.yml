@@ -27,7 +27,7 @@ jobs:
             echo "release v$V ja existe"; exit 0
           fi
           cp .github/release_header.md NOTES.md
-          awk -v h="## v$V" '$0==h {f=1; next} f && /^## / {exit} f {print}' CHANGELOG.md > SECTION.md || true
+          awk -v h="## v$V" 'index($0,h)==1 {f=1; next} f && /^## / {exit} f {print}' CHANGELOG.md > SECTION.md || true
           if [ -s SECTION.md ]; then
             printf '## O que mudou nesta versao\n' >> NOTES.md
             cat SECTION.md >> NOTES.md
