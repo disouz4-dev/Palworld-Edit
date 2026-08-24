@@ -11,7 +11,7 @@ import sv_ttk
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from palsave import wgs, palz, backup, meta, objetos, personagem, traducao, icones_rt
+from palsave import wgs, palz, backup, meta, objetos, personagem, traducao, icones_rt, breeding
 from palsave.level import LevelSave
 
 WGS_DIR = os.path.expandvars(
@@ -1085,8 +1085,10 @@ class TelaPals(Tela):
         self.v_hp.set(str(random.randint(90, 100)))
         self.v_at.set(str(random.randint(90, 100)))
         self.v_df.set(str(random.randint(90, 100)))
+        self.v_rk.set("4")   # condensacao no maximo (4 estrelas)
         self.lbl_sug.configure(text=self.lbl_sug.cget("text") +
-                               "\n\n(passivas + IVs altos e variados (90-100) aplicados - revise e Guardar)")
+                               "\n\n(passivas + IVs altos (90-100) + condensacao 4 estrelas "
+                               "aplicados - revise e Guardar)")
         self.b_aplicar_sug.configure(state="disabled")
 
     def _guardar(self):
@@ -1117,14 +1119,143 @@ class TelaPals(Tela):
 class TelaBreeding(Tela):
     def __init__(self, master, app):
         Tela.__init__(self, master, app)
-        ttk.Label(self, text="Breeding", style="Titulo.TLabel").pack(anchor="w", pady=(0, 8))
-        ttk.Label(self, style="Sub.TLabel", justify="left", wraplength=760, text=(
-            "Em construcao.\n\n"
-            "Aqui voce vai escolher qual Pal quer que nasca, e o editor vai varrer a sua Caixa "
-            "de Pals e mostrar os pares que geram esse filho, ja avisando quando precisar trocar "
-            "o sexo de um deles.\n\n"
-            "Falta so a tabela de combinacoes do jogo. O motor de ler/editar Pals ja esta pronto "
-            "(veja a Caixa de Pals).")).pack(anchor="w")
+        self.eng = breeding.carregar()
+        self.alvo_sel = None
+
+        # sexos que voce tem de cada especie (normalizando alfas para a especie base)
+        self.meus_gen = {}
+        for p in personagem.pals_do_mundo(app.level):
+            self.meus_gen.setdefault(self._norm(p.especie), set()).add(p.genero)
+
+        ttk.Label(self, text="Breeding", style="Titulo.TLabel").pack(anchor="w")
+        ttk.Label(self, style="Sub.TLabel", text=(
+            "Escolha o Pal que voce quer criar. O editor mostra os pares que geram ele. "
+            "A reproducao precisa de 1 macho + 1 femea: quando voce so tem do mesmo sexo, "
+            "aparece um aviso -- e so trocar o sexo de um na Caixa de Pals.")
+        ).pack(anchor="w", pady=(0, 6))
+
+        corpo = ttk.Panedwindow(self, orient="horizontal"); corpo.pack(fill="both", expand=True)
+
+        # ---- esquerda: escolher o alvo ----
+        esq = ttk.Labelframe(corpo, text="O que voce quer criar?", padding=6); corpo.add(esq, weight=1)
+        f = ttk.Frame(esq); f.pack(fill="x")
+        ttk.Label(f, text="Buscar:").pack(side="left")
+        self.v_busca = tk.StringVar(); self.v_busca.trace_add("write", lambda *a: self.render_alvos())
+        ttk.Entry(f, textvariable=self.v_busca).pack(side="left", fill="x", expand=True, padx=4)
+        f2 = ttk.Frame(esq); f2.pack(fill="x", pady=(2, 0))
+        ttk.Label(f2, text="Elemento:").pack(side="left")
+        elems = ["Todos"] + sorted({e for v in self.eng.pals.values() for e in v.get("elements", [])})
+        self.v_elem = tk.StringVar(value="Todos")
+        ttk.Combobox(f2, textvariable=self.v_elem, state="readonly", width=14,
+                     values=elems).pack(side="left", padx=4)
+        self.v_elem.trace_add("write", lambda *a: self.render_alvos())
+        ttk.Label(f2, text="Ordenar:").pack(side="left", padx=(8, 0))
+        self.v_ord = tk.StringVar(value="Numero")
+        ttk.Combobox(f2, textvariable=self.v_ord, state="readonly", width=10,
+                     values=["Numero", "Nome"]).pack(side="left", padx=4)
+        self.v_ord.trace_add("write", lambda *a: self.render_alvos())
+
+        self.tv_alvo = ttk.Treeview(esq, columns=("num",), show="tree headings", height=20,
+                                    style="Big.Treeview")
+        self.tv_alvo.heading("#0", text="Pal"); self.tv_alvo.heading("num", text="No")
+        self.tv_alvo.column("#0", width=210); self.tv_alvo.column("num", width=44, anchor="e", stretch=False)
+        sa = ttk.Scrollbar(esq, orient="vertical", command=self.tv_alvo.yview)
+        self.tv_alvo.configure(yscrollcommand=sa.set); sa.pack(side="right", fill="y")
+        self.tv_alvo.pack(fill="both", expand=True, pady=4)
+        self.tv_alvo.bind("<<TreeviewSelect>>", self.sel_alvo)
+
+        # ---- direita: pares ----
+        dir_ = ttk.Labelframe(corpo, text="Pares que geram esse Pal", padding=6); corpo.add(dir_, weight=2)
+        fm = ttk.Frame(dir_); fm.pack(fill="x")
+        self.v_modo = tk.StringVar(value="meus")
+        ttk.Radiobutton(fm, text="Usar so os meus Pals", variable=self.v_modo, value="meus",
+                        command=self.render_pares).pack(side="left")
+        ttk.Radiobutton(fm, text="Todos os Pals do jogo", variable=self.v_modo, value="todos",
+                        command=self.render_pares).pack(side="left", padx=(8, 0))
+        self.lbl_res = ttk.Label(dir_, style="Sub.TLabel", text="Escolha um Pal a esquerda.")
+        self.lbl_res.pack(anchor="w", pady=(4, 2))
+
+        self.tv_par = ttk.Treeview(dir_, columns=("tipo", "obs"), show="tree headings", height=20,
+                                   style="Big.Treeview")
+        self.tv_par.heading("#0", text="Par (Pai x Mae)")
+        self.tv_par.heading("tipo", text="Tipo"); self.tv_par.heading("obs", text="Sexo")
+        self.tv_par.column("#0", width=330)
+        self.tv_par.column("tipo", width=64, anchor="center", stretch=False)
+        self.tv_par.column("obs", width=150, anchor="w", stretch=False)
+        self.tv_par.tag_configure("aviso", foreground="#e0a030")
+        sp = ttk.Scrollbar(dir_, orient="vertical", command=self.tv_par.yview)
+        self.tv_par.configure(yscrollcommand=sp.set); sp.pack(side="right", fill="y")
+        self.tv_par.pack(fill="both", expand=True, pady=4)
+
+        self.render_alvos()
+
+    @staticmethod
+    def _norm(esp):
+        for pre in ("BOSS_", "Boss_"):
+            if esp.startswith(pre):
+                return esp[len(pre):]
+        return esp
+
+    def render_alvos(self):
+        for i in self.tv_alvo.get_children():
+            self.tv_alvo.delete(i)
+        b = self.v_busca.get().strip().lower()
+        elem = self.v_elem.get()
+        if self.v_ord.get() == "Nome":
+            itens = sorted(self.eng.pals.items(), key=lambda kv: traducao.nome_pal(kv[0]).lower())
+        else:
+            itens = sorted(self.eng.pals.items(), key=lambda kv: kv[1].get("index", 9999))
+        self.map_alvo = {}
+        for key, info in itens:
+            nome = traducao.nome_pal(key)
+            if b and b not in nome.lower() and b not in key.lower():
+                continue
+            if elem != "Todos" and elem not in info.get("elements", []):
+                continue
+            ico = icones_rt.pal(key)
+            kw = {"image": ico} if ico else {}
+            self.map_alvo[self.tv_alvo.insert("", "end", text=" " + nome,
+                                              values=(info.get("index", ""),), **kw)] = key
+
+    def sel_alvo(self, _e=None):
+        s = self.tv_alvo.selection()
+        self.alvo_sel = self.map_alvo.get(s[0]) if s else None
+        self.render_pares()
+
+    def _obs_genero(self, a, b):
+        if self.v_modo.get() != "meus":
+            return "precisa 1 M + 1 F"
+        ga = self.meus_gen.get(a, set()); gb = self.meus_gen.get(b, set())
+        if a == b:
+            return "" if {"M", "F"} <= ga else "trocar sexo (precisa M+F)"
+        if ("M" in ga and "F" in gb) or ("F" in ga and "M" in gb):
+            return ""
+        return "trocar o sexo de um"
+
+    def render_pares(self, *a):
+        for i in self.tv_par.get_children():
+            self.tv_par.delete(i)
+        if not self.alvo_sel:
+            self.lbl_res.configure(text="Escolha um Pal a esquerda.")
+            return
+        disp = set(self.meus_gen.keys()) if self.v_modo.get() == "meus" else set(self.eng.pals.keys())
+        pares = self.eng.pares_para(self.alvo_sel, disp)
+        pares.sort(key=lambda t: (t[2] != "unico", traducao.nome_pal(t[0]).lower()))
+        nome_alvo = traducao.nome_pal(self.alvo_sel)
+        if not pares:
+            self.lbl_res.configure(text=("Nenhum par entre os seus Pals gera %s. "
+                                         "Tente 'Todos os Pals do jogo'." % nome_alvo)
+                                   if self.v_modo.get() == "meus"
+                                   else "Nenhuma combinacao conhecida gera %s." % nome_alvo)
+            return
+        self.lbl_res.configure(text="%d par(es) geram %s" % (len(pares), nome_alvo))
+        for a2, b2, tipo in pares[:600]:
+            obs = self._obs_genero(a2, b2)
+            ico = icones_rt.pal(a2)
+            kw = {"image": ico} if ico else {}
+            self.tv_par.insert("", "end", text=" %s  x  %s" % (traducao.nome_pal(a2), traducao.nome_pal(b2)),
+                               values=("Unico" if tipo == "unico" else "Normal", obs),
+                               tags=("aviso",) if obs and "trocar" in obs else (), **kw)
 
 
 # ===========================================================================
