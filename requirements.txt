@@ -1,0 +1,7 @@
+# Necessario para RODAR o editor:
+sv-ttk>=2.6
+palworld-save-tools>=0.24
+
+# Necessario apenas para GERAR icones/traducao a partir do jogo (opcional):
+pillow>=10
+texture2ddecoder>=1.0

@@ -1,0 +1,931 @@
+# -*- coding: utf-8 -*-
+"""Palworld - Editor de Save (versao Xbox/GDK).
+
+Janela unica com menus: Inicio -> Itens / Personagem / Caixa de Pals / Breeding.
+Le e grava o Level.sav de dentro dos containers WGS, com backup automatico.
+"""
+import os, sys, json, queue, threading, traceback, webbrowser
+import tkinter as tk
+from tkinter import ttk, messagebox
+import sv_ttk
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, BASE)
+from palsave import wgs, palz, backup, meta, objetos, personagem, traducao, icones_rt
+from palsave.level import LevelSave
+
+WGS_DIR = os.path.expandvars(
+    r"%LOCALAPPDATA%\Packages\PocketpairInc.Palworld_ad4psfrxyesvt\SystemAppData\wgs")
+BACKUP_DIR = os.path.join(BASE, "backups")
+LIMITE = 99999
+TODOS = "[ TODOS ]  ver tudo que existe no mundo"
+GRUPOS = [("personagem", "Personagem"), ("guilda", "Guilda"),
+          ("mundo", "Baus e estruturas"), ("pal", "Equipamento de Pal"),
+          ("vazio", "Vazios")]
+
+CONFIG = os.path.join(BASE, "config.json")
+
+
+def _ler_config():
+    try:
+        return json.load(open(CONFIG, encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _gravar_config(d):
+    try:
+        json.dump(d, open(CONFIG, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+# ===========================================================================
+class App(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self.title("Palworld - Editor de Save")
+        self.geometry("1180x760")
+        self.minsize(1000, 660)
+        try:
+            self.iconbitmap(os.path.join(BASE, "assets", "logo.ico"))
+        except Exception:
+            pass
+
+        # estado compartilhado
+        self.root_wgs = None
+        self.index = None
+        self.bm = None
+        self.level = None
+        self.entry_atual = None
+        self.meta_comp = None
+        self.containers = []
+        self.nomes = {}
+        self.pendentes = {}       # {guid: {sid: qtd}}  (itens, aplicados ao salvar)
+        self.dirty = False        # edicoes de pal/personagem ja aplicadas ao level
+        self.catalogo = self._carregar_catalogo()
+        self.tela = None
+        self.tela_nome = "inicio"
+        self.fila = queue.Queue()
+        self.cfg = _ler_config()
+        self.tema = self.cfg.get("tema", "dark")
+
+        self._estilo()
+        self._shell()
+        self.after(80, self._poll)
+        self.after(200, self._iniciar)
+
+    # ---------- infra ----------
+    def _carregar_catalogo(self):
+        try:
+            return json.load(open(os.path.join(BASE, "items.json"), encoding="utf-8"))
+        except Exception:
+            return {"verificados": [], "derivados": []}
+
+    def todos_ids(self):
+        return self.catalogo["verificados"] + self.catalogo["derivados"]
+
+    def _estilo(self):
+        sv_ttk.set_theme(self.tema)
+        st = ttk.Style(self)
+        st.configure("Titulo.TLabel", font=("Segoe UI Variable Display", 22, "bold"))
+        st.configure("Sub.TLabel", foreground="#8b93a7")
+        st.configure("Menu.TButton", font=("Segoe UI", 13, "bold"), padding=14)
+        st.configure("Treeview", rowheight=26)
+        st.configure("Big.Treeview", rowheight=38)
+        st.configure("Big.Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        st.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+
+    def cor_tag(self, qual):
+        escuro = self.tema == "dark"
+        if qual == "edit":
+            return "#4d421e" if escuro else "#fff3cd"
+        if qual == "todos":
+            return "#33507a" if escuro else "#dbe8ff"
+        return ""
+
+    def paleta(self):
+        if self.tema == "dark":
+            return {"fundo": "#1c1c1c", "card": "#2b2b2b", "hover": "#383838",
+                    "fg": "#e8e8e8", "sub": "#9aa0aa", "accent": "#57a6ff"}
+        return {"fundo": "#fafafa", "card": "#ffffff", "hover": "#eef1f6",
+                "fg": "#1a1a1a", "sub": "#5c6470", "accent": "#0d6efd"}
+
+    def _toggle_tema(self):
+        sv_ttk.toggle_theme()
+        self.tema = sv_ttk.get_theme()
+        self.cfg["tema"] = self.tema
+        _gravar_config(self.cfg)
+        self.btn_tema.configure(text=("Modo claro" if self.tema == "dark" else "Modo escuro"))
+        if self.tela is not None and self.level is not None:
+            self.mostrar(self.tela_nome)
+
+    def _shell(self):
+        topo = ttk.Frame(self, padding=(10, 8))
+        topo.pack(fill="x")
+        self.btn_inicio = ttk.Button(topo, text="‹ Inicio", command=lambda: self.mostrar("inicio"))
+        self.btn_inicio.pack(side="left")
+        ttk.Label(topo, text="   Mundo:").pack(side="left")
+        self.cb_mundo = ttk.Combobox(topo, state="readonly", width=42)
+        self.cb_mundo.pack(side="left", padx=6)
+        self.cb_mundo.bind("<<ComboboxSelected>>", lambda e: self.carregar_mundo())
+        ttk.Button(topo, text="Recarregar", command=self.carregar_mundo).pack(side="left")
+        self.btn_salvar = ttk.Button(topo, text="SALVAR NO JOGO", style="Accent.TButton",
+                                     command=self.salvar, state="disabled")
+        self.btn_salvar.pack(side="right")
+        self.pb = ttk.Progressbar(topo, mode="indeterminate", length=130)
+        self.pb.pack(side="right", padx=8)
+        self.btn_tema = ttk.Button(topo, text=("Modo claro" if self.tema == "dark" else "Modo escuro"),
+                                   command=self._toggle_tema)
+        self.btn_tema.pack(side="right", padx=8)
+
+        self.conteudo = ttk.Frame(self)
+        self.conteudo.pack(fill="both", expand=True, padx=10, pady=(0, 6))
+
+        rod = ttk.Frame(self, padding=(10, 4))
+        rod.pack(fill="x")
+        self.lbl_status = ttk.Label(rod, text="iniciando...")
+        self.lbl_status.pack(side="left")
+
+    def status(self, txt, cor=None):
+        self.lbl_status.configure(text=txt, foreground=(cor or ""))
+        self.update_idletasks()
+
+    def _na_ui(self, fn, *a):
+        self.fila.put((fn, a))
+
+    def _poll(self):
+        while True:
+            try:
+                fn, a = self.fila.get_nowait()
+            except queue.Empty:
+                break
+            try:
+                fn(*a)
+            except Exception:
+                traceback.print_exc()
+        self.after(80, self._poll)
+
+    # ---------- navegacao ----------
+    def mostrar(self, nome):
+        if self.level is None and nome != "inicio":
+            return
+        if self.tela is not None:
+            self.tela.destroy()
+        classes = {"inicio": TelaInicio, "itens": TelaItens,
+                   "personagem": TelaPersonagem, "pals": TelaPals, "breeding": TelaBreeding}
+        self.tela_nome = nome
+        self.tela = classes[nome](self.conteudo, self)
+        self.tela.pack(fill="both", expand=True)
+        self.btn_inicio.configure(state=("disabled" if nome == "inicio" else "normal"))
+
+    # ---------- carregar mundo ----------
+    def _iniciar(self):
+        try:
+            self.root_wgs = wgs.find_wgs_root(WGS_DIR)
+        except Exception as ex:
+            messagebox.showerror("Save nao encontrado",
+                                 "Nao achei os saves do Palworld.\n\n%s\n\nProcurei em:\n%s" % (ex, WGS_DIR))
+            self.destroy(); return
+        self.bm = backup.BackupManager(self.root_wgs, BACKUP_DIR)
+        self.index = wgs.parse_index(self.root_wgs)
+        opcoes, self.map_mundo, self.nome_mundo = [], {}, {}
+        for wid, partes in wgs.worlds(self.index).items():
+            lvl = partes.get("Level-01") or partes.get("Level")
+            if not lvl:
+                continue
+            try:
+                _, raw = wgs.read_blob(self.root_wgs, lvl); palz.decompress(raw)
+            except Exception:
+                continue
+            info = {"mundo": None, "jogador": None}
+            lm = partes.get("LevelMeta")
+            if lm:
+                try:
+                    info = meta.ler_meta(wgs.read_blob(self.root_wgs, lm)[1])
+                except Exception:
+                    pass
+            nome = info["mundo"] or ("mundo " + wid[:8])
+            rot = "%s  (%s%.1f MB)" % (nome, (info["jogador"] + " - ") if info["jogador"] else "",
+                                       lvl["size"] / 1048576.0)
+            if rot in self.map_mundo:
+                rot += "  [%s]" % wid[:8]
+            opcoes.append(rot); self.map_mundo[rot] = lvl; self.nome_mundo[rot] = nome
+        if not opcoes:
+            messagebox.showerror("Nada para editar", "Nenhum mundo com Level.sav legivel.")
+            self.destroy(); return
+        opcoes.sort(key=lambda r: -self.map_mundo[r]["size"])
+        self.cb_mundo["values"] = opcoes
+        self.cb_mundo.current(0)
+        self.status("fazendo backup do save original...")
+        threading.Thread(target=self._bkp_ini, daemon=True).start()
+
+    def _bkp_ini(self):
+        try:
+            self.bm.ensure_original()
+        except Exception:
+            pass
+        self._na_ui(self.carregar_mundo)
+
+    def carregar_mundo(self):
+        rot = self.cb_mundo.get()
+        if not rot:
+            return
+        self.entry_atual = self.map_mundo[rot]
+        self.pendentes.clear(); self.dirty = False
+        self.btn_salvar.configure(state="disabled")
+        self.pb.start(12); self.status("lendo e descomprimindo o save...")
+        threading.Thread(target=self._carregar_th, daemon=True).start()
+
+    def _carregar_th(self):
+        try:
+            _, raw = wgs.read_blob(self.root_wgs, self.entry_atual)
+            data, self.meta_comp = palz.decompress(raw)
+            lv = LevelSave.from_bytes(data)
+            nomes = objetos.mapear(lv)
+            self._na_ui(self._carregado, lv, nomes)
+        except Exception:
+            self._na_ui(self._erro, "Falha ao ler o save", traceback.format_exc())
+
+    def _carregado(self, lv, nomes):
+        self.level = lv; self.nomes = nomes
+        self.containers = sorted(lv.containers,
+                                 key=lambda c: (objetos.ORDEM.get(nomes[c.guid][1], 9), -len(c.slots)))
+        self.pb.stop()
+        self.btn_salvar.configure(state="normal")
+        nome = self.nome_mundo.get(self.cb_mundo.get(), "")
+        self.title("Palworld - Editor de Save - %s" % nome)
+        self.status('"%s" carregado.' % nome, "#7fe0a0")
+        self.mostrar("inicio")
+
+    def _erro(self, titulo, tb):
+        self.pb.stop(); self.status(titulo, "#ff8080")
+        messagebox.showerror(titulo, tb[-1500:])
+
+    # ---------- salvar ----------
+    def marcar_sujo(self):
+        self.dirty = True
+
+    def n_pendencias(self):
+        return sum(len(v) for v in self.pendentes.values())
+
+    def salvar(self):
+        if not self.n_pendencias() and not self.dirty:
+            messagebox.showinfo("Nada a fazer", "Nenhuma alteracao pendente.")
+            return
+        if not messagebox.askyesno("Salvar",
+                                   "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
+                                   "Um backup e feito automaticamente antes."):
+            return
+        self.btn_salvar.configure(state="disabled"); self.pb.start(12); self.status("salvando...")
+        threading.Thread(target=self._salvar_th, daemon=True).start()
+
+    def _salvar_th(self):
+        try:
+            self.bm.create("antes de editar")
+            porg = {c.guid: c for c in self.level.containers}
+            for guid, itens in self.pendentes.items():
+                c = porg.get(guid)
+                if not c:
+                    continue
+                cap = max(42, len(c.slots))
+                for sid, q in itens.items():
+                    self.level.set_quantity(c, sid, q, capacity=cap)
+            blob = palz.compress(self.level.to_bytes(), self.meta_comp)
+            wgs.write_blob(self.root_wgs, self.index, self.entry_atual, blob)
+            self._na_ui(self._salvo)
+        except Exception:
+            self._na_ui(self._erro, "Falha ao salvar", traceback.format_exc())
+
+    def _salvo(self):
+        self.pb.stop(); self.btn_salvar.configure(state="normal")
+        self.status("salvo com sucesso!", "#7fe0a0")
+        messagebox.showinfo("Pronto", "Alteracoes gravadas.\n\nSe algo der errado no jogo, "
+                                       "use Inicio > Backups > Restaurar.")
+        self.carregar_mundo()
+
+    # ---------- backups ----------
+    def criar_backup(self):
+        try:
+            self.bm.create("manual"); messagebox.showinfo("Backup", "Backup criado.")
+        except Exception as ex:
+            messagebox.showerror("Erro", str(ex))
+
+    def abrir_pasta_backup(self):
+        os.makedirs(BACKUP_DIR, exist_ok=True); webbrowser.open(BACKUP_DIR)
+
+
+# ===========================================================================
+class Tela(ttk.Frame):
+    """Base das telas."""
+    def __init__(self, master, app):
+        ttk.Frame.__init__(self, master)
+        self.app = app
+
+
+# ---------------------------------------------------------------------------
+class TelaInicio(Tela):
+    MENUS = [
+        ("\U0001F4E6", "Itens", "Inventario, baus, dinheiro e adicionar\no que voce nao tem", "itens"),
+        ("\U0001F9CD", "Personagem", "Nivel, experiencia e pontos\nde atributo", "personagem"),
+        ("\U0001F43E", "Caixa de Pals", "Nivel, sexo, IVs e passivas\ndos seus Pals", "pals"),
+        ("\U0001F95A", "Breeding", "Descobrir e montar os pares\npara o filho que voce quer", "breeding"),
+    ]
+
+    def __init__(self, master, app):
+        Tela.__init__(self, master, app)
+        wrap = ttk.Frame(self); wrap.place(relx=0.5, rely=0.44, anchor="center")
+        nome = app.nome_mundo.get(app.cb_mundo.get(), "")
+        ttk.Label(wrap, text="O que voce quer editar?", style="Titulo.TLabel").pack()
+        ttk.Label(wrap, text="Mundo: %s" % nome, style="Sub.TLabel").pack(pady=(2, 22))
+
+        grade = ttk.Frame(wrap); grade.pack()
+        for c in (0, 1):
+            grade.columnconfigure(c, weight=1, uniform="col")
+        for i, (icone, tit, sub, destino) in enumerate(self.MENUS):
+            self._card(grade, i // 2, i % 2, icone, tit, sub, destino)
+
+        bar = ttk.Frame(wrap); bar.pack(pady=(24, 0))
+        ttk.Button(bar, text="Criar backup", command=app.criar_backup).pack(side="left", padx=4)
+        ttk.Button(bar, text="Restaurar backup...",
+                   command=lambda: JanelaRestaurar(app)).pack(side="left", padx=4)
+        ttk.Button(bar, text="Pasta de backups", command=app.abrir_pasta_backup).pack(side="left", padx=4)
+
+    def _card(self, grade, r, c, icone, tit, sub, destino):
+        pal = self.app.paleta()
+        card = tk.Frame(grade, bg=pal["card"], highlightbackground=pal["hover"],
+                        highlightthickness=1, bd=0)
+        card.grid(row=r, column=c, padx=12, pady=12, sticky="nsew", ipadx=28, ipady=20)
+        ic = tk.Label(card, text=icone, font=("Segoe UI Emoji", 42), bg=pal["card"], fg=pal["fg"])
+        ic.pack(pady=(4, 0))
+        t = tk.Label(card, text=tit, font=("Segoe UI Variable Display", 16, "bold"),
+                     bg=pal["card"], fg=pal["fg"])
+        t.pack(pady=(6, 2))
+        s = tk.Label(card, text=sub, justify="center", font=("Segoe UI", 9),
+                     bg=pal["card"], fg=pal["sub"])
+        s.pack()
+        alvos = [card, ic, t, s]
+
+        def entra(_e):
+            for w in alvos:
+                w.configure(bg=pal["hover"])
+            card.configure(highlightbackground=pal["accent"])
+
+        def sai(_e):
+            for w in alvos:
+                w.configure(bg=pal["card"])
+            card.configure(highlightbackground=pal["hover"])
+
+        for w in alvos:
+            w.bind("<Button-1>", lambda e, d=destino: self.app.mostrar(d))
+            w.bind("<Enter>", entra)
+            w.bind("<Leave>", sai)
+            try:
+                w.configure(cursor="hand2")
+            except tk.TclError:
+                pass
+
+
+# ---------------------------------------------------------------------------
+class TelaItens(Tela):
+    def __init__(self, master, app):
+        Tela.__init__(self, master, app)
+        self.container = None
+        self.map_cont = {}
+        self.map_item = {}
+
+        cab = ttk.Frame(self); cab.pack(fill="x", pady=(0, 6))
+        ttk.Label(cab, text="Itens", style="Titulo.TLabel").pack(side="left")
+
+        corpo = ttk.Panedwindow(self, orient="horizontal"); corpo.pack(fill="both", expand=True)
+
+        esq = ttk.Labelframe(corpo, text="Onde", padding=6); corpo.add(esq, weight=1)
+        f1 = ttk.Frame(esq); f1.pack(fill="x")
+        ttk.Label(f1, text="Filtrar:").pack(side="left")
+        self.var_fc = tk.StringVar(); self.var_fc.trace_add("write", lambda *a: self.render_cont())
+        ttk.Entry(f1, textvariable=self.var_fc).pack(side="left", fill="x", expand=True, padx=4)
+        self.var_vazios = tk.BooleanVar(value=False)
+        ttk.Checkbutton(esq, text="mostrar vazios", variable=self.var_vazios,
+                        command=self.render_cont).pack(anchor="w", pady=2)
+        self.lst = ttk.Treeview(esq, columns=("n",), show="tree headings", height=22)
+        self.lst.heading("#0", text="Container"); self.lst.heading("n", text="Itens")
+        self.lst.column("#0", width=330); self.lst.column("n", width=48, anchor="e", stretch=False)
+        s1 = ttk.Scrollbar(esq, orient="vertical", command=self.lst.yview)
+        self.lst.configure(yscrollcommand=s1.set); s1.pack(side="right", fill="y")
+        self.lst.pack(fill="both", expand=True, pady=4)
+        self.lst.bind("<<TreeviewSelect>>", self.sel_cont)
+        self.lst.tag_configure("grupo", font=("Segoe UI", 9, "bold"))
+        self.lst.tag_configure("todos", background=app.cor_tag("todos"))
+
+        dir_ = ttk.Labelframe(corpo, text="Itens", padding=6); corpo.add(dir_, weight=2)
+        f2 = ttk.Frame(dir_); f2.pack(fill="x")
+        ttk.Label(f2, text="Buscar:").pack(side="left")
+        self.var_b = tk.StringVar(); self.var_b.trace_add("write", lambda *a: self.render_item())
+        e = ttk.Entry(f2, textvariable=self.var_b, font=("Segoe UI", 11))
+        e.pack(side="left", fill="x", expand=True, padx=4); e.focus_set()
+
+        self.tv = ttk.Treeview(dir_, columns=("qtd", "novo", "onde"), show="tree headings",
+                               style="Big.Treeview")
+        for c, t, w in [("#0", "Item", 300), ("qtd", "Tem", 80), ("novo", "Vai virar", 80), ("onde", "Onde", 220)]:
+            self.tv.heading(c, text=t); self.tv.column(c, width=w, anchor=("e" if c in ("qtd", "novo") else "w"),
+                                                       stretch=(c == "onde"))
+        s2 = ttk.Scrollbar(dir_, orient="vertical", command=self.tv.yview)
+        self.tv.configure(yscrollcommand=s2.set); s2.pack(side="right", fill="y")
+        self.tv.pack(fill="both", expand=True, pady=4)
+        self.tv.tag_configure("edit", background=app.cor_tag("edit"))
+        self.tv.bind("<Double-1>", lambda e: self.aplicar())
+
+        f3 = ttk.Frame(dir_); f3.pack(fill="x", pady=4)
+        ttk.Label(f3, text="Quantidade:").pack(side="left")
+        self.var_q = tk.StringVar(value="")
+        ttk.Entry(f3, textvariable=self.var_q, width=9).pack(side="left", padx=4)
+        self.b_ap = ttk.Button(f3, text="Aplicar ao selecionado", command=self.aplicar); self.b_ap.pack(side="left")
+        self.b_todos = ttk.Button(f3, text="Aplicar a todos da lista", command=self.aplicar_todos)
+        self.b_todos.pack(side="left", padx=4)
+        ttk.Button(f3, text="Desfazer", command=self.desfazer).pack(side="left")
+        ttk.Button(f3, text="+ Adicionar item que nao tenho", command=self.adicionar).pack(side="left", padx=8)
+        self.lbl_alvo = ttk.Label(dir_, text="", style="Sub.TLabel"); self.lbl_alvo.pack(anchor="w")
+
+        self.render_cont(); self._sel_padrao(); self.render_item()
+
+    def _sel_padrao(self):
+        """Ja seleciona o inventario principal para dar pra editar sem entrar no modo TODOS."""
+        alvo = next((c for c in self.app.containers
+                     if self.app.nomes[c.guid][0].startswith("Personagem: INVENTARIO")), None)
+        if alvo is None:
+            alvo = next((c for c in self.app.containers if self.app.nomes[c.guid][1] == "guilda"), None)
+        if alvo is None:
+            return
+        for iid, c in self.map_cont.items():
+            if c is alvo:
+                self.lst.selection_set(iid); self.lst.see(iid)
+                self.container = alvo
+                return
+
+    def pend(self, c=None):
+        c = c or self.container
+        return self.app.pendentes.setdefault(c.guid, {}) if c else {}
+
+    def render_cont(self):
+        for i in self.lst.get_children():
+            self.lst.delete(i)
+        f = self.var_fc.get().strip().lower(); self.map_cont = {}
+        iid = self.lst.insert("", "end", text=TODOS, values=("",), tags=("todos",)); self.map_cont[iid] = None
+        porg = {}
+        for c in self.app.containers:
+            rot, cat = self.app.nomes[c.guid]
+            if cat == "vazio" and not self.var_vazios.get():
+                continue
+            if f and f not in rot.lower() and not any(f in traducao.nome_item(i).lower() or f in i.lower() for i in c.items):
+                continue
+            porg.setdefault(cat, []).append((c, rot))
+        for cat, tit in GRUPOS:
+            grp = porg.get(cat)
+            if not grp:
+                continue
+            pai = self.lst.insert("", "end", text="%s  (%d)" % (tit, len(grp)), values=("",),
+                                  tags=("grupo",), open=cat in ("personagem", "guilda"))
+            for c, rot in grp[:600]:
+                self.map_cont[self.lst.insert(pai, "end", text=rot, values=(len(c.slots),))] = c
+
+    def sel_cont(self, _e=None):
+        s = self.lst.selection()
+        if not s or s[0] not in self.map_cont:
+            return
+        self.container = self.map_cont[s[0]]; self.render_item()
+
+    def render_item(self):
+        for i in self.tv.get_children():
+            self.tv.delete(i)
+        b = self.var_b.get().strip().lower(); self.map_item = {}
+        todos = self.container is None
+        self.b_ap.configure(state=("disabled" if todos else "normal"))
+        self.b_todos.configure(state=("disabled" if todos else "normal"))
+        verif = set(self.app.catalogo["verificados"])
+        if todos:
+            self.tv.heading("onde", text="Em quantos lugares")
+            self.lbl_alvo.configure(text="Modo consulta. Escolha um container para editar. (o + usa o inventario principal)")
+            tot, loc = {}, {}
+            for c in self.app.level.containers:
+                nc = self.app.nomes[c.guid][0]
+                for sid, q in c.items.items():
+                    tot[sid] = tot.get(sid, 0) + q; loc.setdefault(sid, []).append(nc)
+            for sid in sorted(tot, key=lambda s: -tot[s]):
+                nome = traducao.nome_item(sid)
+                if b and b not in sid.lower() and b not in nome.lower():
+                    continue
+                rot = nome if nome == sid else "%s  (%s)" % (nome, sid)
+                ico = icones_rt.item(sid)
+                kw = {"image": ico} if ico else {}
+                self.map_item[self.tv.insert("", "end", text=" " + rot,
+                             values=(tot[sid], "", "%d lugar(es)" % len(loc[sid])), **kw)] = sid
+            self.app.status("modo TODOS: %d itens diferentes no mundo" % len(tot))
+            return
+        self.tv.heading("onde", text="Origem")
+        self.lbl_alvo.configure(text="Alvo: %s" % self.app.nomes[self.container.guid][0])
+        at = self.container.items; pd = self.pend()
+        for sid in sorted(set(at) | set(pd), key=lambda s: traducao.nome_item(s).lower()):
+            nome = traducao.nome_item(sid)
+            if b and b not in sid.lower() and b not in nome.lower():
+                continue
+            rot = nome if nome == sid else "%s  (%s)" % (nome, sid)
+            ico = icones_rt.item(sid)
+            kw = {"image": ico} if ico else {}
+            self.map_item[self.tv.insert("", "end", text=" " + rot,
+                         values=(at.get(sid, 0), pd.get(sid, ""),
+                                 "confirmado" if sid in verif else "arquivos"),
+                         tags=("edit",) if sid in pd else (), **kw)] = sid
+
+    def _q(self):
+        try:
+            v = int(self.var_q.get())
+        except ValueError:
+            messagebox.showwarning("Invalido", "Digite um numero."); return None
+        v = max(0, min(v, LIMITE)); self.var_q.set(str(v)); return v
+
+    def aplicar(self):
+        if self.container is None:
+            messagebox.showinfo("Escolha", "Selecione um container para editar."); return
+        s = self.tv.selection()
+        if not s:
+            return
+        v = self._q()
+        if v is None:
+            return
+        for i in s:
+            self.pend()[self.map_item[i]] = v
+        self.render_item(); self.app.status("%d alteracao(oes) pendente(s)" % self.app.n_pendencias(), "#e0c060")
+
+    def aplicar_todos(self):
+        if self.container is None:
+            return
+        its = list(self.map_item.values())
+        if not its or self._q() is None:
+            return
+        if not messagebox.askyesno("Confirmar", "Definir %d itens para %d?" % (len(its), self._q())):
+            return
+        for sid in its:
+            self.pend()[sid] = self._q()
+        self.render_item()
+
+    def desfazer(self):
+        self.app.pendentes.clear(); self.render_item(); self.app.status("alteracoes de item descartadas")
+
+    def adicionar(self):
+        alvo = self.container
+        if alvo is None:
+            alvo = next((c for c in self.app.containers
+                         if self.app.nomes[c.guid][0].startswith("Personagem: INVENTARIO")), None)
+        if alvo is None:
+            messagebox.showinfo("Escolha", "Selecione onde adicionar."); return
+        JanelaAdicionar(self.app, self, alvo)
+
+
+# ---------------------------------------------------------------------------
+class TelaPersonagem(Tela):
+    def __init__(self, master, app):
+        Tela.__init__(self, master, app)
+        ttk.Label(self, text="Personagem", style="Titulo.TLabel").pack(anchor="w", pady=(0, 8))
+        try:
+            js = personagem.jogadores(app.level)
+        except Exception:
+            js = []
+        if not js:
+            ttk.Label(self, text="Nao encontrei o personagem neste save.").pack(); return
+        self.p = js[0]
+        top = ttk.Frame(self); top.pack(fill="x", pady=6)
+        ttk.Label(top, text=self.p.apelido or "(sem nome)", font=("Segoe UI", 13, "bold")).grid(
+            row=0, column=0, columnspan=6, sticky="w")
+        self.v_nivel = tk.StringVar(value=str(self._n(self.p.nivel)))
+        self.v_exp = tk.StringVar(value=str(self._n(self.p.exp)))
+        self.v_livres = tk.StringVar(value=str(self._n(self.p.pontos_livres)))
+        for c, (rot, var) in enumerate([("Nivel", self.v_nivel), ("Experiencia", self.v_exp),
+                                        ("Pontos nao gastos", self.v_livres)]):
+            ttk.Label(top, text=rot + ":").grid(row=1, column=c * 2, sticky="e", padx=(0, 4), pady=6)
+            ttk.Entry(top, textvariable=var, width=12).grid(row=1, column=c * 2 + 1, sticky="w", padx=(0, 14))
+
+        ttk.Label(self, text="Pontos por atributo (duplo clique aplica o valor abaixo):",
+                  style="Sub.TLabel").pack(anchor="w", pady=(8, 2))
+        self.tv = ttk.Treeview(self, columns=("pts",), show="tree headings", height=16)
+        self.tv.heading("#0", text="Atributo"); self.tv.heading("pts", text="Pontos")
+        self.tv.column("#0", width=340); self.tv.column("pts", width=90, anchor="e", stretch=False)
+        self.tv.pack(fill="both", expand=True, pady=4)
+        self.tv.bind("<Double-1>", self.editar)
+        self.mapa = {}
+        for lista, rot, pts, no in self.p.status():
+            self.mapa[self.tv.insert("", "end", text=rot, values=(pts,))] = no
+
+        f = ttk.Frame(self); f.pack(fill="x", pady=6)
+        ttk.Label(f, text="Novo valor:").pack(side="left")
+        self.v_val = tk.StringVar(value="50")
+        ttk.Entry(f, textvariable=self.v_val, width=8).pack(side="left", padx=4)
+        ttk.Button(f, text="Aplicar ao selecionado", command=self.editar).pack(side="left")
+        ttk.Button(f, text="Guardar alteracoes do personagem", command=self.guardar).pack(side="right")
+
+    @staticmethod
+    def _n(v):
+        return v.get("value", 0) if isinstance(v, dict) else (v or 0)
+
+    def editar(self, _e=None):
+        s = self.tv.selection()
+        if not s:
+            return
+        try:
+            v = int(self.v_val.get())
+        except ValueError:
+            messagebox.showwarning("Invalido", "Digite um numero."); return
+        for i in s:
+            personagem.Personagem.set_status(self.mapa[i], v); self.tv.set(i, "pts", v)
+
+    def guardar(self):
+        try:
+            self.p.set_nivel(int(self.v_nivel.get())); self.p.set_exp(int(self.v_exp.get()))
+            self.p.set_pontos_livres(int(self.v_livres.get())); self.p.gravar()
+        except Exception as ex:
+            messagebox.showerror("Erro", str(ex)); return
+        self.app.marcar_sujo(); self.app.status("personagem alterado - clique em SALVAR NO JOGO", "#e0c060")
+        messagebox.showinfo("Guardado", "Alteracoes preparadas. Clique em SALVAR NO JOGO.")
+
+
+# ---------------------------------------------------------------------------
+class TelaPals(Tela):
+    PRESETS = {
+        "Combate (dano)": (["Legend", "PAL_ALLAttack_up3", "Noukin", "MoveSpeed_up_2"],
+                           "Foco em dano: Lendario (+ataque/defesa/vel.), Deus Inclemente (+20% ataque), "
+                           "Brutamontes (+30% ataque, mas -50% trabalho) e Bom corredor (+vel.)."),
+        "Tanque (defesa)": (["Legend", "Deffence_up2_2", "PAL_masochist", "MoveSpeed_up_2"],
+                            "Foco em sobreviver: Lendario, Casca de aco (+defesa), Masoquista (+defesa) "
+                            "e Bom corredor."),
+        "Trabalho (base)": (["Legend", "CraftSpeed_up1", "PAL_ALLAttack_up3", "Deffence_up1"],
+                            "Bom em tudo na base: Lendario, Mao de obra (+vel. de trabalho) e um pouco de "
+                            "ataque/defesa para nao morrer."),
+    }
+
+    def __init__(self, master, app):
+        Tela.__init__(self, master, app)
+        self.pals = personagem.pals_do_mundo(app.level)
+        self.atual = None
+        self._passivas_opts()
+
+        ttk.Label(self, text="Caixa de Pals  (%d)" % len(self.pals), style="Titulo.TLabel").pack(anchor="w", pady=(0, 6))
+        corpo = ttk.Panedwindow(self, orient="horizontal"); corpo.pack(fill="both", expand=True)
+
+        esq = ttk.Labelframe(corpo, text="Seus Pals", padding=6); corpo.add(esq, weight=1)
+        f = ttk.Frame(esq); f.pack(fill="x")
+        ttk.Label(f, text="Buscar:").pack(side="left")
+        self.v_b = tk.StringVar(); self.v_b.trace_add("write", lambda *a: self.render())
+        ttk.Entry(f, textvariable=self.v_b).pack(side="left", fill="x", expand=True, padx=4)
+        self.tv = ttk.Treeview(esq, columns=("lv", "g"), show="tree headings", height=22)
+        self.tv.heading("#0", text="Pal"); self.tv.heading("lv", text="Nv"); self.tv.heading("g", text="Sexo")
+        self.tv.column("#0", width=240); self.tv.column("lv", width=40, anchor="e", stretch=False)
+        self.tv.column("g", width=44, anchor="center", stretch=False)
+        s = ttk.Scrollbar(esq, orient="vertical", command=self.tv.yview)
+        self.tv.configure(yscrollcommand=s.set); s.pack(side="right", fill="y")
+        self.tv.pack(fill="both", expand=True, pady=4)
+        self.tv.bind("<<TreeviewSelect>>", self.sel)
+
+        self.ed = ttk.Labelframe(corpo, text="Editar", padding=10); corpo.add(self.ed, weight=1)
+        self._painel_vazio()
+
+        self.render()
+
+    def _passivas_opts(self):
+        d = traducao.carregar()["passivas"]
+        pares = [(v, k) for k, v in d.items()
+                 if v and v != "pt-BR_Text" and not k.startswith("Test") and "TEST" not in k]
+        vistos = {}
+        for nome, pid in pares:
+            vistos.setdefault(nome, pid)
+        self.pass_nome2id = dict(vistos)
+        self.pass_id2nome = {pid: nome for nome, pid in vistos.items()}
+        self.pass_lista = [""] + sorted(vistos.keys(), key=str.lower)
+
+    def render(self):
+        for i in self.tv.get_children():
+            self.tv.delete(i)
+        b = self.v_b.get().strip().lower(); self.map = {}
+        dados = sorted(self.pals, key=lambda p: traducao.nome_pal(p.especie).lower())
+        for p in dados:
+            nome = traducao.nome_pal(p.especie)
+            if b and b not in nome.lower() and b not in p.especie.lower():
+                continue
+            self.map[self.tv.insert("", "end", text=nome, values=(p.nivel, p.genero))] = p
+            if len(self.map) >= 800:
+                break
+
+    def _painel_vazio(self):
+        for w in self.ed.winfo_children():
+            w.destroy()
+        ttk.Label(self.ed, text="Selecione um Pal a esquerda.", style="Sub.TLabel").pack(pady=20)
+
+    def sel(self, _e=None):
+        s = self.tv.selection()
+        if not s:
+            return
+        self.atual = self.map[s[0]]; self._painel()
+
+    def _painel(self):
+        p = self.atual
+        for w in self.ed.winfo_children():
+            w.destroy()
+        ttk.Label(self.ed, text=traducao.nome_pal(p.especie), font=("Segoe UI", 14, "bold")).grid(
+            row=0, column=0, columnspan=3, sticky="w")
+        ttk.Label(self.ed, text=p.especie, style="Sub.TLabel").grid(row=1, column=0, columnspan=3, sticky="w", pady=(0, 8))
+
+        self.v_nv = tk.StringVar(value=str(p.nivel))
+        self.v_g = tk.StringVar(value=("Femea" if p.genero == "F" else "Macho"))
+        self.v_hp = tk.StringVar(value=str(p.talento("Talent_HP")))
+        self.v_at = tk.StringVar(value=str(p.talento("Talent_Shot")))
+        self.v_df = tk.StringVar(value=str(p.talento("Talent_Defense")))
+        self.v_rk = tk.StringVar(value=str(p.rank))
+        lin = 2
+        def campo(rot, var, larg=8, combo=None):
+            nonlocal lin
+            ttk.Label(self.ed, text=rot).grid(row=lin, column=0, sticky="e", padx=(0, 6), pady=3)
+            if combo:
+                w = ttk.Combobox(self.ed, textvariable=var, values=combo, state="readonly", width=larg)
+            else:
+                w = ttk.Entry(self.ed, textvariable=var, width=larg)
+            w.grid(row=lin, column=1, sticky="w"); lin += 1; return w
+        campo("Nivel", self.v_nv)
+        campo("Sexo", self.v_g, 10, ["Macho", "Femea"])
+        campo("IV Vida (0-100)", self.v_hp)
+        campo("IV Ataque (0-100)", self.v_at)
+        campo("IV Defesa (0-100)", self.v_df)
+        campo("Rank alma (1-5)", self.v_rk)
+
+        ttk.Label(self.ed, text="Passivas:", font=("Segoe UI", 10, "bold")).grid(
+            row=lin, column=0, columnspan=3, sticky="w", pady=(10, 2)); lin += 1
+        atuais = p.passivas
+        self.v_pass = []
+        for k in range(4):
+            var = tk.StringVar(value=self.pass_id2nome.get(atuais[k], atuais[k]) if k < len(atuais) else "")
+            ttk.Combobox(self.ed, textvariable=var, values=self.pass_lista, width=28).grid(
+                row=lin, column=0, columnspan=2, sticky="w", pady=1); lin += 1
+            self.v_pass.append(var)
+
+        ttk.Label(self.ed, text="Sugerir melhores passivas:", style="Sub.TLabel").grid(
+            row=lin, column=0, columnspan=3, sticky="w", pady=(10, 2)); lin += 1
+        self.v_preset = tk.StringVar()
+        ttk.Combobox(self.ed, textvariable=self.v_preset, values=list(self.PRESETS), state="readonly",
+                     width=28).grid(row=lin, column=0, columnspan=2, sticky="w"); lin += 1
+        bs = ttk.Frame(self.ed); bs.grid(row=lin, column=0, columnspan=2, sticky="w", pady=(4, 2)); lin += 1
+        ttk.Button(bs, text="Ver sugestao", command=self._ver_sug).pack(side="left")
+        self.b_aplicar_sug = ttk.Button(bs, text="Aplicar aos 4 espacos", command=self._aplicar_sug,
+                                        state="disabled")
+        self.b_aplicar_sug.pack(side="left", padx=4)
+        self.lbl_sug = ttk.Label(self.ed, text="", style="Sub.TLabel", justify="left", wraplength=360)
+        self.lbl_sug.grid(row=lin, column=0, columnspan=3, sticky="w", pady=(0, 8)); lin += 1
+
+        ttk.Button(self.ed, text="Guardar alteracoes deste Pal", style="Accent.TButton",
+                   command=self._guardar).grid(row=lin, column=0, columnspan=2, sticky="w", pady=8)
+
+    def _ver_sug(self):
+        nome = self.v_preset.get()
+        if not nome:
+            messagebox.showinfo("Sugestao", "Escolha um perfil na lista."); return
+        ids, expl = self.PRESETS[nome]
+        legiveis = [self.pass_id2nome.get(i, i) for i in ids]
+        self._sug_ids = legiveis
+        self.lbl_sug.configure(text="%s\n\nPassivas sugeridas:\n- %s" % (expl, "\n- ".join(legiveis)))
+        self.b_aplicar_sug.configure(state="normal")
+
+    def _aplicar_sug(self):
+        for k in range(4):
+            self.v_pass[k].set(self._sug_ids[k] if k < len(self._sug_ids) else "")
+        self.lbl_sug.configure(text=self.lbl_sug.cget("text") + "\n\n(aplicado nos espacos - revise e depois Guardar)")
+        self.b_aplicar_sug.configure(state="disabled")
+
+    def _guardar(self):
+        p = self.atual
+        try:
+            p.set_nivel(int(self.v_nv.get()))
+            p.set_genero("F" if self.v_g.get().startswith("F") else "M")
+            p.set_talento("Talent_HP", int(self.v_hp.get()))
+            p.set_talento("Talent_Shot", int(self.v_at.get()))
+            p.set_talento("Talent_Defense", int(self.v_df.get()))
+            p.set_rank(int(self.v_rk.get()))
+            ids = []
+            for var in self.v_pass:
+                nome = var.get().strip()
+                if nome:
+                    ids.append(self.pass_nome2id.get(nome, nome))
+            p.set_passivas(ids)
+            p.gravar()
+        except Exception as ex:
+            messagebox.showerror("Erro", str(ex)); return
+        self.app.marcar_sujo()
+        self.tv.item(self.tv.selection()[0], values=(p.nivel, p.genero))
+        self.app.status("Pal alterado - clique em SALVAR NO JOGO", "#e0c060")
+        messagebox.showinfo("Guardado", "Alteracoes deste Pal preparadas. Clique em SALVAR NO JOGO.")
+
+
+# ---------------------------------------------------------------------------
+class TelaBreeding(Tela):
+    def __init__(self, master, app):
+        Tela.__init__(self, master, app)
+        ttk.Label(self, text="Breeding", style="Titulo.TLabel").pack(anchor="w", pady=(0, 8))
+        ttk.Label(self, style="Sub.TLabel", justify="left", wraplength=760, text=(
+            "Em construcao.\n\n"
+            "Aqui voce vai escolher qual Pal quer que nasca, e o editor vai varrer a sua Caixa "
+            "de Pals e mostrar os pares que geram esse filho, ja avisando quando precisar trocar "
+            "o sexo de um deles.\n\n"
+            "Falta so a tabela de combinacoes do jogo. O motor de ler/editar Pals ja esta pronto "
+            "(veja a Caixa de Pals).")).pack(anchor="w")
+
+
+# ===========================================================================
+class JanelaAdicionar(tk.Toplevel):
+    def __init__(self, app, tela, alvo):
+        tk.Toplevel.__init__(self, app)
+        self.app = app; self.tela = tela; self.alvo = alvo
+        self.title("Adicionar item em: %s" % app.nomes[alvo.guid][0])
+        self.geometry("640x560"); self.transient(app); self.grab_set()
+        f = ttk.Frame(self, padding=8); f.pack(fill="x")
+        ttk.Label(f, text="Buscar:").pack(side="left")
+        self.v = tk.StringVar(); self.v.trace_add("write", lambda *a: self.render())
+        e = ttk.Entry(f, textvariable=self.v); e.pack(side="left", fill="x", expand=True, padx=4); e.focus_set()
+        self.tv = ttk.Treeview(self, columns=("tem",), show="tree headings")
+        self.tv.heading("#0", text="Item"); self.tv.heading("tem", text="Ja tem")
+        self.tv.column("#0", width=440); self.tv.column("tem", width=80, anchor="e", stretch=False)
+        sc = ttk.Scrollbar(self, orient="vertical", command=self.tv.yview)
+        self.tv.configure(yscrollcommand=sc.set); sc.pack(side="right", fill="y")
+        self.tv.pack(fill="both", expand=True, padx=8, pady=4)
+        self.tv.bind("<Double-1>", lambda e: self.add())
+        f2 = ttk.Frame(self, padding=8); f2.pack(fill="x")
+        ttk.Label(f2, text="Qtd:").pack(side="left")
+        self.vq = tk.StringVar(value=(tela.var_q.get() or "1"))
+        ttk.Entry(f2, textvariable=self.vq, width=8).pack(side="left", padx=4)
+        ttk.Button(f2, text="Adicionar", command=self.add).pack(side="left")
+        ttk.Button(f2, text="Fechar", command=self.destroy).pack(side="right")
+        self.render()
+
+    def render(self):
+        for i in self.tv.get_children():
+            self.tv.delete(i)
+        b = self.v.get().strip().lower(); self.map = {}; n = 0
+        at = self.alvo.items
+        for sid in self.app.todos_ids():
+            nome = traducao.nome_item(sid)
+            if b and b not in sid.lower() and b not in nome.lower():
+                continue
+            rot = nome if nome == sid else "%s  (%s)" % (nome, sid)
+            self.map[self.tv.insert("", "end", text=rot, values=(at.get(sid, "") or "",))] = sid
+            n += 1
+            if n >= 900:
+                break
+
+    def add(self):
+        s = self.tv.selection()
+        if not s:
+            return
+        try:
+            q = max(1, min(int(self.vq.get()), LIMITE))
+        except ValueError:
+            messagebox.showwarning("Invalido", "Digite um numero.", parent=self); return
+        d = self.tela.pend(self.alvo)
+        for i in s:
+            d[self.map[i]] = q
+        self.tela.container = self.alvo
+        self.tela.render_cont(); self.tela.render_item()
+        self.app.status("%d item(ns) marcados" % self.app.n_pendencias(), "#e0c060")
+
+
+class JanelaRestaurar(tk.Toplevel):
+    def __init__(self, app):
+        tk.Toplevel.__init__(self, app)
+        self.app = app; self.title("Restaurar backup"); self.geometry("720x420")
+        self.transient(app); self.grab_set()
+        ttk.Label(self, text="Escolha um ponto para voltar. O save atual sera substituido.",
+                  padding=8).pack(anchor="w")
+        self.tv = ttk.Treeview(self, columns=("quando", "tam", "obs"), show="tree headings")
+        for c, t, w in [("#0", "Backup", 210), ("quando", "Quando", 140), ("tam", "Tam", 70), ("obs", "Obs", 250)]:
+            self.tv.heading(c, text=t); self.tv.column(c, width=w)
+        self.tv.pack(fill="both", expand=True, padx=8)
+        self.mapa = {}
+        for m in app.bm.list():
+            nome = m["dir"] + ("   * ORIGINAL" if m["original"] else "")
+            self.mapa[self.tv.insert("", "end", text=nome, values=(
+                m.get("time", ""), "%.1f MB" % (m["size"] / 1048576.0), m.get("label", "")))] = m
+        f = ttk.Frame(self, padding=8); f.pack(fill="x")
+        ttk.Button(f, text="Restaurar o selecionado", command=self.restaurar).pack(side="left")
+        ttk.Button(f, text="Fechar", command=self.destroy).pack(side="right")
+
+    def restaurar(self):
+        s = self.tv.selection()
+        if not s:
+            return
+        m = self.mapa[s[0]]
+        if not messagebox.askyesno("Confirmar", "Restaurar '%s'?\nO save atual sera substituido "
+                                   "(com backup antes).\nO JOGO PRECISA ESTAR FECHADO." % m["dir"], parent=self):
+            return
+        try:
+            self.app.bm.restore(m["path"])
+        except Exception as ex:
+            messagebox.showerror("Erro", str(ex), parent=self); return
+        messagebox.showinfo("Ok", "Save restaurado.", parent=self); self.destroy()
+        self.app.index = wgs.parse_index(self.app.root_wgs); self.app.carregar_mundo()
+
+
+if __name__ == "__main__":
+    App().mainloop()

@@ -1,0 +1,25 @@
+# --- dados pessoais / do jogo (NAO versionar) ---
+backups/
+backup_manual_inicial/
+config.json
+extracao_local.json
+
+# ferramenta de extracao (pesada, do usuario)
+fmodel/
+
+# conteudo extraido do jogo que e propriedade da Pocketpair:
+# icones (arte do jogo) ficam de fora; a traducao (nomes) e mantida por escolha.
+dados/icones/
+dados/icones_pals/
+dados/teste_icones/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyw.anterior
+
+# SO
+Thumbs.db
+desktop.ini
+.DS_Store
