@@ -3,6 +3,12 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.1 — 2026-08-24
+### Correções / Fixes
+- O botão **APLICAR otimização** do otimizador em massa agora fica **sempre visível**
+  (o rodapé estava sendo empurrado para fora da janela pela tabela). _Fix: the mass
+  optimizer's APLICAR button was pushed off-screen; the footer is now pinned._
+
 ## v1.6.0 — 2026-08-24
 ### Assistente de Pals (passivas por função) / Pal advisor
 - **Sugestão de passivas agora é por Pal**, não mais igual para todos. Usa dados

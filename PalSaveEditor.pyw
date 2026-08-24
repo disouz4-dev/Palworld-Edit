@@ -1294,7 +1294,7 @@ class JanelaOtimizar(tk.Toplevel):
         self.app = app; self.tela = tela
         self.pf = perfil.carregar()
         self.title("Otimizar / modificar Pals em massa")
-        self.geometry("860x640"); self.transient(app)
+        self.geometry("860x640"); self.minsize(720, 500); self.transient(app)
         try:
             self.iconbitmap(default=os.path.join(BASE, "assets", "logo.ico"))
         except Exception:
@@ -1328,22 +1328,25 @@ class JanelaOtimizar(tk.Toplevel):
             self.op[key] = tk.BooleanVar(value=val)
             ttk.Checkbutton(opf, text=txt, variable=self.op[key]).pack(side="left", padx=6)
 
-        self.tv = ttk.Treeview(self, columns=("papel", "det"), show="tree headings",
-                               height=16, style="Big.Treeview")
+        # rodape fixo no fundo PRIMEIRO, para o botao APLICAR ficar sempre visivel
+        rod = ttk.Frame(self, padding=10); rod.pack(side="bottom", fill="x")
+        self.lbl = ttk.Label(rod, text="", style="Sub.TLabel"); self.lbl.pack(side="left")
+        ttk.Button(rod, text="APLICAR otimizacao", style="Accent.TButton",
+                   command=self.aplicar).pack(side="right")
+        ttk.Button(rod, text="Fechar", command=self.destroy).pack(side="right", padx=6)
+
+        mid = ttk.Frame(self); mid.pack(side="top", fill="both", expand=True)
+        self.tv = ttk.Treeview(mid, columns=("papel", "det"), show="tree headings",
+                               height=12, style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("papel", text="Funcao")
         self.tv.heading("det", text="Motivo / detalhe")
         self.tv.column("#0", width=230); self.tv.column("papel", width=140, stretch=False)
         self.tv.column("det", width=380)
         self.tv.tag_configure("base", foreground="#4aa3df")
         self.tv.tag_configure("combate", foreground="#e08a3c")
-        sc = ttk.Scrollbar(self, orient="vertical", command=self.tv.yview)
+        sc = ttk.Scrollbar(mid, orient="vertical", command=self.tv.yview)
         self.tv.configure(yscrollcommand=sc.set)
-        sc.pack(side="right", fill="y"); self.tv.pack(fill="both", expand=True, padx=(10, 0), pady=4)
-
-        rod = ttk.Frame(self, padding=10); rod.pack(fill="x")
-        self.lbl = ttk.Label(rod, text="", style="Sub.TLabel"); self.lbl.pack(side="left")
-        ttk.Button(rod, text="APLICAR", style="Accent.TButton", command=self.aplicar).pack(side="right")
-        ttk.Button(rod, text="Fechar", command=self.destroy).pack(side="right", padx=6)
+        sc.pack(side="right", fill="y"); self.tv.pack(side="left", fill="both", expand=True, padx=(10, 0), pady=4)
 
         self.calcular()
 
