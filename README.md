@@ -39,8 +39,12 @@ git clone https://github.com/disouz4-dev/Palworld-Edit.git
 cd Palworld-Edit
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
-The installer checks for **Python** (installs it if missing), installs the dependencies and
-creates a **Desktop shortcut** with the app icon. Then open **Palworld Editor** from your Desktop.
+The installer checks for **Python** (installs it if missing), installs the dependencies, copies
+the app to `%LOCALAPPDATA%\Programs\Palworld Editor`, and adds it to the **Start Menu** and the
+**Desktop** with the app icon. It also registers in **Apps & Features**, so you can remove it later
+from Windows Settings (or with `uninstall.ps1`). Your backups and settings live in
+`%LOCALAPPDATA%\PalworldEditor` and are kept on uninstall unless you choose otherwise. Then open
+**Palworld Editor** from the Start Menu (All apps).
 
 > **Important:** run the three lines above **in order**. The `powershell ... install.ps1` line
 > only works from **inside** the `Palworld-Edit` folder (the `cd` line puts you there).
@@ -92,8 +96,12 @@ git clone https://github.com/disouz4-dev/Palworld-Edit.git
 cd Palworld-Edit
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
-O instalador verifica o **Python** (instala se faltar), instala as dependências e cria um
-**atalho na Área de Trabalho** com o ícone. Depois é só abrir o **Palworld Editor** pela Área de Trabalho.
+O instalador verifica o **Python** (instala se faltar), instala as dependências, copia o app para
+`%LOCALAPPDATA%\Programs\Palworld Editor` e o adiciona ao **Menu Iniciar** e à **Área de Trabalho**
+com o ícone. Também registra em **Adicionar/Remover programas**, então dá pra remover pelas
+Configurações do Windows (ou pelo `uninstall.ps1`). Seus backups e configurações ficam em
+`%LOCALAPPDATA%\PalworldEditor` e são mantidos ao desinstalar, a menos que você escolha apagar.
+Depois é só abrir o **Palworld Editor** pelo Menu Iniciar (Todos os programas).
 
 > **Importante:** rode as três linhas **na ordem**. A linha `powershell ... install.ps1` só
 > funciona de **dentro** da pasta `Palworld-Edit` (a linha `cd` te leva pra lá). Se rodar de

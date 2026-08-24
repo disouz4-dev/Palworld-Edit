@@ -4,7 +4,7 @@
 Janela unica com menus: Inicio -> Itens / Personagem / Caixa de Pals / Breeding.
 Le e grava o Level.sav de dentro dos containers WGS, com backup automatico.
 """
-import os, sys, json, queue, random, threading, traceback, webbrowser
+import os, sys, json, queue, random, shutil, threading, traceback, webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import sv_ttk
@@ -16,14 +16,27 @@ from palsave.level import LevelSave
 
 WGS_DIR = os.path.expandvars(
     r"%LOCALAPPDATA%\Packages\PocketpairInc.Palworld_ad4psfrxyesvt\SystemAppData\wgs")
-BACKUP_DIR = os.path.join(BASE, "backups")
+
+# Dados do usuario (backups + config) ficam FORA da pasta do programa, para
+# funcionar mesmo instalado e para nao sumir numa desinstalacao/atualizacao.
+DADOS_USUARIO = os.path.join(os.environ.get("LOCALAPPDATA", BASE), "PalworldEditor")
+os.makedirs(DADOS_USUARIO, exist_ok=True)
+BACKUP_DIR = os.path.join(DADOS_USUARIO, "backups")
 LIMITE = 99999
 TODOS = "[ TODOS ]  ver tudo que existe no mundo"
 GRUPOS = [("personagem", "Personagem"), ("guilda", "Guilda"),
           ("mundo", "Baus e estruturas"), ("pal", "Equipamento de Pal"),
           ("vazio", "Vazios")]
 
-CONFIG = os.path.join(BASE, "config.json")
+CONFIG = os.path.join(DADOS_USUARIO, "config.json")
+
+# migra config/backup antigos (quando ficavam junto do programa) para a nova pasta
+_CFG_ANTIGO = os.path.join(BASE, "config.json")
+if not os.path.exists(CONFIG) and os.path.exists(_CFG_ANTIGO):
+    try:
+        shutil.copy2(_CFG_ANTIGO, CONFIG)
+    except Exception:
+        pass
 
 
 def _ler_config():

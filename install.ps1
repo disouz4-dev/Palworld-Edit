@@ -1,9 +1,12 @@
-# Palworld Editor - instalador automatico / automatic installer (Windows)
+# Palworld Editor - instalador (Windows, por usuario / per-user, sem admin)
 # Uso / Usage:  powershell -ExecutionPolicy Bypass -File install.ps1
+#
+# Instala em %LOCALAPPDATA%\Programs\Palworld Editor, cria atalhos no Menu
+# Iniciar e na Area de Trabalho, e registra em "Adicionar/Remover programas".
 
 $ErrorActionPreference = "Stop"
-$raiz = Split-Path -Parent $MyInvocation.MyCommand.Definition
-Set-Location $raiz
+$origem = Split-Path -Parent $MyInvocation.MyCommand.Definition
+Set-Location $origem
 Write-Host "== Palworld Editor - instalacao ==" -ForegroundColor Cyan
 
 # 1) Python -------------------------------------------------------------
@@ -50,34 +53,77 @@ Write-Host "Python OK: $(& $exe $arg --version)" -ForegroundColor Green
 # 2) Dependencias -------------------------------------------------------
 Write-Host "Instalando dependencias..." -ForegroundColor Cyan
 & $exe $arg -m pip install --upgrade pip --quiet
-& $exe $arg -m pip install -r (Join-Path $raiz "requirements.txt") --quiet
+& $exe $arg -m pip install -r (Join-Path $origem "requirements.txt") --quiet
 Write-Host "Dependencias OK." -ForegroundColor Green
 
-# 3) Atalho na area de trabalho ----------------------------------------
-Write-Host "Criando atalho na Area de Trabalho..." -ForegroundColor Cyan
+# 3) Copiar o programa para a pasta de instalacao -----------------------
+$destino = Join-Path $env:LOCALAPPDATA "Programs\Palworld Editor"
+Write-Host "Instalando em: $destino" -ForegroundColor Cyan
+
+# se ja existe uma instalacao, fecha o app e limpa a pasta antiga
+Get-Process pythonw -ErrorAction SilentlyContinue |
+    Where-Object { $_.Path -and $_.Path -like "*Palworld Editor*" } |
+    Stop-Process -Force -ErrorAction SilentlyContinue
+if (Test-Path $destino) {
+    Remove-Item -Recurse -Force $destino -ErrorAction SilentlyContinue
+}
+New-Item -ItemType Directory -Force -Path $destino | Out-Null
+
+# copia tudo, menos o que nao deve ir junto
+$ignorar = @(".git", "__pycache__", "backups", "config.json",
+             "extracao_local.json", "teste_icones", "fmodel")
+Get-ChildItem -Force $origem | Where-Object { $ignorar -notcontains $_.Name } | ForEach-Object {
+    Copy-Item $_.FullName -Destination $destino -Recurse -Force
+}
+# remove __pycache__ que possa ter sido copiado
+Get-ChildItem -Path $destino -Recurse -Force -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+$alvo    = Join-Path $destino "PalSaveEditor.pyw"
+$ico     = Join-Path $destino "assets\logo.ico"
 $pythonw = (& $exe $arg -c "import sys,os;print(os.path.join(os.path.dirname(sys.executable),'pythonw.exe'))").Trim()
 if (-not (Test-Path $pythonw)) { $pythonw = "pythonw.exe" }
-$lnk = Join-Path ([Environment]::GetFolderPath("Desktop")) "Palworld Editor.lnk"
-$ws = New-Object -ComObject WScript.Shell
-$sc = $ws.CreateShortcut($lnk)
-$sc.TargetPath = $pythonw
-$sc.Arguments = '"' + (Join-Path $raiz "PalSaveEditor.pyw") + '"'
-$sc.WorkingDirectory = $raiz
-$ico = Join-Path $raiz "assets\logo.ico"
-if (Test-Path $ico) {
-    # o indice ",0" e obrigatorio; sem ele o Windows ignora e usa o icone do pythonw
-    $sc.IconLocation = "$ico,0"
-}
-$sc.Description = "Palworld Editor"
-$sc.Save()
+$versao = (Get-Content (Join-Path $destino "VERSION") -ErrorAction SilentlyContinue | Select-Object -First 1)
+if (-not $versao) { $versao = "1.0.0" }
 
-# forca o Explorer a reler o icone (evita ficar mostrando o icone antigo em cache)
+# 4) Atalhos (Menu Iniciar + Area de Trabalho) -------------------------
+function New-Atalho($caminho) {
+    $ws = New-Object -ComObject WScript.Shell
+    $sc = $ws.CreateShortcut($caminho)
+    $sc.TargetPath = $pythonw
+    $sc.Arguments = '"' + $alvo + '"'
+    $sc.WorkingDirectory = $destino
+    if (Test-Path $ico) { $sc.IconLocation = "$ico,0" }  # o ",0" evita cair no icone do pythonw
+    $sc.Description = "Palworld Editor"
+    $sc.Save()
+}
+Write-Host "Criando atalhos..." -ForegroundColor Cyan
+$menu = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs"
+New-Atalho (Join-Path $menu "Palworld Editor.lnk")                                  # Todos os programas
+New-Atalho (Join-Path ([Environment]::GetFolderPath("Desktop")) "Palworld Editor.lnk")  # Area de Trabalho
+
+# forca o Explorer a reler o icone (evita ficar mostrando o antigo em cache)
 try {
     $sig = '[DllImport("shell32.dll")] public static extern void SHChangeNotify(int e, int f, IntPtr a, IntPtr b);'
     $sh = Add-Type -MemberDefinition $sig -Name Shell -Namespace Win32 -PassThru
-    $sh::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)  # SHCNE_ASSOCCHANGED
+    $sh::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)
 } catch {}
+
+# 5) Registrar em "Adicionar/Remover programas" ------------------------
+$reg = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\PalworldEditor"
+New-Item -Path $reg -Force | Out-Null
+$uninst = 'powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + (Join-Path $destino "uninstall.ps1") + '"'
+Set-ItemProperty $reg "DisplayName"     "Palworld Editor"
+Set-ItemProperty $reg "DisplayVersion"  $versao
+Set-ItemProperty $reg "Publisher"       "disouz4-dev"
+Set-ItemProperty $reg "DisplayIcon"     $ico
+Set-ItemProperty $reg "InstallLocation" $destino
+Set-ItemProperty $reg "UninstallString" $uninst
+Set-ItemProperty $reg "URLInfoAbout"    "https://github.com/disouz4-dev/Palworld-Edit"
+Set-ItemProperty $reg "NoModify" 1 -Type DWord
+Set-ItemProperty $reg "NoRepair" 1 -Type DWord
 
 Write-Host ""
 Write-Host "== Pronto! ==" -ForegroundColor Green
-Write-Host "Abra 'Palworld Editor' na sua Area de Trabalho." -ForegroundColor Green
+Write-Host "Abra 'Palworld Editor' pelo Menu Iniciar (Todos os programas) ou pela Area de Trabalho." -ForegroundColor Green
+Write-Host "Para remover: Configuracoes > Aplicativos > Palworld Editor > Desinstalar." -ForegroundColor Green
