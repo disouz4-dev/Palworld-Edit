@@ -7,10 +7,12 @@
 <p align="center">
   <b>🪟 Windows only</b> — save editor for <b>Palworld (Xbox / Microsoft Store / Game Pass build)</b>.
   <br>
-  <b>Languages / Idiomas:</b> <a href="#-english">🇺🇸 English</a> · <a href="#-portugues-pt-br">🇧🇷 Português</a>
+  <b>Languages / Idiomas:</b> <a href="#english">🇺🇸 English</a> · <a href="#portugues">🇧🇷 Português</a>
 </p>
 
 ---
+
+<a id="english"></a>
 
 ## 🇺🇸 English
 
@@ -56,6 +58,8 @@ from the game's IoStore (`.utoc`/`.ucas`) via the Oodle decompressor — no FMod
 [MIT](LICENSE). Names and artwork belong to Pocketpair — see [NOTICE](NOTICE.md).
 
 ---
+
+<a id="portugues"></a>
 
 ## 🇧🇷 Português (PT-BR)
 
