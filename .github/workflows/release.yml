@@ -1,6 +1,7 @@
 name: release
 
 # Cria um Release automaticamente sempre que o arquivo VERSION muda no main.
+# Notas = .github/release_header.md (download) + a secao da versao no CHANGELOG.md.
 on:
   push:
     branches: [main]
@@ -16,15 +17,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Criar release a partir do VERSION
+      - name: Criar release a partir do VERSION + CHANGELOG
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           V=$(tr -d '[:space:]' < VERSION)
           if [ -z "$V" ]; then echo "VERSION vazio"; exit 1; fi
           if gh release view "v$V" >/dev/null 2>&1; then
-            echo "release v$V ja existe, nada a fazer"; exit 0
+            echo "release v$V ja existe"; exit 0
           fi
-          gh release create "v$V" \
-            --title "Palworld Editor v$V" \
-            --generate-notes
+          cp .github/release_header.md NOTES.md
+          awk -v h="## v$V" '$0==h {f=1; next} f && /^## / {exit} f {print}' CHANGELOG.md > SECTION.md || true
+          if [ -s SECTION.md ]; then
+            printf '## O que mudou nesta versao\n' >> NOTES.md
+            cat SECTION.md >> NOTES.md
+          fi
+          gh release create "v$V" --title "Palworld Editor v$V" --notes-file NOTES.md

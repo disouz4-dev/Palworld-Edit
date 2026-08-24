@@ -1,0 +1,5498 @@
+{
+ "Alpaca": {
+  "slug": "melpaca",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 90,
+   "Price": 791,
+   "Running Speed": 500,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 62,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2
+  }
+ },
+ "AmaterasuWolf": {
+  "slug": "kitsun",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 70,
+   "Price": 1744,
+   "Running Speed": 700,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1100,
+   "Stamina": 140,
+   "Support": 110
+  },
+  "work": {
+   "Kindling": 3
+  }
+ },
+ "AmaterasuWolf_Dark": {
+  "slug": "kitsun-noct",
+  "stats": {
+   "Defense": 105,
+   "HP": 100,
+   "Melee Attack": 70,
+   "Price": 2014,
+   "Running Speed": 700,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1100,
+   "Stamina": 140,
+   "Support": 110
+  },
+  "work": {
+   "Kindling": 4
+  }
+ },
+ "Anubis": {
+  "slug": "anubis",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 130,
+   "Price": 3217,
+   "Running Speed": 800,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Mining": 6,
+   "Transporting": 4
+  }
+ },
+ "BadCatgirl": {
+  "slug": "nyafia",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2182,
+   "Running Speed": 600,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 4,
+   "Transporting": 3
+  }
+ },
+ "Baphomet": {
+  "slug": "incineram",
+  "stats": {
+   "Defense": 85,
+   "HP": 95,
+   "Melee Attack": 150,
+   "Price": 1325,
+   "Running Speed": 700,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 960,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Kindling": 3,
+   "Mining": 3,
+   "Transporting": 2
+  }
+ },
+ "Baphomet_Dark": {
+  "slug": "incineram-noct",
+  "stats": {
+   "Defense": 85,
+   "HP": 95,
+   "Melee Attack": 150,
+   "Price": 2036,
+   "Running Speed": 700,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 960,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Mining": 4,
+   "Transporting": 3
+  }
+ },
+ "Bastet": {
+  "slug": "mau",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 665,
+   "Running Speed": 475,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 52,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Gathering": 1
+  }
+ },
+ "Bastet_Ice": {
+  "slug": "mau-cryst",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 385,
+   "Running Speed": 475,
+   "Shot Attack": 65,
+   "Slow Walk Speed": 52,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 1,
+   "Farming": 1
+  }
+ },
+ "BerryGoat": {
+  "slug": "caprity",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 70,
+   "Price": 1643,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 120
+  },
+  "work": {
+   "Farming": 1,
+   "Planting": 2
+  }
+ },
+ "BerryGoat_Dark": {
+  "slug": "caprity-noct",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 70,
+   "Price": 928,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 120
+  },
+  "work": {
+   "Farming": 1,
+   "Planting": 2
+  }
+ },
+ "BirdDragon": {
+  "slug": "vanwyrm",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1464,
+   "Running Speed": 700,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 850,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 2,
+   "Transporting": 3
+  }
+ },
+ "BirdDragon_Ice": {
+  "slug": "vanwyrm-cryst",
+  "stats": {
+   "Defense": 95,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1624,
+   "Running Speed": 700,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 850,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Transporting": 3
+  }
+ },
+ "BlackCentaur": {
+  "slug": "necromus",
+  "stats": {
+   "Defense": 120,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 4339,
+   "Running Speed": 1300,
+   "Shot Attack": 145,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1900,
+   "Stamina": 350,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 6
+  }
+ },
+ "BlackGriffon": {
+  "slug": "shadowbeak",
+  "stats": {
+   "Defense": 140,
+   "HP": 120,
+   "Melee Attack": 130,
+   "Price": 3245,
+   "Running Speed": 850,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1200,
+   "Stamina": 250,
+   "Support": 90
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "BlackMetalDragon": {
+  "slug": "astegon",
+  "stats": {
+   "Defense": 125,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 3794,
+   "Running Speed": 700,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 300,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Mining": 7
+  }
+ },
+ "BlackPuppy": {
+  "slug": "smokie",
+  "stats": {
+   "Defense": 85,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1842,
+   "Running Speed": 550,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "BlackPuppy_Ice": {
+  "slug": "smokie-cryst",
+  "stats": {
+   "Defense": 90,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1628,
+   "Running Speed": 550,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Gathering": 2
+  }
+ },
+ "BlueDragon": {
+  "slug": "azurobe",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 70,
+   "Price": 1831,
+   "Running Speed": 600,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 900,
+   "Stamina": 160,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 4
+  }
+ },
+ "BlueDragon_Ice": {
+  "slug": "azurobe-cryst",
+  "stats": {
+   "Defense": 105,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 2109,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 900,
+   "Stamina": 160,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4
+  }
+ },
+ "BluePlatypus": {
+  "slug": "fuack",
+  "stats": {
+   "Defense": 60,
+   "HP": 60,
+   "Melee Attack": 80,
+   "Price": 376,
+   "Running Speed": 300,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "BluePlatypus_Fire": {
+  "slug": "fuack-ignis",
+  "stats": {
+   "Defense": 60,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 463,
+   "Running Speed": 300,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Kindling": 2,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "BlueSkyDragon": {
+  "slug": "shaolong",
+  "stats": {
+   "Defense": 120,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 4531,
+   "Running Speed": 1400,
+   "Shot Attack": 135,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 2800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Watering": 8
+  }
+ },
+ "BlueThunderHorse": {
+  "slug": "azurmane",
+  "stats": {
+   "Defense": 110,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 3079,
+   "Running Speed": 900,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 1260,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 5
+  }
+ },
+ "BlueberryFairy": {
+  "slug": "prunelia",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2063,
+   "Running Speed": 550,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 1,
+   "Medicine Production": 3,
+   "Planting": 3,
+   "Transporting": 1
+  }
+ },
+ "Boar": {
+  "slug": "rushoar",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 443,
+   "Running Speed": 500,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 1
+  }
+ },
+ "BrownRabbit": {
+  "slug": "lapiron",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 777,
+   "Running Speed": 480,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 720,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 3,
+   "Mining": 2,
+   "Transporting": 1
+  }
+ },
+ "CactusDoll": {
+  "slug": "needoll",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 702,
+   "Running Speed": 525,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 630,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Planting": 3,
+   "Transporting": 1
+  }
+ },
+ "CactusDoll_Dark": {
+  "slug": "needoll-noct",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 749,
+   "Running Speed": 525,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 630,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Planting": 3,
+   "Transporting": 1
+  }
+ },
+ "CandleGhost": {
+  "slug": "sootseer",
+  "stats": {
+   "Defense": 90,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2041,
+   "Running Speed": 800,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2,
+   "Gathering": 2,
+   "Handiwork": 3,
+   "Kindling": 3,
+   "Mining": 3
+  }
+ },
+ "CaptainPenguin": {
+  "slug": "penking",
+  "stats": {
+   "Defense": 95,
+   "HP": 95,
+   "Melee Attack": 70,
+   "Price": 1442,
+   "Running Speed": 450,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Handiwork": 2,
+   "Mining": 3,
+   "Transporting": 3,
+   "Watering": 2
+  }
+ },
+ "CaptainPenguin_Black": {
+  "slug": "penking-lux",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1683,
+   "Running Speed": 450,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 3,
+   "Handiwork": 2,
+   "Mining": 3,
+   "Transporting": 3,
+   "Watering": 2
+  }
+ },
+ "Carbunclo": {
+  "slug": "lifmunk",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 70,
+   "Price": 480,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 20,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Medicine Production": 1,
+   "Planting": 1
+  }
+ },
+ "CatBat": {
+  "slug": "tombat",
+  "stats": {
+   "Defense": 80,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 1147,
+   "Running Speed": 400,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Mining": 3,
+   "Transporting": 2
+  }
+ },
+ "CatMage": {
+  "slug": "katress",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1356,
+   "Running Speed": 440,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 620,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Medicine Production": 3,
+   "Transporting": 2
+  }
+ },
+ "CatMage_Fire": {
+  "slug": "katress-ignis",
+  "stats": {
+   "Defense": 90,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 1675,
+   "Running Speed": 440,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 620,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Kindling": 3,
+   "Medicine Production": 3,
+   "Transporting": 2
+  }
+ },
+ "CatVampire": {
+  "slug": "felbat",
+  "stats": {
+   "Defense": 110,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1744,
+   "Running Speed": 550,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 110
+  },
+  "work": {
+   "Medicine Production": 3
+  }
+ },
+ "ChickenPal": {
+  "slug": "chikipi",
+  "stats": {
+   "Defense": 60,
+   "HP": 60,
+   "Melee Attack": 70,
+   "Price": 313,
+   "Running Speed": 375,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 70
+  },
+  "work": {
+   "Farming": 1,
+   "Gathering": 1
+  }
+ },
+ "ClioneTwins": {
+  "slug": "amione",
+  "stats": {
+   "Defense": 65,
+   "HP": 65,
+   "Melee Attack": 100,
+   "Price": 421,
+   "Running Speed": 450,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "CloverFairy": {
+  "slug": "clovee",
+  "stats": {
+   "Defense": 65,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 407,
+   "Running Speed": 400,
+   "Shot Attack": 65,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Planting": 1
+  }
+ },
+ "ClownRabbit": {
+  "slug": "dupin",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 3191,
+   "Running Speed": 500,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 5,
+   "Kindling": 7,
+   "Medicine Production": 4,
+   "Transporting": 2
+  }
+ },
+ "ColorfulBird": {
+  "slug": "tocotoco",
+  "stats": {
+   "Defense": 70,
+   "HP": 60,
+   "Melee Attack": 80,
+   "Price": 373,
+   "Running Speed": 300,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 70
+  },
+  "work": {
+   "Gathering": 1
+  }
+ },
+ "CowPal": {
+  "slug": "mozzarina",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 502,
+   "Running Speed": 580,
+   "Shot Attack": 50,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2
+  }
+ },
+ "CubeTurtle": {
+  "slug": "tetroise",
+  "stats": {
+   "Defense": 135,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2436,
+   "Running Speed": 360,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 540,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 4
+  }
+ },
+ "CubeTurtle_Neutral": {
+  "slug": "tetroise-primo",
+  "stats": {
+   "Defense": 140,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2945,
+   "Running Speed": 360,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 540,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 6
+  }
+ },
+ "CuteButterfly": {
+  "slug": "cinnamoth",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 534,
+   "Running Speed": 550,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Medicine Production": 2,
+   "Planting": 2
+  }
+ },
+ "CuteFox": {
+  "slug": "vixy",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 407,
+   "Running Speed": 350,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 140
+  },
+  "work": {
+   "Farming": 1,
+   "Gathering": 1
+  }
+ },
+ "CuteMole": {
+  "slug": "fuddler",
+  "stats": {
+   "Defense": 50,
+   "HP": 65,
+   "Melee Attack": 100,
+   "Price": 358,
+   "Running Speed": 300,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Mining": 1,
+   "Transporting": 1
+  }
+ },
+ "DarkAlien": {
+  "slug": "xenovader",
+  "stats": {
+   "Defense": 85,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1543,
+   "Running Speed": 550,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 125,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 2
+  }
+ },
+ "DarkCrow": {
+  "slug": "cawgnito",
+  "stats": {
+   "Defense": 80,
+   "HP": 75,
+   "Melee Attack": 80,
+   "Price": 770,
+   "Running Speed": 920,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 85,
+   "Sprinting Speed": 1200,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1
+  }
+ },
+ "DarkFlameFox": {
+  "slug": "majex",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2347,
+   "Running Speed": 500,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 5,
+   "Kindling": 4,
+   "Medicine Production": 3,
+   "Transporting": 2
+  }
+ },
+ "DarkMechaDragon": {
+  "slug": "xenolord",
+  "stats": {
+   "Defense": 120,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 3622,
+   "Running Speed": 550,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 660,
+   "Stamina": 300,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "DarkScorpion": {
+  "slug": "menasting",
+  "stats": {
+   "Defense": 130,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 2469,
+   "Running Speed": 1000,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1200,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 5
+  }
+ },
+ "DarkScorpion_Ground": {
+  "slug": "menasting-terra",
+  "stats": {
+   "Defense": 130,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 10000,
+   "Running Speed": 1000,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1200,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 6
+  }
+ },
+ "Deer": {
+  "slug": "eikthyrdeer",
+  "stats": {
+   "Defense": 80,
+   "HP": 95,
+   "Melee Attack": 70,
+   "Price": 791,
+   "Running Speed": 700,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "Deer_Ground": {
+  "slug": "eikthyrdeer-terra",
+  "stats": {
+   "Defense": 80,
+   "HP": 95,
+   "Melee Attack": 70,
+   "Price": 891,
+   "Running Speed": 700,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "DomeArmorDragon": {
+  "slug": "aegidron",
+  "stats": {
+   "Defense": 140,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 4116,
+   "Running Speed": 850,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 115,
+   "Sprinting Speed": 1100,
+   "Stamina": 300,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 8
+  }
+ },
+ "DreamDemon": {
+  "slug": "daedream",
+  "stats": {
+   "Defense": 60,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 397,
+   "Running Speed": 300,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Transporting": 1
+  }
+ },
+ "DrillGame": {
+  "slug": "digtoise",
+  "stats": {
+   "Defense": 120,
+   "HP": 80,
+   "Melee Attack": 80,
+   "Price": 1577,
+   "Running Speed": 300,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 420,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 4
+  }
+ },
+ "Eagle": {
+  "slug": "galeclaw",
+  "stats": {
+   "Defense": 60,
+   "HP": 75,
+   "Melee Attack": 120,
+   "Price": 502,
+   "Running Speed": 600,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "ElecCat": {
+  "slug": "sparkit",
+  "stats": {
+   "Defense": 70,
+   "HP": 60,
+   "Melee Attack": 60,
+   "Price": 410,
+   "Running Speed": 350,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 80
+  },
+  "work": {
+   "Farming": 1,
+   "Generating Electricity": 1,
+   "Handiwork": 1,
+   "Transporting": 1
+  }
+ },
+ "ElecLizard": {
+  "slug": "slowatt",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 1611,
+   "Running Speed": 300,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 390,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 3
+  }
+ },
+ "ElecPanda": {
+  "slug": "grizzbolt",
+  "stats": {
+   "Defense": 105,
+   "HP": 120,
+   "Melee Attack": 120,
+   "Price": 3524,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1000,
+   "Stamina": 180,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 5,
+   "Handiwork": 4,
+   "Transporting": 5
+  }
+ },
+ "ElecPomeranian": {
+  "slug": "puffolt",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 556,
+   "Running Speed": 200,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 35,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 2,
+   "Transporting": 1
+  }
+ },
+ "ElecSnail": {
+  "slug": "snock",
+  "stats": {
+   "Defense": 75,
+   "HP": 65,
+   "Melee Attack": 100,
+   "Price": 1523,
+   "Running Speed": 360,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 945,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4
+  }
+ },
+ "ElecSnail_Ground": {
+  "slug": "snock-lux",
+  "stats": {
+   "Defense": 80,
+   "HP": 65,
+   "Melee Attack": 100,
+   "Price": 1623,
+   "Running Speed": 360,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 945,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4
+  }
+ },
+ "FairyDragon": {
+  "slug": "elphidran",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 80,
+   "Price": 1205,
+   "Running Speed": 630,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 83,
+   "Sprinting Speed": 800,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "FairyDragon_Water": {
+  "slug": "elphidran-aqua",
+  "stats": {
+   "Defense": 95,
+   "HP": 115,
+   "Melee Attack": 80,
+   "Price": 1543,
+   "Running Speed": 630,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 83,
+   "Sprinting Speed": 800,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 4
+  }
+ },
+ "FeatherOstrich": {
+  "slug": "dazemu",
+  "stats": {
+   "Defense": 80,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 896,
+   "Running Speed": 900,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1200,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "FengyunDeeper": {
+  "slug": "fenglope",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 110,
+   "Price": 1659,
+   "Running Speed": 750,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 85,
+   "Sprinting Speed": 1050,
+   "Stamina": 140,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "FengyunDeeper_Electric": {
+  "slug": "fenglope-lux",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 110,
+   "Price": 2164,
+   "Running Speed": 750,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 85,
+   "Sprinting Speed": 1050,
+   "Stamina": 140,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 5
+  }
+ },
+ "FireKirin": {
+  "slug": "pyrin",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 110,
+   "Price": 1464,
+   "Running Speed": 850,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1300,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 4
+  }
+ },
+ "FireKirin_Dark": {
+  "slug": "pyrin-noct",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 110,
+   "Price": 2034,
+   "Running Speed": 850,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1300,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 4
+  }
+ },
+ "FlameBambi": {
+  "slug": "rooby",
+  "stats": {
+   "Defense": 75,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 459,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Kindling": 1
+  }
+ },
+ "FlameBuffalo": {
+  "slug": "arsox",
+  "stats": {
+   "Defense": 95,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1176,
+   "Running Speed": 700,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 87,
+   "Sprinting Speed": 1050,
+   "Stamina": 120,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 3
+  }
+ },
+ "FlowerDinosaur": {
+  "slug": "dinossom",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 90,
+   "Price": 1315,
+   "Running Speed": 700,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1030,
+   "Stamina": 130,
+   "Support": 150
+  },
+  "work": {
+   "Planting": 3
+  }
+ },
+ "FlowerDinosaur_Electric": {
+  "slug": "dinossom-lux",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 90,
+   "Price": 1543,
+   "Running Speed": 700,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1030,
+   "Stamina": 130,
+   "Support": 150
+  },
+  "work": {
+   "Generating Electricity": 3
+  }
+ },
+ "FlowerDoll": {
+  "slug": "petallia",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1769,
+   "Running Speed": 550,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Medicine Production": 4,
+   "Planting": 4,
+   "Transporting": 2
+  }
+ },
+ "FlowerDoll_Fire": {
+  "slug": "petallia-ignis",
+  "stats": {
+   "Defense": 100,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2357,
+   "Running Speed": 550,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Kindling": 4,
+   "Medicine Production": 4,
+   "Transporting": 2
+  }
+ },
+ "FlowerPrince": {
+  "slug": "dandilord",
+  "stats": {
+   "Defense": 110,
+   "HP": 125,
+   "Melee Attack": 100,
+   "Price": 4442,
+   "Running Speed": 1000,
+   "Shot Attack": 135,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Handiwork": 6,
+   "Medicine Production": 6,
+   "Planting": 8,
+   "Transporting": 3
+  }
+ },
+ "FlowerRabbit": {
+  "slug": "flopie",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 512,
+   "Running Speed": 400,
+   "Shot Attack": 65,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 2,
+   "Medicine Production": 1,
+   "Planting": 2,
+   "Transporting": 1
+  }
+ },
+ "FluffyBird": {
+  "slug": "muffly",
+  "stats": {
+   "Defense": 55,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 385,
+   "Running Speed": 300,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Transporting": 1
+  }
+ },
+ "FlyingManta": {
+  "slug": "celaray",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 521,
+   "Running Speed": 550,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "FlyingManta_Thunder": {
+  "slug": "celaray-lux",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 658,
+   "Running Speed": 550,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 2,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "FoxExorcist": {
+  "slug": "flaracle",
+  "stats": {
+   "Defense": 105,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 3217,
+   "Running Speed": 500,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Kindling": 7,
+   "Transporting": 2
+  }
+ },
+ "FoxMage": {
+  "slug": "wixen",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 50,
+   "Price": 1284,
+   "Running Speed": 440,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 620,
+   "Stamina": 100,
+   "Support": 120
+  },
+  "work": {
+   "Handiwork": 3,
+   "Kindling": 3,
+   "Transporting": 2
+  }
+ },
+ "FoxMage_Dark": {
+  "slug": "wixen-noct",
+  "stats": {
+   "Defense": 85,
+   "HP": 90,
+   "Melee Attack": 50,
+   "Price": 1509,
+   "Running Speed": 440,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 620,
+   "Stamina": 100,
+   "Support": 120
+  },
+  "work": {
+   "Handiwork": 4,
+   "Kindling": 4,
+   "Transporting": 2
+  }
+ },
+ "Ganesha": {
+  "slug": "teafant",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 355,
+   "Running Speed": 300,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 1
+  }
+ },
+ "Garm": {
+  "slug": "direhowl",
+  "stats": {
+   "Defense": 75,
+   "HP": 80,
+   "Melee Attack": 110,
+   "Price": 611,
+   "Running Speed": 800,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 1050,
+   "Stamina": 70,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1
+  }
+ },
+ "GhostAnglerfish": {
+  "slug": "ghangler",
+  "stats": {
+   "Defense": 105,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 2263,
+   "Running Speed": 500,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 320,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 2,
+   "Watering": 5
+  }
+ },
+ "GhostAnglerfish_Fire": {
+  "slug": "ghangler-ignis",
+  "stats": {
+   "Defense": 105,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 2424,
+   "Running Speed": 500,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 320,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5,
+   "Transporting": 2,
+   "Watering": 5
+  }
+ },
+ "GhostBeast": {
+  "slug": "maraith",
+  "stats": {
+   "Defense": 80,
+   "HP": 75,
+   "Melee Attack": 50,
+   "Price": 1110,
+   "Running Speed": 700,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Mining": 4
+  }
+ },
+ "GhostBlackCat": {
+  "slug": "wispaw",
+  "stats": {
+   "Defense": 70,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 827,
+   "Running Speed": 360,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 540,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Medicine Production": 1,
+   "Transporting": 1
+  }
+ },
+ "GhostDragon": {
+  "slug": "eidrolon",
+  "stats": {
+   "Defense": 120,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 3323,
+   "Running Speed": 1400,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 2750,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 6
+  }
+ },
+ "GhostDragon_Fire": {
+  "slug": "eidrolon-ignis",
+  "stats": {
+   "Defense": 120,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 3521,
+   "Running Speed": 1400,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 2750,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 6,
+   "Transporting": 6
+  }
+ },
+ "GhostRabbit": {
+  "slug": "nitemary",
+  "stats": {
+   "Defense": 105,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2594,
+   "Running Speed": 380,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 4,
+   "Transporting": 2
+  }
+ },
+ "GhostRabbit_Grass": {
+  "slug": "nitemary-botan",
+  "stats": {
+   "Defense": 105,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2134,
+   "Running Speed": 380,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 4,
+   "Planting": 3,
+   "Transporting": 2
+  }
+ },
+ "GoldenHorse": {
+  "slug": "gildane",
+  "stats": {
+   "Defense": 110,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 2622,
+   "Running Speed": 840,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 170,
+   "Sprinting Speed": 1260,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5
+  }
+ },
+ "Gorilla": {
+  "slug": "gorirat",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 110,
+   "Price": 1214,
+   "Running Speed": 550,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 66,
+   "Sprinting Speed": 720,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Transporting": 3
+  }
+ },
+ "Gorilla_Ground": {
+  "slug": "gorirat-terra",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 110,
+   "Price": 1284,
+   "Running Speed": 550,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 66,
+   "Sprinting Speed": 720,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Mining": 3,
+   "Transporting": 3
+  }
+ },
+ "GrassGolem": {
+  "slug": "dualith",
+  "stats": {
+   "Defense": 125,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 3113,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 210,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Mining": 6,
+   "Planting": 3,
+   "Transporting": 6
+  }
+ },
+ "GrassGolem_Dark": {
+  "slug": "dualith-noct",
+  "stats": {
+   "Defense": 125,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 3234,
+   "Running Speed": 600,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 210,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Mining": 6,
+   "Planting": 3,
+   "Transporting": 6
+  }
+ },
+ "GrassMammoth": {
+  "slug": "mammorest",
+  "stats": {
+   "Defense": 90,
+   "HP": 150,
+   "Melee Attack": 100,
+   "Price": 2220,
+   "Running Speed": 600,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1030,
+   "Stamina": 180,
+   "Support": 30
+  },
+  "work": {
+   "Mining": 4,
+   "Planting": 4
+  }
+ },
+ "GrassMammoth_Ice": {
+  "slug": "mammorest-cryst",
+  "stats": {
+   "Defense": 90,
+   "HP": 150,
+   "Melee Attack": 100,
+   "Price": 2424,
+   "Running Speed": 600,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1030,
+   "Stamina": 180,
+   "Support": 30
+  },
+  "work": {
+   "Cooling": 5,
+   "Mining": 4
+  }
+ },
+ "GrassMinotaur": {
+  "slug": "elgrove",
+  "stats": {
+   "Defense": 105,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2041,
+   "Running Speed": 700,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Mining": 2,
+   "Planting": 3,
+   "Transporting": 3
+  }
+ },
+ "GrassMinotaur_Ice": {
+  "slug": "elgrove-cryst",
+  "stats": {
+   "Defense": 105,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 2484,
+   "Running Speed": 700,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Mining": 3,
+   "Transporting": 3
+  }
+ },
+ "GrassPanda": {
+  "slug": "mossanda",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1475,
+   "Running Speed": 600,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1000,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Planting": 3,
+   "Transporting": 4
+  }
+ },
+ "GrassPanda_Electric": {
+  "slug": "mossanda-lux",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1806,
+   "Running Speed": 600,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1000,
+   "Stamina": 130,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4,
+   "Handiwork": 3,
+   "Transporting": 4
+  }
+ },
+ "GrassRabbitMan": {
+  "slug": "verdash",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1947,
+   "Running Speed": 500,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Handiwork": 5,
+   "Planting": 4,
+   "Transporting": 3
+  }
+ },
+ "GrimGirl": {
+  "slug": "splatterina",
+  "stats": {
+   "Defense": 105,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2484,
+   "Running Speed": 550,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 660,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Medicine Production": 5,
+   "Transporting": 2
+  }
+ },
+ "GuardianDog": {
+  "slug": "yakumo",
+  "stats": {
+   "Defense": 85,
+   "HP": 85,
+   "Melee Attack": 80,
+   "Price": 1238,
+   "Running Speed": 750,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1080,
+   "Stamina": 140,
+   "Support": 110
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "HadesBird": {
+  "slug": "helzephyr",
+  "stats": {
+   "Defense": 100,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 2109,
+   "Running Speed": 700,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 170,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 4
+  }
+ },
+ "HadesBird_Electric": {
+  "slug": "helzephyr-lux",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2469,
+   "Running Speed": 700,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 170,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4,
+   "Transporting": 5
+  }
+ },
+ "HawkBird": {
+  "slug": "nitewing",
+  "stats": {
+   "Defense": 80,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1012,
+   "Running Speed": 600,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "Hedgehog": {
+  "slug": "jolthog",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 417,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 1
+  }
+ },
+ "Hedgehog_Ice": {
+  "slug": "jolthog-cryst",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 472,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 1
+  }
+ },
+ "HerculesBeetle": {
+  "slug": "warsect",
+  "stats": {
+   "Defense": 120,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 2913,
+   "Running Speed": 500,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Planting": 3,
+   "Transporting": 5
+  }
+ },
+ "HerculesBeetle_Ground": {
+  "slug": "warsect-terra",
+  "stats": {
+   "Defense": 120,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 10000,
+   "Running Speed": 500,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Mining": 5,
+   "Transporting": 5
+  }
+ },
+ "HoodGhost": {
+  "slug": "hoodle",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 1656,
+   "Running Speed": 400,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Transporting": 1
+  }
+ },
+ "Horus": {
+  "slug": "faleris",
+  "stats": {
+   "Defense": 115,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2685,
+   "Running Speed": 1000,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1400,
+   "Stamina": 230,
+   "Support": 90
+  },
+  "work": {
+   "Kindling": 6,
+   "Transporting": 3
+  }
+ },
+ "Horus_Water": {
+  "slug": "faleris-aqua",
+  "stats": {
+   "Defense": 115,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2797,
+   "Running Speed": 1000,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1400,
+   "Stamina": 230,
+   "Support": 90
+  },
+  "work": {
+   "Transporting": 5,
+   "Watering": 6
+  }
+ },
+ "IceCrocodile": {
+  "slug": "munchill",
+  "stats": {
+   "Defense": 85,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 798,
+   "Running Speed": 300,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 20,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 3,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "IceDeer": {
+  "slug": "reindrix",
+  "stats": {
+   "Defense": 110,
+   "HP": 100,
+   "Melee Attack": 80,
+   "Price": 1464,
+   "Running Speed": 700,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 35,
+   "Sprinting Speed": 1070,
+   "Stamina": 140,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 3
+  }
+ },
+ "IceFox": {
+  "slug": "foxcicle",
+  "stats": {
+   "Defense": 105,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1543,
+   "Running Speed": 600,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 65,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Farming": 3
+  }
+ },
+ "IceHorse": {
+  "slug": "frostallion",
+  "stats": {
+   "Defense": 120,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 4695,
+   "Running Speed": 1200,
+   "Shot Attack": 140,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 1800,
+   "Stamina": 300,
+   "Support": 70
+  },
+  "work": {
+   "Cooling": 7
+  }
+ },
+ "IceHorse_Dark": {
+  "slug": "frostallion-noct",
+  "stats": {
+   "Defense": 135,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 5000,
+   "Running Speed": 1200,
+   "Shot Attack": 140,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 1800,
+   "Stamina": 300,
+   "Support": 70
+  },
+  "work": {
+   "Gathering": 7
+  }
+ },
+ "IceNarwhal": {
+  "slug": "whalaska",
+  "stats": {
+   "Defense": 110,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2685,
+   "Running Speed": 600,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 125,
+   "Sprinting Speed": 750,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 6,
+   "Watering": 5
+  }
+ },
+ "IceNarwhal_Fire": {
+  "slug": "whalaska-ignis",
+  "stats": {
+   "Defense": 110,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 3097,
+   "Running Speed": 600,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 125,
+   "Sprinting Speed": 750,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 6,
+   "Kindling": 5
+  }
+ },
+ "IceSeal": {
+  "slug": "polapup",
+  "stats": {
+   "Defense": 105,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 1794,
+   "Running Speed": 250,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 20,
+   "Sprinting Speed": 375,
+   "Stamina": 120,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Watering": 3
+  }
+ },
+ "IceSeal_Ground": {
+  "slug": "polapup-terra",
+  "stats": {
+   "Defense": 110,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 1942,
+   "Running Speed": 250,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 20,
+   "Sprinting Speed": 375,
+   "Stamina": 120,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Mining": 4
+  }
+ },
+ "IceWitch": {
+  "slug": "icelyn",
+  "stats": {
+   "Defense": 105,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2277,
+   "Running Speed": 400,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Handiwork": 5,
+   "Medicine Production": 4,
+   "Transporting": 2
+  }
+ },
+ "JellyfishFairy": {
+  "slug": "jelliette",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 658,
+   "Running Speed": 240,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "JellyfishGhost": {
+  "slug": "jellroy",
+  "stats": {
+   "Defense": 75,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1328,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Medicine Production": 1,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "JetDragon": {
+  "slug": "jetragon",
+  "stats": {
+   "Defense": 120,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 4452,
+   "Running Speed": 1700,
+   "Shot Attack": 140,
+   "Slow Walk Speed": 200,
+   "Sprinting Speed": 3300,
+   "Stamina": 110,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 8
+  }
+ },
+ "KabukiMan": {
+  "slug": "renjishi",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 4028,
+   "Running Speed": 400,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Handiwork": 6,
+   "Kindling": 8,
+   "Transporting": 5
+  }
+ },
+ "Kelpie": {
+  "slug": "kelpsea",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 407,
+   "Running Speed": 700,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Watering": 1
+  }
+ },
+ "Kelpie_Fire": {
+  "slug": "kelpsea-ignis",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 407,
+   "Running Speed": 700,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Kindling": 1
+  }
+ },
+ "KendoFrog": {
+  "slug": "croajiro",
+  "stats": {
+   "Defense": 85,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 584,
+   "Running Speed": 300,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 33,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "KendoFrog_Dark": {
+  "slug": "croajiro-noct",
+  "stats": {
+   "Defense": 90,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1254,
+   "Running Speed": 300,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 33,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 2,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "KingAlpaca": {
+  "slug": "kingpaca",
+  "stats": {
+   "Defense": 90,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 1274,
+   "Running Speed": 700,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1040,
+   "Stamina": 170,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "KingAlpaca_Ice": {
+  "slug": "kingpaca-cryst",
+  "stats": {
+   "Defense": 90,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 1624,
+   "Running Speed": 700,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1040,
+   "Stamina": 170,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Gathering": 2
+  }
+ },
+ "KingBahamut": {
+  "slug": "blazamut",
+  "stats": {
+   "Defense": 120,
+   "HP": 100,
+   "Melee Attack": 150,
+   "Price": 3470,
+   "Running Speed": 800,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1200,
+   "Stamina": 190,
+   "Support": 50
+  },
+  "work": {
+   "Kindling": 6,
+   "Mining": 7
+  }
+ },
+ "KingBahamut_Dragon": {
+  "slug": "blazamut-ryu",
+  "stats": {
+   "Defense": 125,
+   "HP": 105,
+   "Melee Attack": 150,
+   "Price": 3651,
+   "Running Speed": 800,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1200,
+   "Stamina": 190,
+   "Support": 50
+  },
+  "work": {
+   "Kindling": 6,
+   "Mining": 7
+  }
+ },
+ "KingSunfish": {
+  "slug": "solmora",
+  "stats": {
+   "Defense": 85,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1636,
+   "Running Speed": 500,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 900,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 4
+  }
+ },
+ "KingWhale": {
+  "slug": "panthalus",
+  "stats": {
+   "Defense": 200,
+   "HP": 180,
+   "Melee Attack": 100,
+   "Price": 4913,
+   "Running Speed": 3000,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 3000,
+   "Sprinting Speed": 3000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "Kirin": {
+  "slug": "univolt",
+  "stats": {
+   "Defense": 105,
+   "HP": 80,
+   "Melee Attack": 110,
+   "Price": 1388,
+   "Running Speed": 720,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1100,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 3
+  }
+ },
+ "Kirin_Ice": {
+  "slug": "univolt-cryst",
+  "stats": {
+   "Defense": 110,
+   "HP": 80,
+   "Melee Attack": 110,
+   "Price": 1974,
+   "Running Speed": 720,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1100,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 6
+  }
+ },
+ "Kitsunebi": {
+  "slug": "foxparks",
+  "stats": {
+   "Defense": 70,
+   "HP": 65,
+   "Melee Attack": 70,
+   "Price": 394,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 1
+  }
+ },
+ "Kitsunebi_Ice": {
+  "slug": "foxparks-cryst",
+  "stats": {
+   "Defense": 70,
+   "HP": 65,
+   "Melee Attack": 70,
+   "Price": 472,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2
+  }
+ },
+ "LanternButler": {
+  "slug": "loomen",
+  "stats": {
+   "Defense": 95,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 2309,
+   "Running Speed": 300,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 25,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 4,
+   "Kindling": 4,
+   "Medicine Production": 4
+  }
+ },
+ "LavaGirl": {
+  "slug": "flambelle",
+  "stats": {
+   "Defense": 80,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 436,
+   "Running Speed": 250,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 65,
+   "Sprinting Speed": 375,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Handiwork": 1,
+   "Kindling": 1,
+   "Transporting": 1
+  }
+ },
+ "LazyCatfish": {
+  "slug": "dumud",
+  "stats": {
+   "Defense": 95,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 995,
+   "Running Speed": 450,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Mining": 2,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "LazyCatfish_Gold": {
+  "slug": "dumud-gild",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 19900,
+   "Running Speed": 450,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 4,
+   "Mining": 2,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "LazyDragon": {
+  "slug": "relaxaurus",
+  "stats": {
+   "Defense": 110,
+   "HP": 120,
+   "Melee Attack": 110,
+   "Price": 2365,
+   "Running Speed": 650,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 1000,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 3,
+   "Watering": 3
+  }
+ },
+ "LazyDragon_Electric": {
+  "slug": "relaxaurus-lux",
+  "stats": {
+   "Defense": 110,
+   "HP": 120,
+   "Melee Attack": 110,
+   "Price": 2685,
+   "Running Speed": 650,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 1000,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4,
+   "Transporting": 3
+  }
+ },
+ "LeafMomonga": {
+  "slug": "herbil",
+  "stats": {
+   "Defense": 75,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 541,
+   "Running Speed": 350,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 15,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Planting": 1,
+   "Transporting": 1
+  }
+ },
+ "LeafPrincess": {
+  "slug": "lullu",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1261,
+   "Running Speed": 400,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 3,
+   "Medicine Production": 3,
+   "Planting": 3
+  }
+ },
+ "LegendDeer": {
+  "slug": "hartalis",
+  "stats": {
+   "Defense": 110,
+   "HP": 135,
+   "Melee Attack": 100,
+   "Price": 4256,
+   "Running Speed": 900,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1900,
+   "Stamina": 400,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 7
+  }
+ },
+ "LilyQueen": {
+  "slug": "lyleen",
+  "stats": {
+   "Defense": 110,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 3427,
+   "Running Speed": 450,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 6,
+   "Handiwork": 5,
+   "Medicine Production": 5,
+   "Planting": 7
+  }
+ },
+ "LilyQueen_Dark": {
+  "slug": "lyleen-noct",
+  "stats": {
+   "Defense": 115,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 3540,
+   "Running Speed": 450,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 6,
+   "Handiwork": 5,
+   "Medicine Production": 7
+  }
+ },
+ "LittleBriarRose": {
+  "slug": "bristla",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 80,
+   "Price": 756,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 2,
+   "Medicine Production": 2,
+   "Planting": 2,
+   "Transporting": 1
+  }
+ },
+ "LizardMan": {
+  "slug": "leezpunk",
+  "stats": {
+   "Defense": 50,
+   "HP": 80,
+   "Melee Attack": 90,
+   "Price": 476,
+   "Running Speed": 600,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 2,
+   "Transporting": 1
+  }
+ },
+ "LizardMan_Fire": {
+  "slug": "leezpunk-ignis",
+  "stats": {
+   "Defense": 50,
+   "HP": 80,
+   "Melee Attack": 90,
+   "Price": 493,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 2,
+   "Kindling": 2,
+   "Transporting": 1
+  }
+ },
+ "LongCat": {
+  "slug": "valentail",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 1684,
+   "Running Speed": 700,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2
+  }
+ },
+ "LotusDragon": {
+  "slug": "ophydia",
+  "stats": {
+   "Defense": 120,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 3884,
+   "Running Speed": 700,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Planting": 7,
+   "Watering": 5
+  }
+ },
+ "Manticore": {
+  "slug": "blazehowl",
+  "stats": {
+   "Defense": 80,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 1794,
+   "Running Speed": 800,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 1200,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5
+  }
+ },
+ "Manticore_Dark": {
+  "slug": "blazehowl-noct",
+  "stats": {
+   "Defense": 80,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 1882,
+   "Running Speed": 800,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 1200,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5
+  }
+ },
+ "MimicDog": {
+  "slug": "mimog",
+  "stats": {
+   "Defense": 130,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 3500,
+   "Running Speed": 2000,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 40,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Transporting": 2
+  }
+ },
+ "Monkey": {
+  "slug": "tanzee",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 512,
+   "Running Speed": 300,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 48,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Planting": 1,
+   "Transporting": 1
+  }
+ },
+ "Monkey_Fire": {
+  "slug": "tanzee-ignis",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 526,
+   "Running Speed": 300,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 48,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 1,
+   "Kindling": 1,
+   "Transporting": 1
+  }
+ },
+ "MonochromeQueen": {
+  "slug": "solenne",
+  "stats": {
+   "Defense": 115,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 3867,
+   "Running Speed": 450,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 8,
+   "Transporting": 2
+  }
+ },
+ "MoonChild": {
+  "slug": "wistella",
+  "stats": {
+   "Defense": 60,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 2421,
+   "Running Speed": 450,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Medicine Production": 6,
+   "Transporting": 1
+  }
+ },
+ "MoonQueen": {
+  "slug": "selyne",
+  "stats": {
+   "Defense": 110,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 4095,
+   "Running Speed": 1000,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 1600,
+   "Stamina": 300,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 7,
+   "Medicine Production": 6,
+   "Transporting": 3
+  }
+ },
+ "MopBaby": {
+  "slug": "swee",
+  "stats": {
+   "Defense": 60,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 313,
+   "Running Speed": 250,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 1,
+   "Gathering": 1
+  }
+ },
+ "MopKing": {
+  "slug": "sweepa",
+  "stats": {
+   "Defense": 90,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1244,
+   "Running Speed": 650,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 1020,
+   "Stamina": 120,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 3,
+   "Gathering": 2
+  }
+ },
+ "Mothman": {
+  "slug": "silvance",
+  "stats": {
+   "Defense": 110,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 4436,
+   "Running Speed": 500,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 6,
+   "Medicine Production": 8,
+   "Planting": 6,
+   "Transporting": 2
+  }
+ },
+ "MummyPal": {
+  "slug": "gildra",
+  "stats": {
+   "Defense": 105,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2529,
+   "Running Speed": 480,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 75,
+   "Sprinting Speed": 720,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 5,
+   "Medicine Production": 4,
+   "Transporting": 2
+  }
+ },
+ "MushroomDragon": {
+  "slug": "shroomer",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 1367,
+   "Running Speed": 740,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1050,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 3,
+   "Gathering": 3,
+   "Handiwork": 2,
+   "Planting": 3
+  }
+ },
+ "MushroomDragon_Dark": {
+  "slug": "shroomer-noct",
+  "stats": {
+   "Defense": 90,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 1399,
+   "Running Speed": 740,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1050,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Planting": 3
+  }
+ },
+ "MushroomLady": {
+  "slug": "mycora",
+  "stats": {
+   "Defense": 90,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 3087,
+   "Running Speed": 300,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 25,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 4,
+   "Medicine Production": 6,
+   "Planting": 6
+  }
+ },
+ "Mutant": {
+  "slug": "lunaris",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 80,
+   "Price": 1845,
+   "Running Speed": 500,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 650,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 4,
+   "Transporting": 2
+  }
+ },
+ "MysteryMask": {
+  "slug": "omascul",
+  "stats": {
+   "Defense": 100,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2431,
+   "Running Speed": 400,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 520,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5
+  }
+ },
+ "NaughtyCat": {
+  "slug": "grintale",
+  "stats": {
+   "Defense": 80,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 1074,
+   "Running Speed": 650,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 32,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3
+  }
+ },
+ "NegativeOctopus": {
+  "slug": "killamari",
+  "stats": {
+   "Defense": 70,
+   "HP": 60,
+   "Melee Attack": 100,
+   "Price": 376,
+   "Running Speed": 400,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Transporting": 2,
+   "Watering": 1
+  }
+ },
+ "NegativeOctopus_Neutral": {
+  "slug": "killamari-primo",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 421,
+   "Running Speed": 400,
+   "Shot Attack": 60,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Transporting": 2,
+   "Watering": 1
+  }
+ },
+ "NightBlueHorse": {
+  "slug": "starryon",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2014,
+   "Running Speed": 900,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1250,
+   "Stamina": 230,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5
+  }
+ },
+ "NightBlueHorse_Neutral": {
+  "slug": "starryon-primo",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2514,
+   "Running Speed": 900,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1250,
+   "Stamina": 230,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 7
+  }
+ },
+ "NightFox": {
+  "slug": "nox",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 70,
+   "Price": 502,
+   "Running Speed": 300,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 140
+  },
+  "work": {
+   "Gathering": 1
+  }
+ },
+ "NightLady": {
+  "slug": "bellanoir",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 3667,
+   "Running Speed": 600,
+   "Shot Attack": 150,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 5,
+   "Medicine Production": 5,
+   "Transporting": 4
+  }
+ },
+ "NightLady_Dark": {
+  "slug": "bellanoir-libero",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 3997,
+   "Running Speed": 600,
+   "Shot Attack": 150,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Medicine Production": 7,
+   "Transporting": 4
+  }
+ },
+ "OctopusGirl": {
+  "slug": "gloopie",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 577,
+   "Running Speed": 300,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Transporting": 2,
+   "Watering": 2
+  }
+ },
+ "OctopusGirl_Neutral": {
+  "slug": "gloopie-primo",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 1612,
+   "Running Speed": 300,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Transporting": 2,
+   "Watering": 2
+  }
+ },
+ "OniGhostGirl": {
+  "slug": "bakemi",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 1625,
+   "Running Speed": 400,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Medicine Production": 4,
+   "Transporting": 2
+  }
+ },
+ "PandaGirl": {
+  "slug": "leafan",
+  "stats": {
+   "Defense": 95,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 1806,
+   "Running Speed": 600,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Planting": 3,
+   "Transporting": 2
+  }
+ },
+ "Penguin": {
+  "slug": "pengullet",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 463,
+   "Running Speed": 500,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 650,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 1,
+   "Handiwork": 1,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "Penguin_Electric": {
+  "slug": "pengullet-lux",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 561,
+   "Running Speed": 500,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 650,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 2,
+   "Handiwork": 1,
+   "Transporting": 1,
+   "Watering": 1
+  }
+ },
+ "PinkCat": {
+  "slug": "cattiva",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 436,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 30,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Mining": 1,
+   "Transporting": 1
+  }
+ },
+ "PinkLizard": {
+  "slug": "lovander",
+  "stats": {
+   "Defense": 70,
+   "HP": 120,
+   "Melee Attack": 70,
+   "Price": 1056,
+   "Running Speed": 750,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 850,
+   "Stamina": 100,
+   "Support": 140
+  },
+  "work": {
+   "Handiwork": 3,
+   "Medicine Production": 3,
+   "Mining": 2,
+   "Transporting": 2
+  }
+ },
+ "PinkRabbit": {
+  "slug": "ribbuny",
+  "stats": {
+   "Defense": 70,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 421,
+   "Running Speed": 245,
+   "Shot Attack": 65,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 350,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Transporting": 1
+  }
+ },
+ "PinkRabbit_Grass": {
+  "slug": "ribbuny-botan",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 526,
+   "Running Speed": 245,
+   "Shot Attack": 65,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 350,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Handiwork": 2,
+   "Planting": 2,
+   "Transporting": 1
+  }
+ },
+ "PlantSlime": {
+  "slug": "gumoss",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 394,
+   "Running Speed": 300,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Planting": 1
+  }
+ },
+ "Plesiosaur": {
+  "slug": "braloha",
+  "stats": {
+   "Defense": 120,
+   "HP": 130,
+   "Melee Attack": 100,
+   "Price": 2862,
+   "Running Speed": 600,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1020,
+   "Stamina": 270,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Mining": 3,
+   "Planting": 5
+  }
+ },
+ "PoseidonOrca": {
+  "slug": "neptilius",
+  "stats": {
+   "Defense": 125,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 4277,
+   "Running Speed": 750,
+   "Shot Attack": 145,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1120,
+   "Stamina": 410,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 7
+  }
+ },
+ "PurpleSpider": {
+  "slug": "tarantriss",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 1806,
+   "Running Speed": 640,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 1000,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Medicine Production": 2,
+   "Transporting": 2
+  }
+ },
+ "QueenBee": {
+  "slug": "elizabee",
+  "stats": {
+   "Defense": 100,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1769,
+   "Running Speed": 450,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 4,
+   "Medicine Production": 4,
+   "Planting": 4
+  }
+ },
+ "RaijinDaughter": {
+  "slug": "dazzi",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 110,
+   "Price": 616,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 3,
+   "Handiwork": 2,
+   "Transporting": 2
+  }
+ },
+ "RaijinDaughter_Water": {
+  "slug": "dazzi-noct",
+  "stats": {
+   "Defense": 75,
+   "HP": 70,
+   "Melee Attack": 110,
+   "Price": 599,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 1,
+   "Handiwork": 1,
+   "Medicine Production": 1,
+   "Transporting": 2
+  }
+ },
+ "RedArmorBird": {
+  "slug": "ragnahawk",
+  "stats": {
+   "Defense": 120,
+   "HP": 95,
+   "Melee Attack": 100,
+   "Price": 2263,
+   "Running Speed": 800,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1300,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 4,
+   "Transporting": 5
+  }
+ },
+ "RedFlowerBird": {
+  "slug": "tropicaw",
+  "stats": {
+   "Defense": 90,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1844,
+   "Running Speed": 600,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Planting": 5
+  }
+ },
+ "RobinHood": {
+  "slug": "robinquill",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1335,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Medicine Production": 1,
+   "Planting": 2,
+   "Transporting": 2
+  }
+ },
+ "RobinHood_Ground": {
+  "slug": "robinquill-terra",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1294,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Medicine Production": 2,
+   "Transporting": 2
+  }
+ },
+ "RockBeast": {
+  "slug": "pierdon",
+  "stats": {
+   "Defense": 120,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 2306,
+   "Running Speed": 350,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 5
+  }
+ },
+ "RockBeast_Ice": {
+  "slug": "pierdon-cryst",
+  "stats": {
+   "Defense": 120,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 2685,
+   "Running Speed": 350,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 6,
+   "Mining": 5
+  }
+ },
+ "Ronin": {
+  "slug": "bushi",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 1442,
+   "Running Speed": 600,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 2,
+   "Kindling": 2,
+   "Transporting": 2
+  }
+ },
+ "Ronin_Dark": {
+  "slug": "bushi-noct",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 1857,
+   "Running Speed": 600,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 80,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 2,
+   "Kindling": 2,
+   "Transporting": 2
+  }
+ },
+ "SaintCentaur": {
+  "slug": "paladius",
+  "stats": {
+   "Defense": 145,
+   "HP": 130,
+   "Melee Attack": 110,
+   "Price": 4339,
+   "Running Speed": 800,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1800,
+   "Stamina": 400,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 6
+  }
+ },
+ "SakuraSaurus": {
+  "slug": "broncherry",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 80,
+   "Price": 2014,
+   "Running Speed": 550,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1020,
+   "Stamina": 150,
+   "Support": 120
+  },
+  "work": {
+   "Planting": 5
+  }
+ },
+ "SakuraSaurus_Water": {
+  "slug": "broncherry-aqua",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 80,
+   "Price": 2259,
+   "Running Speed": 550,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1020,
+   "Stamina": 150,
+   "Support": 120
+  },
+  "work": {
+   "Watering": 5
+  }
+ },
+ "SamuraiDog": {
+  "slug": "pupperai",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 476,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 25,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Transporting": 1
+  }
+ },
+ "ScorpionMan": {
+  "slug": "prixter",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1649,
+   "Running Speed": 720,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 90,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Medicine Production": 2
+  }
+ },
+ "ScorpionMan_Electric": {
+  "slug": "prixter-lux",
+  "stats": {
+   "Defense": 90,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1773,
+   "Running Speed": 720,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 90,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Generating Electricity": 3,
+   "Medicine Production": 2
+  }
+ },
+ "Sekhmet": {
+  "slug": "sekhmet",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2638,
+   "Running Speed": 600,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 6,
+   "Mining": 3,
+   "Transporting": 2
+  }
+ },
+ "Serpent": {
+  "slug": "surfent",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 70,
+   "Price": 968,
+   "Running Speed": 500,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2,
+   "Watering": 3
+  }
+ },
+ "Serpent_Ground": {
+  "slug": "surfent-terra",
+  "stats": {
+   "Defense": 100,
+   "HP": 90,
+   "Melee Attack": 70,
+   "Price": 1205,
+   "Running Speed": 500,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3
+  }
+ },
+ "SharkKid": {
+  "slug": "gobfin",
+  "stats": {
+   "Defense": 75,
+   "HP": 90,
+   "Melee Attack": 90,
+   "Price": 850,
+   "Running Speed": 400,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "SharkKid_Fire": {
+  "slug": "gobfin-ignis",
+  "stats": {
+   "Defense": 75,
+   "HP": 90,
+   "Melee Attack": 90,
+   "Price": 850,
+   "Running Speed": 400,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Kindling": 2,
+   "Transporting": 1
+  }
+ },
+ "SheepBall": {
+  "slug": "lamball",
+  "stats": {
+   "Defense": 70,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 421,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 23,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1,
+   "Handiwork": 1,
+   "Transporting": 1
+  }
+ },
+ "SifuDog": {
+  "slug": "dogen",
+  "stats": {
+   "Defense": 100,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1683,
+   "Running Speed": 300,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 45,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 4,
+   "Medicine Production": 2,
+   "Transporting": 3
+  }
+ },
+ "SkyDragon": {
+  "slug": "quivern",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2081,
+   "Running Speed": 800,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 950,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Handiwork": 2,
+   "Mining": 4,
+   "Transporting": 5
+  }
+ },
+ "SkyDragon_Grass": {
+  "slug": "quivern-botan",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2235,
+   "Running Speed": 800,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 950,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 2,
+   "Mining": 3,
+   "Planting": 5,
+   "Transporting": 4
+  }
+ },
+ "SleeveRabbit": {
+  "slug": "lapure",
+  "stats": {
+   "Defense": 100,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2464,
+   "Running Speed": 600,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 40,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Handiwork": 6
+  }
+ },
+ "SmallArmadillo": {
+  "slug": "kikit",
+  "stats": {
+   "Defense": 90,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 1152,
+   "Running Speed": 800,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 1
+  }
+ },
+ "SmallYeti": {
+  "slug": "snugloo",
+  "stats": {
+   "Defense": 85,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 927,
+   "Running Speed": 400,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 3,
+   "Handiwork": 2,
+   "Mining": 3,
+   "Transporting": 2
+  }
+ },
+ "SnakeGirl": {
+  "slug": "venusa",
+  "stats": {
+   "Defense": 90,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 2680,
+   "Running Speed": 450,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 600,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 6,
+   "Handiwork": 6,
+   "Medicine Production": 5,
+   "Transporting": 2
+  }
+ },
+ "SnowPeafowl": {
+  "slug": "frostplume",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2382,
+   "Running Speed": 500,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Gathering": 2
+  }
+ },
+ "SnowTigerBeastman": {
+  "slug": "bastigor",
+  "stats": {
+   "Defense": 120,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 4425,
+   "Running Speed": 750,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 120,
+   "Sprinting Speed": 1100,
+   "Stamina": 270,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 8,
+   "Mining": 5
+  }
+ },
+ "SoldierBee": {
+  "slug": "beegarde",
+  "stats": {
+   "Defense": 90,
+   "HP": 80,
+   "Melee Attack": 100,
+   "Price": 1166,
+   "Running Speed": 450,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 125,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 3,
+   "Gathering": 3,
+   "Handiwork": 2,
+   "Medicine Production": 2,
+   "Planting": 2,
+   "Transporting": 2
+  }
+ },
+ "StuffedShark": {
+  "slug": "finsider",
+  "stats": {
+   "Defense": 80,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 677,
+   "Running Speed": 250,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 25,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "StuffedShark_Fire": {
+  "slug": "finsider-ignis",
+  "stats": {
+   "Defense": 80,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 749,
+   "Running Speed": 250,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 25,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 2,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "SumoDog": {
+  "slug": "bulldosu",
+  "stats": {
+   "Defense": 100,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 1812,
+   "Running Speed": 600,
+   "Shot Attack": 95,
+   "Slow Walk Speed": 60,
+   "Sprinting Speed": 810,
+   "Stamina": 110,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 4,
+   "Transporting": 3
+  }
+ },
+ "Suzaku": {
+  "slug": "suzaku",
+  "stats": {
+   "Defense": 105,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 2409,
+   "Running Speed": 850,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 350,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5
+  }
+ },
+ "Suzaku_Water": {
+  "slug": "suzaku-aqua",
+  "stats": {
+   "Defense": 105,
+   "HP": 125,
+   "Melee Attack": 100,
+   "Price": 2732,
+   "Running Speed": 850,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1100,
+   "Stamina": 350,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 6
+  }
+ },
+ "SweetsSheep": {
+  "slug": "woolipop",
+  "stats": {
+   "Defense": 90,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 502,
+   "Running Speed": 300,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1
+  }
+ },
+ "SweetsSheep_Ground": {
+  "slug": "woolipop-terra",
+  "stats": {
+   "Defense": 95,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 836,
+   "Running Speed": 300,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 400,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 1
+  }
+ },
+ "SwordCutlassfish": {
+  "slug": "skutlass",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 1342,
+   "Running Speed": 500,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Watering": 4
+  }
+ },
+ "SwordCutlassfish_Fire": {
+  "slug": "skutlass-ignis",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 1442,
+   "Running Speed": 500,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Kindling": 3,
+   "Watering": 2
+  }
+ },
+ "TentacleTurtle": {
+  "slug": "turtacle",
+  "stats": {
+   "Defense": 115,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 661,
+   "Running Speed": 320,
+   "Shot Attack": 75,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 1,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "TentacleTurtle_Ground": {
+  "slug": "turtacle-terra",
+  "stats": {
+   "Defense": 125,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 14950,
+   "Running Speed": 320,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 500,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 3,
+   "Transporting": 1,
+   "Watering": 2
+  }
+ },
+ "ThiefBird": {
+  "slug": "roujay",
+  "stats": {
+   "Defense": 95,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2263,
+   "Running Speed": 950,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1350,
+   "Stamina": 200,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 5,
+   "Transporting": 5
+  }
+ },
+ "ThunderBird": {
+  "slug": "beakon",
+  "stats": {
+   "Defense": 80,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 1934,
+   "Running Speed": 750,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1200,
+   "Stamina": 160,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 2,
+   "Generating Electricity": 4,
+   "Transporting": 5
+  }
+ },
+ "ThunderBird_Ice": {
+  "slug": "beakon-cryst",
+  "stats": {
+   "Defense": 85,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2227,
+   "Running Speed": 750,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1200,
+   "Stamina": 160,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Gathering": 2,
+   "Transporting": 5
+  }
+ },
+ "ThunderDog": {
+  "slug": "rayhound",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1205,
+   "Running Speed": 700,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 110,
+   "Sprinting Speed": 1150,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 4
+  }
+ },
+ "ThunderDog_Ice": {
+  "slug": "rayhound-cryst",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1138,
+   "Running Speed": 700,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 110,
+   "Sprinting Speed": 1150,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 3
+  }
+ },
+ "ThunderDragonMan": {
+  "slug": "orserk",
+  "stats": {
+   "Defense": 115,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 4136,
+   "Running Speed": 900,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1200,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Generating Electricity": 8,
+   "Handiwork": 3,
+   "Transporting": 4
+  }
+ },
+ "ThunderFluffyBird": {
+  "slug": "dynamoff",
+  "stats": {
+   "Defense": 80,
+   "HP": 75,
+   "Melee Attack": 100,
+   "Price": 1963,
+   "Running Speed": 700,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1000,
+   "Stamina": 140,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Generating Electricity": 6,
+   "Transporting": 3
+  }
+ },
+ "TropicalOstrich": {
+  "slug": "palumba",
+  "stats": {
+   "Defense": 115,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 2529,
+   "Running Speed": 550,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 150,
+   "Sprinting Speed": 1000,
+   "Stamina": 180,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Mining": 5,
+   "Planting": 4
+  }
+ },
+ "Umihebi": {
+  "slug": "jormuntide",
+  "stats": {
+   "Defense": 100,
+   "HP": 130,
+   "Melee Attack": 150,
+   "Price": 3723,
+   "Running Speed": 600,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1000,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Watering": 7
+  }
+ },
+ "Umihebi_Fire": {
+  "slug": "jormuntide-ignis",
+  "stats": {
+   "Defense": 100,
+   "HP": 130,
+   "Melee Attack": 150,
+   "Price": 3577,
+   "Running Speed": 600,
+   "Shot Attack": 130,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1000,
+   "Stamina": 150,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 7
+  }
+ },
+ "VenusFlytrap": {
+  "slug": "carnibora",
+  "stats": {
+   "Defense": 85,
+   "HP": 85,
+   "Melee Attack": 100,
+   "Price": 1875,
+   "Running Speed": 600,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 750,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Handiwork": 4,
+   "Planting": 6,
+   "Transporting": 2
+  }
+ },
+ "VioletFairy": {
+  "slug": "vaelet",
+  "stats": {
+   "Defense": 120,
+   "HP": 100,
+   "Melee Attack": 100,
+   "Price": 2095,
+   "Running Speed": 400,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2,
+   "Gathering": 3,
+   "Handiwork": 3,
+   "Medicine Production": 3,
+   "Planting": 3,
+   "Transporting": 2
+  }
+ },
+ "VolcanicMonster": {
+  "slug": "reptyro",
+  "stats": {
+   "Defense": 120,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2576,
+   "Running Speed": 550,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1000,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5,
+   "Mining": 5
+  }
+ },
+ "VolcanicMonster_Ice": {
+  "slug": "reptyro-cryst",
+  "stats": {
+   "Defense": 130,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2797,
+   "Running Speed": 550,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 1000,
+   "Stamina": 220,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Mining": 5
+  }
+ },
+ "VolcanoDragon": {
+  "slug": "moldron",
+  "stats": {
+   "Defense": 115,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2911,
+   "Running Speed": 650,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 850,
+   "Stamina": 270,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5,
+   "Mining": 5
+  }
+ },
+ "VolcanoDragon_Ice": {
+  "slug": "moldron-cryst",
+  "stats": {
+   "Defense": 120,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 3328,
+   "Running Speed": 650,
+   "Shot Attack": 125,
+   "Slow Walk Speed": 55,
+   "Sprinting Speed": 850,
+   "Stamina": 270,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Mining": 5
+  }
+ },
+ "WeaselDragon": {
+  "slug": "chillet",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1270,
+   "Running Speed": 750,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1050,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Gathering": 1
+  }
+ },
+ "WeaselDragon_Fire": {
+  "slug": "chillet-ignis",
+  "stats": {
+   "Defense": 80,
+   "HP": 90,
+   "Melee Attack": 100,
+   "Price": 1670,
+   "Running Speed": 750,
+   "Shot Attack": 85,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 1050,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 3,
+   "Kindling": 4
+  }
+ },
+ "Werewolf": {
+  "slug": "loupmoon",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 130,
+   "Price": 842,
+   "Running Speed": 600,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2
+  }
+ },
+ "Werewolf_Ice": {
+  "slug": "loupmoon-cryst",
+  "stats": {
+   "Defense": 80,
+   "HP": 80,
+   "Melee Attack": 130,
+   "Price": 1176,
+   "Running Speed": 600,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 800,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Handiwork": 4
+  }
+ },
+ "WhiteAlienDragon": {
+  "slug": "xenogard",
+  "stats": {
+   "Defense": 130,
+   "HP": 110,
+   "Melee Attack": 100,
+   "Price": 2845,
+   "Running Speed": 790,
+   "Shot Attack": 120,
+   "Slow Walk Speed": 115,
+   "Sprinting Speed": 1200,
+   "Stamina": 250,
+   "Support": 100
+  },
+  "work": {
+   "Mining": 4
+  }
+ },
+ "WhiteDeer": {
+  "slug": "celesdir",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 2911,
+   "Running Speed": 800,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1200,
+   "Stamina": 260,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4
+  }
+ },
+ "WhiteDeer_Dark": {
+  "slug": "celesdir-noct",
+  "stats": {
+   "Defense": 100,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 3528,
+   "Running Speed": 800,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1200,
+   "Stamina": 260,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4
+  }
+ },
+ "WhiteMoth": {
+  "slug": "sibelyx",
+  "stats": {
+   "Defense": 100,
+   "HP": 110,
+   "Melee Attack": 90,
+   "Price": 1589,
+   "Running Speed": 400,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 90
+  },
+  "work": {
+   "Cooling": 3,
+   "Farming": 3,
+   "Medicine Production": 3
+  }
+ },
+ "WhiteMoth_Neutral": {
+  "slug": "sibelyx-primo",
+  "stats": {
+   "Defense": 100,
+   "HP": 115,
+   "Melee Attack": 100,
+   "Price": 2094,
+   "Running Speed": 400,
+   "Shot Attack": 90,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 90
+  },
+  "work": {
+   "Farming": 4,
+   "Medicine Production": 3
+  }
+ },
+ "WhiteShieldDragon": {
+  "slug": "silvegis",
+  "stats": {
+   "Defense": 115,
+   "HP": 120,
+   "Melee Attack": 100,
+   "Price": 3710,
+   "Running Speed": 700,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 90,
+   "Sprinting Speed": 1050,
+   "Stamina": 280,
+   "Support": 100
+  },
+  "work": {}
+ },
+ "WhiteTiger": {
+  "slug": "cryolinx",
+  "stats": {
+   "Defense": 110,
+   "HP": 100,
+   "Melee Attack": 140,
+   "Price": 1987,
+   "Running Speed": 720,
+   "Shot Attack": 100,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 4,
+   "Handiwork": 3,
+   "Transporting": 4
+  }
+ },
+ "WhiteTiger_Ground": {
+  "slug": "cryolinx-terra",
+  "stats": {
+   "Defense": 110,
+   "HP": 100,
+   "Melee Attack": 140,
+   "Price": 2484,
+   "Running Speed": 720,
+   "Shot Attack": 105,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 900,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 2,
+   "Mining": 5,
+   "Transporting": 4
+  }
+ },
+ "WindChimes": {
+  "slug": "hangyu",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 70,
+   "Price": 541,
+   "Running Speed": 400,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1,
+   "Handiwork": 1,
+   "Transporting": 2
+  }
+ },
+ "WindChimes_Ice": {
+  "slug": "hangyu-cryst",
+  "stats": {
+   "Defense": 70,
+   "HP": 80,
+   "Melee Attack": 70,
+   "Price": 728,
+   "Running Speed": 400,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 50,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 2,
+   "Gathering": 2,
+   "Handiwork": 3,
+   "Transporting": 3
+  }
+ },
+ "WingGolem": {
+  "slug": "knocklem",
+  "stats": {
+   "Defense": 135,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 3767,
+   "Running Speed": 550,
+   "Shot Attack": 110,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 4,
+   "Mining": 7,
+   "Transporting": 7
+  }
+ },
+ "WingGolem_Fire": {
+  "slug": "knocklem-ignis",
+  "stats": {
+   "Defense": 135,
+   "HP": 105,
+   "Melee Attack": 100,
+   "Price": 3895,
+   "Running Speed": 550,
+   "Shot Attack": 115,
+   "Slow Walk Speed": 100,
+   "Sprinting Speed": 700,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Kindling": 5,
+   "Mining": 7,
+   "Transporting": 7
+  }
+ },
+ "WizardOwl": {
+  "slug": "hoocrates",
+  "stats": {
+   "Defense": 80,
+   "HP": 70,
+   "Melee Attack": 70,
+   "Price": 443,
+   "Running Speed": 380,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 26,
+   "Sprinting Speed": 550,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Gathering": 1
+  }
+ },
+ "WoolFox": {
+  "slug": "cremis",
+  "stats": {
+   "Defense": 75,
+   "HP": 70,
+   "Melee Attack": 100,
+   "Price": 489,
+   "Running Speed": 300,
+   "Shot Attack": 70,
+   "Slow Walk Speed": 20,
+   "Sprinting Speed": 450,
+   "Stamina": 100,
+   "Support": 100
+  },
+  "work": {
+   "Farming": 2,
+   "Gathering": 1
+  }
+ },
+ "Yeti": {
+  "slug": "wumpo",
+  "stats": {
+   "Defense": 100,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 2591,
+   "Running Speed": 600,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1050,
+   "Stamina": 240,
+   "Support": 100
+  },
+  "work": {
+   "Cooling": 5,
+   "Handiwork": 3,
+   "Transporting": 6
+  }
+ },
+ "Yeti_Grass": {
+  "slug": "wumpo-botan",
+  "stats": {
+   "Defense": 110,
+   "HP": 140,
+   "Melee Attack": 100,
+   "Price": 2743,
+   "Running Speed": 600,
+   "Shot Attack": 80,
+   "Slow Walk Speed": 70,
+   "Sprinting Speed": 1050,
+   "Stamina": 240,
+   "Support": 100
+  },
+  "work": {
+   "Handiwork": 3,
+   "Planting": 3,
+   "Transporting": 6
+  }
+ }
+}

@@ -11,7 +11,7 @@ import sv_ttk
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from palsave import wgs, palz, backup, meta, objetos, personagem, traducao, icones_rt, breeding
+from palsave import wgs, palz, backup, meta, objetos, personagem, traducao, icones_rt, breeding, perfil
 from palsave.level import LevelSave
 
 WGS_DIR = os.path.expandvars(
@@ -860,6 +860,8 @@ class TelaPals(Tela):
         ttk.Label(cab, text="Caixa de Pals  (%d)" % len(self.pals), style="Titulo.TLabel").pack(side="left")
         ttk.Button(cab, text="Igualar nivel de todos ao personagem (Nv %d)" % self.nivel_jogador,
                    command=self.igualar_niveis).pack(side="right")
+        ttk.Button(cab, text="Otimizar / modificar em massa...", style="Accent.TButton",
+                   command=lambda: JanelaOtimizar(self.app, self)).pack(side="right", padx=(0, 6))
         corpo = ttk.Panedwindow(self, orient="horizontal"); corpo.pack(fill="both", expand=True)
 
         esq = ttk.Labelframe(corpo, text="Seus Pals", padding=6); corpo.add(esq, weight=1)
@@ -1052,11 +1054,12 @@ class TelaPals(Tela):
                 row=lin, column=0, columnspan=2, sticky="w", pady=1); lin += 1
             self.v_pass.append(var)
 
-        ttk.Label(self.ed, text="Sugerir melhores passivas:", style="Sub.TLabel").grid(
-            row=lin, column=0, columnspan=3, sticky="w", pady=(10, 2)); lin += 1
-        self.v_preset = tk.StringVar()
-        ttk.Combobox(self.ed, textvariable=self.v_preset, values=list(self.PRESETS), state="readonly",
-                     width=28).grid(row=lin, column=0, columnspan=2, sticky="w"); lin += 1
+        ttk.Label(self.ed, text="Sugerir melhores passivas (por funcao do Pal):",
+                  style="Sub.TLabel").grid(row=lin, column=0, columnspan=3, sticky="w", pady=(10, 2)); lin += 1
+        self.v_preset = tk.StringVar(value="Automatica")
+        ttk.Combobox(self.ed, textvariable=self.v_preset, state="readonly", width=28,
+                     values=["Automatica", "Combate (equipe)", "Trabalho (base)", "Montaria"]
+                     ).grid(row=lin, column=0, columnspan=2, sticky="w"); lin += 1
         bs = ttk.Frame(self.ed); bs.grid(row=lin, column=0, columnspan=2, sticky="w", pady=(4, 2)); lin += 1
         ttk.Button(bs, text="Ver sugestao", command=self._ver_sug).pack(side="left")
         self.b_aplicar_sug = ttk.Button(bs, text="Aplicar aos 4 espacos", command=self._aplicar_sug,
@@ -1068,14 +1071,34 @@ class TelaPals(Tela):
         ttk.Button(self.ed, text="Guardar alteracoes deste Pal", style="Accent.TButton",
                    command=self._guardar).grid(row=lin, column=0, columnspan=2, sticky="w", pady=8)
 
+    def _papel_escolhido(self, esp):
+        escolha = self.v_preset.get()
+        if escolha.startswith("Combate"):
+            return "combate"
+        if escolha.startswith("Trabalho"):
+            return "trabalho"
+        if escolha.startswith("Montaria"):
+            return "montaria"
+        a = perfil.carregar().analisar(esp)          # automatica
+        return "trabalho" if a["papel"] in ("trabalho", "ambos") else "combate"
+
     def _ver_sug(self):
-        nome = self.v_preset.get()
-        if not nome:
-            messagebox.showinfo("Sugestao", "Escolha um perfil na lista."); return
-        ids, expl = self.PRESETS[nome]
+        if not self.atual:
+            return
+        esp = self.atual.especie
+        pf = perfil.carregar()
+        a = pf.analisar(esp)
+        papel = self._papel_escolhido(esp)
+        ids = pf.passivas(esp, papel)
         legiveis = [self.pass_id2nome.get(i, i) for i in ids]
         self._sug_ids = legiveis
-        self.lbl_sug.configure(text="%s\n\nPassivas sugeridas:\n- %s" % (expl, "\n- ".join(legiveis)))
+        works = ", ".join("%s Lv%d" % (n, v) for n, v in a["works"]) or "nenhuma"
+        rot = {"combate": "Combate (equipe)", "trabalho": "Trabalho (base)",
+               "montaria": "Montaria"}[papel]
+        self.lbl_sug.configure(text=(
+            "Analise: combate %s | aptidoes: %s\nFuncao escolhida: %s\n\n"
+            "Passivas sugeridas (para este Pal):\n- %s"
+            % (a["combate_lbl"], works, rot, "\n- ".join(legiveis))))
         self.b_aplicar_sug.configure(state="normal")
 
     def _aplicar_sug(self):
@@ -1256,6 +1279,153 @@ class TelaBreeding(Tela):
             self.tv_par.insert("", "end", text=" %s  x  %s" % (traducao.nome_pal(a2), traducao.nome_pal(b2)),
                                values=("Unico" if tipo == "unico" else "Normal", obs),
                                tags=("aviso",) if obs and "trocar" in obs else (), **kw)
+
+
+# ===========================================================================
+class JanelaOtimizar(tk.Toplevel):
+    """Modifica varios Pals de uma vez: passivas por funcao, IVs, condensacao,
+    almas e aptidoes. No modo automatico, olha a caixa e decide base vs combate,
+    dividindo os repetidos (foco maior em base)."""
+
+    ROTULO = {"combate": "Combate (equipe)", "trabalho": "Trabalho (base)", "montaria": "Montaria"}
+
+    def __init__(self, app, tela):
+        tk.Toplevel.__init__(self, app)
+        self.app = app; self.tela = tela
+        self.pf = perfil.carregar()
+        self.title("Otimizar / modificar Pals em massa")
+        self.geometry("860x640"); self.transient(app)
+        try:
+            self.iconbitmap(default=os.path.join(BASE, "assets", "logo.ico"))
+        except Exception:
+            pass
+
+        top = ttk.Frame(self, padding=(10, 8)); top.pack(fill="x")
+        ttk.Label(top, text="Onde:").pack(side="left")
+        self.v_scope = tk.StringVar(value="Na caixa (Palbox)")
+        cbs = ttk.Combobox(top, textvariable=self.v_scope, state="readonly", width=24,
+                           values=["Com o personagem (equipe)", "Na caixa (Palbox)",
+                                   "Nas bases", "Todos"])
+        cbs.pack(side="left", padx=4)
+        ttk.Label(top, text="Funcao:").pack(side="left", padx=(10, 0))
+        self.v_modo = tk.StringVar(value="Automatica (base x combate)")
+        cbm = ttk.Combobox(top, textvariable=self.v_modo, state="readonly", width=26,
+                           values=["Automatica (base x combate)", "Todos para Combate",
+                                   "Todos para Trabalho (base)", "Todos para Montaria"])
+        cbm.pack(side="left", padx=4)
+        cbs.bind("<<ComboboxSelected>>", lambda e: self.calcular())
+        cbm.bind("<<ComboboxSelected>>", lambda e: self.calcular())
+
+        opf = ttk.Labelframe(self, text="O que aplicar em cada Pal", padding=8)
+        opf.pack(fill="x", padx=10, pady=(0, 4))
+        self.op = {}
+        for txt, key, val in [("Passivas por funcao", "passivas", True),
+                              ("IVs altos (90-100)", "ivs", True),
+                              ("Condensacao 4 estrelas", "cond", True),
+                              ("Almas (Estatua do Poder)", "almas", True),
+                              ("Aptidoes no max. (base)", "aptidoes", True),
+                              ("Igualar nivel ao personagem", "nivel", True)]:
+            self.op[key] = tk.BooleanVar(value=val)
+            ttk.Checkbutton(opf, text=txt, variable=self.op[key]).pack(side="left", padx=6)
+
+        self.tv = ttk.Treeview(self, columns=("papel", "det"), show="tree headings",
+                               height=16, style="Big.Treeview")
+        self.tv.heading("#0", text="Pal"); self.tv.heading("papel", text="Funcao")
+        self.tv.heading("det", text="Motivo / detalhe")
+        self.tv.column("#0", width=230); self.tv.column("papel", width=140, stretch=False)
+        self.tv.column("det", width=380)
+        self.tv.tag_configure("base", foreground="#4aa3df")
+        self.tv.tag_configure("combate", foreground="#e08a3c")
+        sc = ttk.Scrollbar(self, orient="vertical", command=self.tv.yview)
+        self.tv.configure(yscrollcommand=sc.set)
+        sc.pack(side="right", fill="y"); self.tv.pack(fill="both", expand=True, padx=(10, 0), pady=4)
+
+        rod = ttk.Frame(self, padding=10); rod.pack(fill="x")
+        self.lbl = ttk.Label(rod, text="", style="Sub.TLabel"); self.lbl.pack(side="left")
+        ttk.Button(rod, text="APLICAR", style="Accent.TButton", command=self.aplicar).pack(side="right")
+        ttk.Button(rod, text="Fechar", command=self.destroy).pack(side="right", padx=6)
+
+        self.calcular()
+
+    def _pals_do_escopo(self):
+        loc = self.v_scope.get()
+        if loc == "Todos":
+            return list(self.tela.pals)
+        alvo = ("party" if loc.startswith("Com") else
+                "caixa" if loc.startswith("Na caixa") else "base")
+        out = []
+        for p in self.tela.pals:
+            if self.tela.cat_cont.get(self.tela._cont_de(p)) == alvo:
+                out.append(p)
+        return out
+
+    def calcular(self):
+        for i in self.tv.get_children():
+            self.tv.delete(i)
+        pals = self._pals_do_escopo()
+        modo = self.v_modo.get()
+        if modo.startswith("Automatica"):
+            plano = self.pf.plano([(p.especie, id(p)) for p in pals])
+            self.plano = {id(p): plano.get(id(p), "combate") for p in pals}
+        else:
+            fix = ("combate" if "Combate" in modo else
+                   "trabalho" if "Trabalho" in modo else "montaria")
+            self.plano = {id(p): fix for p in pals}
+        self.alvo = pals
+        nb = sum(1 for v in self.plano.values() if v == "trabalho")
+        nc = len(pals) - nb
+        for p in pals:
+            papel = self.plano[id(p)]
+            a = self.pf.analisar(p.especie)
+            if papel == "trabalho":
+                det = "aptidoes: " + (", ".join("%s Lv%d" % (n, v) for n, v in a["works"]) or "-")
+                tag = "base"
+            else:
+                det = "combate: %s" % a["combate_lbl"]
+                tag = "combate"
+            ico = icones_rt.pal(p.especie)
+            kw = {"image": ico} if ico else {}
+            self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
+                           values=(self.ROTULO[papel], det), tags=(tag,), **kw)
+        self.lbl.configure(text="%d Pals   |   %d para base, %d para combate" % (len(pals), nb, nc))
+
+    def aplicar(self):
+        if not self.alvo:
+            messagebox.showinfo("Nada", "Nenhum Pal no escopo escolhido.", parent=self); return
+        if not messagebox.askyesno("Confirmar",
+                                   "Modificar %d Pals de uma vez?\n\nSo vale ao clicar em SALVAR NO JOGO "
+                                   "depois (com backup automatico)." % len(self.alvo), parent=self):
+            return
+        md = personagem.moldes(self.tela.pals)
+        n = self.tela.nivel_jogador
+        op = {k: v.get() for k, v in self.op.items()}
+        for p in self.alvo:
+            papel = self.plano[id(p)]
+            esp = p.especie
+            if op["nivel"]:
+                p._garante("Level", md["Level"]); p.set_nivel(n)
+            if op["passivas"]:
+                p.set_passivas_f(self.pf.passivas(esp, papel), md["PassiveSkillList"])
+            if op["ivs"]:
+                p.set_talento_f("Talent_HP", random.randint(90, 100), md["Talent_HP"])
+                p.set_talento_f("Talent_Shot", random.randint(90, 100), md["Talent_Shot"])
+                p.set_talento_f("Talent_Defense", random.randint(90, 100), md["Talent_Defense"])
+            if op["cond"]:
+                p.set_condensacao_estrelas(4, md["Rank"])
+            if op["almas"]:
+                for qual, val in self.pf.almas(papel).items():
+                    p.set_alma(qual, val)
+            if op["aptidoes"] and papel == "trabalho":
+                ap = self.pf.aptidoes_enum(esp, 3)
+                if ap:
+                    p.set_aptidoes(ap, md["GotWorkSuitabilityAddRankList"])
+            p.gravar()
+        self.app.marcar_sujo()
+        self.tela.render()
+        self.app.status("%d Pals modificados em massa - clique em SALVAR NO JOGO" % len(self.alvo), "#e0c060")
+        messagebox.showinfo("Pronto", "%d Pals foram modificados.\nClique em SALVAR NO JOGO." % len(self.alvo),
+                            parent=self)
+        self.destroy()
 
 
 # ===========================================================================

@@ -243,10 +243,81 @@ class PalWrap(object):
         if "Rank" in self.sp:
             _set_num(self.sp["Rank"], max(1, min(int(v), 5)))
 
+    # -------- injecao (muitos Pals nao guardam o campo quando esta no padrao) --------
+    def _garante(self, chave, molde):
+        import copy
+        if chave not in self.sp and molde is not None:
+            self.sp[chave] = copy.deepcopy(molde)
+
+    def set_condensacao_estrelas(self, estrelas, molde=None):
+        """estrelas 0-4 -> campo Rank 1-5 (cria o campo se faltar)."""
+        self._garante("Rank", molde)
+        if "Rank" in self.sp:
+            _set_num(self.sp["Rank"], max(1, min(int(estrelas) + 1, 5)))
+
+    def set_talento_f(self, chave, v, molde=None):
+        self._garante(chave, molde)
+        if chave in self.sp:
+            _set_num(self.sp[chave], max(0, min(int(v), 100)))
+
+    def set_passivas_f(self, lista, molde=None):
+        lista = [x for x in lista if x][:4]
+        self._garante("PassiveSkillList", molde)
+        n = self.sp.get("PassiveSkillList")
+        if n:
+            n["value"]["values"] = lista
+
+    # almas da Estatua do Poder (GotExStatusPointList existe em todos os Pals)
+    _ALMA_JP = {"hp": "最大HP", "sp": "最大SP", "atk": "攻撃力",
+                "peso": "所持重量", "trabalho": "作業速度"}
+
+    def set_alma(self, qual, valor):
+        campo = self.sp.get("GotExStatusPointList")
+        jp = self._ALMA_JP.get(qual)
+        if not campo or not jp:
+            return
+        for e in campo["value"]["values"]:
+            if e.get("StatusName", {}).get("value") == jp:
+                _set_num(e["StatusPoint"], int(valor))
+                return
+
+    def set_aptidoes(self, enum_rank, molde_lista=None):
+        """enum_rank: {'Mining': 4, ...} (nome do enum). Cria/substitui a lista."""
+        import copy
+        self._garante("GotWorkSuitabilityAddRankList", molde_lista)
+        campo = self.sp.get("GotWorkSuitabilityAddRankList")
+        if not campo:
+            return
+        base = campo["value"]["values"]
+        modelo = copy.deepcopy(base[0]) if base else None
+        if modelo is None:
+            return
+        novos = []
+        for work, rank in enum_rank.items():
+            e = copy.deepcopy(modelo)
+            e["WorkSuitability"]["value"]["value"] = "EPalWorkSuitability::" + work
+            _set_num(e["Rank"], int(rank))
+            novos.append(e)
+        campo["value"]["values"] = novos
+
     def gravar(self):
         w = FArchiveWriter()
         w.properties(self.obj)
         self._prop["value"]["values"] = list(w.bytes() + self.cauda)
+
+
+def moldes(pals):
+    """Coleta 'moldes' de campos que muitos Pals nao guardam, para poder injeta-los."""
+    campos = ("Level", "Rank", "Talent_HP", "Talent_Shot", "Talent_Defense",
+              "PassiveSkillList", "GotWorkSuitabilityAddRankList")
+    m = {}
+    for c in campos:
+        if c == "GotWorkSuitabilityAddRankList":
+            m[c] = next((p.sp[c] for p in pals
+                         if c in p.sp and p.sp[c]["value"]["values"]), None)
+        else:
+            m[c] = next((p.sp[c] for p in pals if c in p.sp), None)
+    return m
 
 
 def pals_do_mundo(level):
