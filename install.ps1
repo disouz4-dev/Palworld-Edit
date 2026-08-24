@@ -64,9 +64,19 @@ $sc.TargetPath = $pythonw
 $sc.Arguments = '"' + (Join-Path $raiz "PalSaveEditor.pyw") + '"'
 $sc.WorkingDirectory = $raiz
 $ico = Join-Path $raiz "assets\logo.ico"
-if (Test-Path $ico) { $sc.IconLocation = $ico }
+if (Test-Path $ico) {
+    # o indice ",0" e obrigatorio; sem ele o Windows ignora e usa o icone do pythonw
+    $sc.IconLocation = "$ico,0"
+}
 $sc.Description = "Palworld Editor"
 $sc.Save()
+
+# forca o Explorer a reler o icone (evita ficar mostrando o icone antigo em cache)
+try {
+    $sig = '[DllImport("shell32.dll")] public static extern void SHChangeNotify(int e, int f, IntPtr a, IntPtr b);'
+    $sh = Add-Type -MemberDefinition $sig -Name Shell -Namespace Win32 -PassThru
+    $sh::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)  # SHCNE_ASSOCCHANGED
+} catch {}
 
 Write-Host ""
 Write-Host "== Pronto! ==" -ForegroundColor Green

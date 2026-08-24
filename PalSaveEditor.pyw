@@ -319,6 +319,61 @@ class App(tk.Tk):
     def abrir_pasta_backup(self):
         os.makedirs(BACKUP_DIR, exist_ok=True); webbrowser.open(BACKUP_DIR)
 
+    # ---------- atualizacao (GitHub) ----------
+    def verificar_atualizacao(self):
+        self.status("verificando atualizacoes no GitHub...")
+        self.pb.start(12)
+        threading.Thread(target=self._verificar_th, daemon=True).start()
+
+    def _verificar_th(self):
+        from palsave import atualizacao
+        self._na_ui(self._verificado, atualizacao.verificar())
+
+    def _verificado(self, res):
+        self.pb.stop()
+        if not res.get("ok"):
+            self.status("nao foi possivel verificar", "#ff8080")
+            messagebox.showwarning("Atualizacao",
+                                   "Nao consegui verificar agora (sem internet?).\n\n%s"
+                                   % res.get("erro", ""))
+            return
+        if not res["tem_update"]:
+            self.status("voce ja esta na versao mais recente (%s)" % res["local"], "#7fe0a0")
+            messagebox.showinfo("Atualizacao",
+                                "Voce ja esta na versao mais recente.\n\nVersao instalada: %s"
+                                % res["local"])
+            return
+        self.status("atualizacao disponivel: %s" % res["remota"], "#57a6ff")
+        notas = ("\n\nNovidades: " + res["notas"]) if res.get("notas") else ""
+        if messagebox.askyesno("Atualizacao disponivel",
+                               "Ha uma versao nova!\n\nInstalada: %s\nNova: %s%s\n\n"
+                               "Baixar e instalar agora?\n\n(Ao terminar o editor fecha; seus "
+                               "backups e configuracoes sao mantidos.)"
+                               % (res["local"], res["remota"], notas)):
+            self._instalar_update()
+
+    def _instalar_update(self):
+        self.status("instalando atualizacao...")
+        self.pb.start(12)
+        threading.Thread(target=self._instalar_th, daemon=True).start()
+
+    def _instalar_th(self):
+        from palsave import atualizacao
+        ok, msg = atualizacao.instalar(log=lambda m: self._na_ui(self.status, m))
+        self._na_ui(self._instalado, ok, msg)
+
+    def _instalado(self, ok, msg):
+        self.pb.stop()
+        if ok:
+            self.status("atualizado! reabra o editor.", "#7fe0a0")
+            messagebox.showinfo("Pronto",
+                                "Atualizacao instalada.\n\n%s\n\nO editor vai fechar agora. "
+                                "Abra de novo pelo atalho." % msg)
+            self.destroy()
+        else:
+            self.status("falha na atualizacao", "#ff8080")
+            messagebox.showerror("Atualizacao", msg)
+
 
 # ===========================================================================
 class Tela(ttk.Frame):
@@ -355,6 +410,13 @@ class TelaInicio(Tela):
         ttk.Button(bar, text="Restaurar backup...",
                    command=lambda: JanelaRestaurar(app)).pack(side="left", padx=4)
         ttk.Button(bar, text="Pasta de backups", command=app.abrir_pasta_backup).pack(side="left", padx=4)
+
+        from palsave import atualizacao
+        bar2 = ttk.Frame(wrap); bar2.pack(pady=(12, 0))
+        ttk.Label(bar2, text="Versao %s" % atualizacao.versao_local(),
+                  style="Sub.TLabel").pack(side="left", padx=(0, 10))
+        ttk.Button(bar2, text="Verificar atualizacao",
+                   command=app.verificar_atualizacao).pack(side="left")
 
     def _card(self, grade, r, c, icone, tit, sub, destino):
         pal = self.app.paleta()
