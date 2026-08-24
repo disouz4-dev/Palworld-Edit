@@ -675,6 +675,18 @@ class TelaPals(Tela):
         ttk.Label(f, text="Buscar:").pack(side="left")
         self.v_b = tk.StringVar(); self.v_b.trace_add("write", lambda *a: self.render())
         ttk.Entry(f, textvariable=self.v_b).pack(side="left", fill="x", expand=True, padx=4)
+        f2 = ttk.Frame(esq); f2.pack(fill="x", pady=(2, 0))
+        ttk.Label(f2, text="Ordenar:").pack(side="left")
+        self.v_ord = tk.StringVar(value="Nome")
+        ttk.Combobox(f2, textvariable=self.v_ord, state="readonly", width=18,
+                     values=["Nome", "Nivel (maior)", "Nivel (menor)", "Sexo"]).pack(side="left", padx=4)
+        self.v_ord.trace_add("write", lambda *a: self.render())
+        self.v_so_macho = tk.BooleanVar(value=False)
+        self.v_so_femea = tk.BooleanVar(value=False)
+        ttk.Checkbutton(f2, text="so M", variable=self.v_so_macho,
+                        command=self.render).pack(side="left", padx=(8, 0))
+        ttk.Checkbutton(f2, text="so F", variable=self.v_so_femea,
+                        command=self.render).pack(side="left")
         self.tv = ttk.Treeview(esq, columns=("lv", "g"), show="tree headings", height=22,
                                style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("lv", text="Nv"); self.tv.heading("g", text="Sexo")
@@ -705,10 +717,22 @@ class TelaPals(Tela):
         for i in self.tv.get_children():
             self.tv.delete(i)
         b = self.v_b.get().strip().lower(); self.map = {}
-        dados = sorted(self.pals, key=lambda p: traducao.nome_pal(p.especie).lower())
+        ordem = self.v_ord.get()
+        if ordem == "Nivel (maior)":
+            dados = sorted(self.pals, key=lambda p: -p.nivel)
+        elif ordem == "Nivel (menor)":
+            dados = sorted(self.pals, key=lambda p: p.nivel)
+        elif ordem == "Sexo":
+            dados = sorted(self.pals, key=lambda p: (p.genero, traducao.nome_pal(p.especie).lower()))
+        else:
+            dados = sorted(self.pals, key=lambda p: traducao.nome_pal(p.especie).lower())
         for p in dados:
             nome = traducao.nome_pal(p.especie)
             if b and b not in nome.lower() and b not in p.especie.lower():
+                continue
+            if self.v_so_macho.get() and p.genero != "M":
+                continue
+            if self.v_so_femea.get() and p.genero != "F":
                 continue
             ico = icones_rt.pal(p.especie)
             kw = {"image": ico} if ico else {}
