@@ -6,7 +6,11 @@ Estrutura:
   wgs/<conta>/<GUID>/container.N    aponta para o arquivo de dados
   wgs/<conta>/<GUID>/<GUID2>        o arquivo de dados em si (o save comprimido)
 """
-import os, struct, io
+import os, struct, io, uuid, time
+
+def _now_filetime():
+    """FILETIME do Windows: intervalos de 100ns desde 1601-01-01 UTC."""
+    return int((time.time() + 11644473600) * 10_000_000)
 
 def find_wgs_root(wgs_dir):
     """Retorna a pasta da conta (a que contem containers.index)."""
@@ -37,15 +41,19 @@ def parse_index(root):
     entries = []
     for _ in range(cnt):
         name = rstr(); rstr(); rstr()
+        seq_off = f.tell()
         seq, = rd("<B")
+        state_off = f.tell()
         state, = rd("<i")
         cguid = f.read(16)
+        ft_off = f.tell()
         ft, = rd("<q")
         rd("<q")
         size_off = f.tell()          # offset do int64 de tamanho — usado pra corrigir
         size, = rd("<q")
         entries.append(dict(name=name, seq=seq, state=state, folder=_guid_str(cguid),
-                            filetime=ft, size=size, size_off=size_off))
+                            filetime=ft, size=size, size_off=size_off,
+                            seq_off=seq_off, state_off=state_off, filetime_off=ft_off))
     if f.tell() != len(data):
         raise ValueError("containers.index nao foi lido ate o fim (%d de %d)" % (f.tell(), len(data)))
     return dict(version=ver, pkg=pkg, entries=entries, raw=data, path=path)
@@ -87,14 +95,89 @@ def read_blob(root, entry):
         raise FileNotFoundError("sem arquivo de dados para " + entry["name"])
     return fs[0][1], open(fs[0][1], "rb").read()
 
+def _guid_bytes():
+    """16 bytes aleatorios para um novo GUID de blob."""
+    return uuid.uuid4().bytes
+
+def _ler_container_file(path):
+    raw = open(path, "rb").read()
+    ver, n = struct.unpack_from("<ii", raw, 0)
+    blobs, off = [], 8
+    for _ in range(n):
+        nome = raw[off:off + 128]; off += 128
+        g1 = raw[off:off + 16]; off += 16
+        g2 = raw[off:off + 16]; off += 16
+        blobs.append([nome, g1, g2])
+    return ver, blobs
+
+def _escrever_container_file(path, ver, blobs):
+    out = struct.pack("<ii", ver, len(blobs))
+    for nome, g1, g2 in blobs:
+        out += nome + g1 + g2
+    _atomic_write(path, out)
+
 def write_blob(root, index, entry, data):
-    """Grava o save e corrige o tamanho no indice."""
-    fs = blob_files(root, entry)
-    if not fs:
-        raise FileNotFoundError("sem arquivo de dados para " + entry["name"])
-    _atomic_write(fs[0][1], data)
-    set_entry_size(index, entry, len(data))
+    """Grava o save do jeito que o Xbox/GDK espera: copy-on-write.
+
+    Em vez de sobrescrever o arquivo de dados no lugar (o que o GDK detecta como
+    corrupcao), cria um NOVO blob com GUID novo, um novo container.N+1 apontando
+    para ele, e atualiza o indice (seq++, filetime=agora, tamanho). Assim cada
+    edicao vira uma nova versao, exatamente como o proprio jogo faz ao salvar.
+    """
+    folder = os.path.join(root, entry["folder"])
+    seq = entry["seq"]
+    cont_atual = os.path.join(folder, "container.%d" % seq)
+    if not os.path.isfile(cont_atual):
+        cands = sorted(x for x in os.listdir(folder) if x.startswith("container."))
+        if not cands:
+            raise FileNotFoundError("sem container.N em " + folder)
+        cont_atual = os.path.join(folder, cands[0])
+        seq = int(cont_atual.rsplit(".", 1)[1])
+
+    ver, blobs = _ler_container_file(cont_atual)
+    if not blobs:
+        raise ValueError("container.N sem blobs")
+
+    # 1) novo blob com GUID novo
+    novo_guid = _guid_bytes()
+    novo_arq = os.path.join(folder, _guid_str(novo_guid))
+    _atomic_write(novo_arq, data)
+
+    # 2) novo container.N+1 (o primeiro blob -- "Data" -- passa a apontar pro novo GUID)
+    guids_antigos = []
+    for i, (nome, g1, g2) in enumerate(blobs):
+        if i == 0:
+            guids_antigos.extend([g1, g2])
+            blobs[i] = [nome, novo_guid, novo_guid]   # cloud==file, como num container sincronizado
+    novo_seq = seq + 1
+    if novo_seq > 255:
+        novo_seq = 1
+    novo_cont = os.path.join(folder, "container.%d" % novo_seq)
+    _escrever_container_file(novo_cont, ver, blobs)
+
+    # 3) atualiza o indice: seq, filetime (agora), tamanho
+    b = bytearray(index["raw"])
+    b[entry["seq_off"]] = novo_seq & 0xFF
+    struct.pack_into("<q", b, entry["filetime_off"], _now_filetime())
+    struct.pack_into("<q", b, entry["size_off"], len(data))
+    index["raw"] = bytes(b)
+    entry["seq"] = novo_seq
+    entry["size"] = len(data)
     save_index(index)
+
+    # 4) limpeza: remove o container.N antigo e os blobs antigos
+    try:
+        if os.path.abspath(cont_atual) != os.path.abspath(novo_cont):
+            os.remove(cont_atual)
+    except OSError:
+        pass
+    for g in guids_antigos:
+        antigo = os.path.join(folder, _guid_str(g))
+        if os.path.isfile(antigo) and os.path.abspath(antigo) != os.path.abspath(novo_arq):
+            try:
+                os.remove(antigo)
+            except OSError:
+                pass
 
 def _atomic_write(path, data):
     tmp = path + ".tmp_editor"
