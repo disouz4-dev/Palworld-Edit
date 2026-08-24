@@ -4,7 +4,7 @@
 Janela unica com menus: Inicio -> Itens / Personagem / Caixa de Pals / Breeding.
 Le e grava o Level.sav de dentro dos containers WGS, com backup automatico.
 """
-import os, sys, json, queue, threading, traceback, webbrowser
+import os, sys, json, queue, random, threading, traceback, webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sv_ttk
@@ -827,17 +827,17 @@ class TelaPals(Tela):
                                    "Colocar TODOS os %d Pals no nivel %d (o do personagem)?\n\n"
                                    "So vale ao clicar em SALVAR NO JOGO depois." % (len(self.pals), n)):
             return
-        maxiv = messagebox.askyesno("IVs", "Tambem deixar os IVs (Vida/Ataque/Defesa) de todos no "
-                                           "maximo original (100)?")
+        maxiv = messagebox.askyesno("IVs", "Tambem deixar os IVs (Vida/Ataque/Defesa) de todos altos "
+                                           "e variados (proximos de 100, sem cara de cheat)?")
         molde = next((p.sp["Level"] for p in self.pals if "Level" in p.sp), None)
         for p in self.pals:
             if "Level" not in p.sp and molde is not None:
                 p.sp["Level"] = copy.deepcopy(molde)   # Pals nivel 1 nao guardam o campo
             p.set_nivel(n)
             if maxiv:
-                p.set_talento("Talent_HP", 100)
-                p.set_talento("Talent_Shot", 100)
-                p.set_talento("Talent_Defense", 100)
+                p.set_talento("Talent_HP", random.randint(90, 100))
+                p.set_talento("Talent_Shot", random.randint(90, 100))
+                p.set_talento("Talent_Defense", random.randint(90, 100))
             p.gravar()
         self.app.marcar_sujo()
         self.render()
@@ -925,10 +925,12 @@ class TelaPals(Tela):
     def _aplicar_sug(self):
         for k in range(4):
             self.v_pass[k].set(self._sug_ids[k] if k < len(self._sug_ids) else "")
-        # tambem deixa os IVs no maximo legitimo (100), sem overpower
-        self.v_hp.set("100"); self.v_at.set("100"); self.v_df.set("100")
+        # IVs proximos de 100, mas variados (parece bem criado, sem cara de cheat)
+        self.v_hp.set(str(random.randint(90, 100)))
+        self.v_at.set(str(random.randint(90, 100)))
+        self.v_df.set(str(random.randint(90, 100)))
         self.lbl_sug.configure(text=self.lbl_sug.cget("text") +
-                               "\n\n(passivas + IVs no maximo (100) aplicados nos campos - revise e Guardar)")
+                               "\n\n(passivas + IVs altos e variados (90-100) aplicados - revise e Guardar)")
         self.b_aplicar_sug.configure(state="disabled")
 
     def _guardar(self):
