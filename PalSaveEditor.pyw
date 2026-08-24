@@ -666,6 +666,7 @@ class TelaPals(Tela):
         self.pals = personagem.pals_do_mundo(app.level)
         self.atual = None
         self._passivas_opts()
+        self._classificar_containers()
         try:
             js = personagem.jogadores(app.level)
             nv = js[0].nivel if js else 1
@@ -696,6 +697,13 @@ class TelaPals(Tela):
                         command=self.render).pack(side="left", padx=(8, 0))
         ttk.Checkbutton(f2, text="so F", variable=self.v_so_femea,
                         command=self.render).pack(side="left")
+        f3 = ttk.Frame(esq); f3.pack(fill="x", pady=(2, 0))
+        ttk.Label(f3, text="Local:").pack(side="left")
+        self.v_local = tk.StringVar(value="Todos")
+        ttk.Combobox(f3, textvariable=self.v_local, state="readonly", width=22,
+                     values=["Todos", "Com o personagem (equipe)", "Na caixa (Palbox)",
+                             "Nas bases"]).pack(side="left", padx=4)
+        self.v_local.trace_add("write", lambda *a: self.render())
         self.tv = ttk.Treeview(esq, columns=("lv", "g"), show="tree headings", height=22,
                                style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("lv", text="Nv"); self.tv.heading("g", text="Sexo")
@@ -710,6 +718,34 @@ class TelaPals(Tela):
         self._painel_vazio()
 
         self.render()
+
+    def _classificar_containers(self):
+        """Descobre onde cada Pal esta: party (com o personagem), caixa (Palbox) ou base.
+        Usa CharacterContainerSaveData: party tem 5 slots, a Palbox e a maior."""
+        self.cat_cont = {}
+        ccsd = self.app.level.ws.get("CharacterContainerSaveData")
+        if not ccsd:
+            return
+        ents = ccsd["value"]
+
+        def sn(ent):
+            try:
+                return ent["value"]["SlotNum"]["value"]
+            except Exception:
+                return 0
+        maior = max(ents, key=sn) if ents else None
+        gcaixa = str(maior["key"]["ID"]["value"]) if maior else None
+        for ent in ents:
+            g = str(ent["key"]["ID"]["value"])
+            num = sn(ent)
+            self.cat_cont[g] = "party" if num == 5 else ("caixa" if g == gcaixa else "base")
+
+    @staticmethod
+    def _cont_de(p):
+        try:
+            return str(p.sp["SlotId"]["value"]["ContainerId"]["value"]["ID"]["value"])
+        except Exception:
+            return None
 
     def _passivas_opts(self):
         d = traducao.carregar()["passivas"]
@@ -743,6 +779,15 @@ class TelaPals(Tela):
                 continue
             if self.v_so_femea.get() and p.genero != "F":
                 continue
+            loc = self.v_local.get()
+            if loc != "Todos":
+                cat = self.cat_cont.get(self._cont_de(p))
+                if loc.startswith("Com o personagem") and cat != "party":
+                    continue
+                if loc.startswith("Na caixa") and cat != "caixa":
+                    continue
+                if loc.startswith("Nas bases") and cat != "base":
+                    continue
             ico = icones_rt.pal(p.especie)
             kw = {"image": ico} if ico else {}
             self.map[self.tv.insert("", "end", text=" " + nome, values=(p.nivel, p.genero), **kw)] = p

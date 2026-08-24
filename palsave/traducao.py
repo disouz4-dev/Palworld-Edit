@@ -25,7 +25,13 @@ def nome_item(sid, idioma="pt-BR"):
     return carregar(idioma)["itens"].get(sid, sid)
 
 def nome_pal(cid, idioma="pt-BR"):
-    return carregar(idioma)["pals"].get(cid, cid)
+    d = carregar(idioma)["pals"]
+    if cid in d:
+        return d[cid]
+    for pref in ("BOSS_", "Boss_"):
+        if cid.startswith(pref) and cid[len(pref):] in d:
+            return d[cid[len(pref):]] + " (Alfa)"
+    return cid
 
 def nome_passiva(pid, idioma="pt-BR"):
     return carregar(idioma)["passivas"].get(pid, pid)
