@@ -7,7 +7,7 @@ inline no proprio .uasset. Achamos o formato pelo name map, as dimensoes pelo
 cabecalho do export, e o offset do mip por busca curta (o alinhamento certo
 deixa o canal alfa "limpo").
 """
-import os, sys, struct
+import os, sys, struct, re
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import iostore, texture2ddecoder
 from PIL import Image
@@ -157,12 +157,23 @@ def _mapa_icones(idx):
 
 
 def resolver(smap, item_id):
-    if item_id in smap:
-        return smap[item_id]
+    def tenta(x):
+        if x in smap:
+            return smap[x]
+        y = re.sub(r"_\d+$", "", x)             # tira o sufixo de tier (_2, _3...)
+        if y != x and y in smap:
+            return smap[y]
+        return None
+    r = tenta(item_id)
+    if r:
+        return r
     if item_id.startswith("Blueprint_"):        # esquema usa o icone do item que constroi
-        base = item_id[len("Blueprint_"):]
-        if base in smap:
-            return smap[base]
+        r = tenta(item_id[len("Blueprint_"):])
+        if r:
+            return r
+    if item_id.startswith("SkillCard_"):        # card sem match exato: usa um card generico
+        return (smap.get("SkillCard_Fire") or smap.get("SkillCard_Grass")
+                or next((v for k, v in smap.items() if k.startswith("SkillCard_")), None))
     return None
 
 
