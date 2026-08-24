@@ -12,11 +12,15 @@ import os, re, sys, json
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from palsave import wgs, palz
 from palsave.level import LevelSave
+import paths
 
-UTOC = r"E:\Jogos\Palworld\Palworld.v1.0.3.101283-OFME\Palworld\Pal\Content\Paks\Pal-WinGDK.utoc"
-WGS_DIR = os.path.expandvars(
+# caminho do jogo resolvido por env var / extracao_local.json (nunca fixo no codigo)
+UTOC = paths.iostore_base() + ".utoc"
+# save descoberto automaticamente (com fallback para o local padrao)
+WGS_DIR = wgs.descobrir_save() or os.path.expandvars(
     r"%LOCALAPPDATA%\Packages\PocketpairInc.Palworld_ad4psfrxyesvt\SystemAppData\wgs")
 
 # categorias que sao so rotulo do icone e devem ser removidas
