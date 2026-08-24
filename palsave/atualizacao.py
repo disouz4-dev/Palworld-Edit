@@ -12,6 +12,7 @@ RAMO = "main"
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION_FILE = os.path.join(BASE, "VERSION")
 URL_RAW = "https://raw.githubusercontent.com/%s/%s/VERSION" % (REPO, RAMO)
+URL_API_VER = "https://api.github.com/repos/%s/contents/VERSION?ref=%s" % (REPO, RAMO)
 URL_COMMIT = "https://api.github.com/repos/%s/commits/%s" % (REPO, RAMO)
 URL_ZIP = "https://github.com/%s/archive/refs/heads/%s.zip" % (REPO, RAMO)
 
@@ -41,11 +42,22 @@ def _baixar(url, timeout=15):
         return r.read()
 
 
+def _versao_remota(timeout):
+    # o CDN do 'raw' cacheia 404 por alguns minutos apos um push; se falhar,
+    # a API de conteudos (base64) esta sempre atualizada.
+    try:
+        return _baixar(URL_RAW, timeout).decode("utf-8").strip()
+    except Exception:
+        import base64
+        d = json.loads(_baixar(URL_API_VER, timeout).decode("utf-8"))
+        return base64.b64decode(d["content"]).decode("utf-8").strip()
+
+
 def verificar(timeout=15):
     """Retorna dict {ok, tem_update, local, remota, notas, erro}."""
     local = versao_local()
     try:
-        remota = _baixar(URL_RAW, timeout).decode("utf-8").strip()
+        remota = _versao_remota(timeout)
     except Exception as ex:
         return {"ok": False, "erro": str(ex), "local": local, "tem_update": False}
     notas = ""
