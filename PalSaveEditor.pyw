@@ -675,7 +675,8 @@ class TelaPals(Tela):
         ttk.Label(f, text="Buscar:").pack(side="left")
         self.v_b = tk.StringVar(); self.v_b.trace_add("write", lambda *a: self.render())
         ttk.Entry(f, textvariable=self.v_b).pack(side="left", fill="x", expand=True, padx=4)
-        self.tv = ttk.Treeview(esq, columns=("lv", "g"), show="tree headings", height=22)
+        self.tv = ttk.Treeview(esq, columns=("lv", "g"), show="tree headings", height=22,
+                               style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("lv", text="Nv"); self.tv.heading("g", text="Sexo")
         self.tv.column("#0", width=240); self.tv.column("lv", width=40, anchor="e", stretch=False)
         self.tv.column("g", width=44, anchor="center", stretch=False)
@@ -709,7 +710,9 @@ class TelaPals(Tela):
             nome = traducao.nome_pal(p.especie)
             if b and b not in nome.lower() and b not in p.especie.lower():
                 continue
-            self.map[self.tv.insert("", "end", text=nome, values=(p.nivel, p.genero))] = p
+            ico = icones_rt.pal(p.especie)
+            kw = {"image": ico} if ico else {}
+            self.map[self.tv.insert("", "end", text=" " + nome, values=(p.nivel, p.genero), **kw)] = p
             if len(self.map) >= 800:
                 break
 

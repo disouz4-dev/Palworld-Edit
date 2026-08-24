@@ -211,3 +211,67 @@ if __name__ == "__main__":
             print("OK", nome)
         else:
             print("FALHOU", nome)
+
+
+# ------- icones de Pal (ficam num .ubulk separado, 128x128) -------
+def _mapa_pals(idx):
+    m = {}
+    for k in idx:
+        n = k.split("/")[-1]
+        if n.startswith("T_") and n.endswith("_icon_normal.uasset"):
+            m.setdefault(n[2:-len("_icon_normal.uasset")], k)
+    return m
+
+
+def resolver_pal(pmap, especie):
+    if especie in pmap:
+        return pmap[especie]
+    e2 = especie.replace("BOSS_", "").replace("Boss_", "")
+    return pmap.get(e2)
+
+
+def extrair_pal(t, idx, uasset_key, tam=40):
+    b = iostore.extrair(t, idx[uasset_key])
+    hsize = struct.unpack_from("<I", b, 4)[0]
+    fmt = _formato(_name_map(b))
+    w, h = _dims(b, hsize)
+    mip = int(w * h * BPP.get(fmt, 1.0))
+    ub = uasset_key[:-7] + ".ubulk"
+    if ub in idx:                       # pixels ficam no .ubulk
+        data = iostore.extrair(t, idx[ub])[:mip]
+    else:                               # ou inline, logo apos o cabecalho
+        data = b[hsize + 125:hsize + 125 + mip]
+    if len(data) < mip:
+        return None
+    try:
+        img = _decode(data, fmt, w, h)
+    except Exception:
+        return None
+    return img.resize((tam, tam), Image.LANCZOS) if img else None
+
+
+def gerar_cache_pals(especies, tam=40, callback=None):
+    t = iostore.carregar()
+    idx = iostore._dir_index(t)
+    pmap = _mapa_pals(idx)
+    outdir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dados", "icones_pals")
+    os.makedirs(outdir, exist_ok=True)
+    ok = falta = 0
+    for i, esp in enumerate(especies):
+        alvo = os.path.join(outdir, esp + ".png")
+        if os.path.exists(alvo):
+            ok += 1; continue
+        key = resolver_pal(pmap, esp)
+        if not key:
+            falta += 1; continue
+        try:
+            img = extrair_pal(t, idx, key, tam)
+        except Exception:
+            img = None
+        if img is not None:
+            img.save(alvo); ok += 1
+        else:
+            falta += 1
+        if callback:
+            callback(i + 1, len(especies))
+    return ok, falta
