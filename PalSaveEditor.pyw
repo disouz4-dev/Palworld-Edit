@@ -48,7 +48,12 @@ class App(tk.Tk):
         self.geometry("1180x760")
         self.minsize(1000, 660)
         try:
-            self.iconbitmap(os.path.join(BASE, "assets", "logo.ico"))
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("disouz4dev.PalworldEditor")
+        except Exception:
+            pass
+        try:
+            self.iconbitmap(default=os.path.join(BASE, "assets", "logo.ico"))
         except Exception:
             pass
 
@@ -499,12 +504,12 @@ class TelaItens(Tela):
             self.tv.delete(i)
         b = self.var_b.get().strip().lower(); self.map_item = {}
         todos = self.container is None
-        self.b_ap.configure(state=("disabled" if todos else "normal"))
+        self.b_ap.configure(state="normal")
         self.b_todos.configure(state=("disabled" if todos else "normal"))
         verif = set(self.app.catalogo["verificados"])
         if todos:
             self.tv.heading("onde", text="Em quantos lugares")
-            self.lbl_alvo.configure(text="Modo consulta. Escolha um container para editar. (o + usa o inventario principal)")
+            self.lbl_alvo.configure(text="Selecione um item e clique Aplicar: vai para o inventario principal do personagem.")
             tot, loc = {}, {}
             for c in self.app.level.containers:
                 nc = self.app.nomes[c.guid][0]
@@ -522,9 +527,17 @@ class TelaItens(Tela):
             self.app.status("modo TODOS: %d itens diferentes no mundo" % len(tot))
             return
         self.tv.heading("onde", text="Origem")
-        self.lbl_alvo.configure(text="Alvo: %s" % self.app.nomes[self.container.guid][0])
+        self.lbl_alvo.configure(text="Alvo: %s  -  busque para adicionar itens que voce nao tem"
+                                     % self.app.nomes[self.container.guid][0])
         at = self.container.items; pd = self.pend()
-        for sid in sorted(set(at) | set(pd), key=lambda s: traducao.nome_item(s).lower()):
+        chaves = set(at) | set(pd)
+        if b:                                   # buscando: mostra tambem itens do catalogo para adicionar
+            for sid in self.app.todos_ids():
+                nome = traducao.nome_item(sid)
+                if b in sid.lower() or b in nome.lower():
+                    chaves.add(sid)
+        n = 0
+        for sid in sorted(chaves, key=lambda s: (s not in at and s not in pd, traducao.nome_item(s).lower())):
             nome = traducao.nome_item(sid)
             if b and b not in sid.lower() and b not in nome.lower():
                 continue
@@ -535,6 +548,9 @@ class TelaItens(Tela):
                          values=(at.get(sid, 0), pd.get(sid, ""),
                                  "confirmado" if sid in verif else "arquivos"),
                          tags=("edit",) if sid in pd else (), **kw)] = sid
+            n += 1
+            if n >= 800:
+                break
 
     def _q(self):
         try:
@@ -543,17 +559,27 @@ class TelaItens(Tela):
             messagebox.showwarning("Invalido", "Digite um numero."); return None
         v = max(0, min(v, LIMITE)); self.var_q.set(str(v)); return v
 
+    def _inv_principal(self):
+        return next((c for c in self.app.containers
+                     if self.app.nomes[c.guid][0].startswith("Personagem: INVENTARIO")), None) \
+            or next((c for c in self.app.containers if self.app.nomes[c.guid][1] == "guilda"), None)
+
     def aplicar(self):
-        if self.container is None:
+        alvo = self.container or self._inv_principal()
+        if alvo is None:
             messagebox.showinfo("Escolha", "Selecione um container para editar."); return
         s = self.tv.selection()
         if not s:
-            return
+            messagebox.showinfo("Selecione", "Escolha um item na lista primeiro."); return
         v = self._q()
         if v is None:
             return
+        d = self.app.pendentes.setdefault(alvo.guid, {})
         for i in s:
-            self.pend()[self.map_item[i]] = v
+            d[self.map_item[i]] = v
+        if self.container is None:            # estava no modo TODOS: passa a mostrar o inventario
+            self.container = alvo
+            self.render_cont()
         self.render_item(); self.app.status("%d alteracao(oes) pendente(s)" % self.app.n_pendencias(), "#e0c060")
 
     def aplicar_todos(self):
