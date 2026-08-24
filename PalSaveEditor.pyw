@@ -666,8 +666,17 @@ class TelaPals(Tela):
         self.pals = personagem.pals_do_mundo(app.level)
         self.atual = None
         self._passivas_opts()
+        try:
+            js = personagem.jogadores(app.level)
+            nv = js[0].nivel if js else 1
+            self.nivel_jogador = nv.get("value", 1) if isinstance(nv, dict) else (nv or 1)
+        except Exception:
+            self.nivel_jogador = 1
 
-        ttk.Label(self, text="Caixa de Pals  (%d)" % len(self.pals), style="Titulo.TLabel").pack(anchor="w", pady=(0, 6))
+        cab = ttk.Frame(self); cab.pack(fill="x", pady=(0, 6))
+        ttk.Label(cab, text="Caixa de Pals  (%d)" % len(self.pals), style="Titulo.TLabel").pack(side="left")
+        ttk.Button(cab, text="Igualar nivel de todos ao personagem (Nv %d)" % self.nivel_jogador,
+                   command=self.igualar_niveis).pack(side="right")
         corpo = ttk.Panedwindow(self, orient="horizontal"); corpo.pack(fill="both", expand=True)
 
         esq = ttk.Labelframe(corpo, text="Seus Pals", padding=6); corpo.add(esq, weight=1)
@@ -739,6 +748,25 @@ class TelaPals(Tela):
             self.map[self.tv.insert("", "end", text=" " + nome, values=(p.nivel, p.genero), **kw)] = p
             if len(self.map) >= 800:
                 break
+
+    def igualar_niveis(self):
+        import copy
+        n = self.nivel_jogador
+        if not messagebox.askyesno("Confirmar",
+                                   "Colocar TODOS os %d Pals no nivel %d (o do personagem)?\n\n"
+                                   "So vale ao clicar em SALVAR NO JOGO depois." % (len(self.pals), n)):
+            return
+        molde = next((p.sp["Level"] for p in self.pals if "Level" in p.sp), None)
+        for p in self.pals:
+            if "Level" not in p.sp and molde is not None:
+                p.sp["Level"] = copy.deepcopy(molde)   # Pals nivel 1 nao guardam o campo
+            p.set_nivel(n)
+            p.gravar()
+        self.app.marcar_sujo()
+        self.render()
+        self.app.status("todos os Pals no nivel %d - clique em SALVAR NO JOGO" % n, "#e0c060")
+        messagebox.showinfo("Pronto", "Os %d Pals foram ajustados para o nivel %d.\n"
+                                      "Clique em SALVAR NO JOGO." % (len(self.pals), n))
 
     def _painel_vazio(self):
         for w in self.ed.winfo_children():
