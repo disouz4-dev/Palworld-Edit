@@ -153,27 +153,103 @@ def _mapa_icones(idx):
                     smap.setdefault(stem.split("_", 1)[1], k)
                 if stem.count("_") >= 2:
                     smap.setdefault(stem.split("_", 2)[2], k)
+        # icones dos tipos de trabalho (usados pelos tickets de aptidao)
+        if n.startswith("T_icon_skill_pal_WorkRank_"):
+            stem = n[len("T_icon_skill_pal_WorkRank_"):-7]
+            smap.setdefault("WorkRank_" + stem, k)
     return smap
 
 
+_CI_CACHE = {}
+
+
+def _cand_variantes(item_id):
+    """Nomes candidatos para casar com uma textura, do mais especifico ao generico."""
+    cands = []
+    def add(x):
+        if x and x not in cands:
+            cands.append(x)
+
+    _SUF = ("_Tier_00", "_Tier_01", "_Default", "_01", "_1")
+    add(item_id)
+    for suf in _SUF:                             # arma pura: Spear -> Spear_Tier_00
+        add(item_id + suf)
+    # tira sufixos comuns (NPC, tier, _fix, _G1, numero final, etc.), acumulando
+    sufixos = [r"_NPC$", r"_Steal$", r"_High$", r"_fix$", r"_Default\d*$",
+               r"_Triple$", r"_Tier_\d+$", r"_G\d+$", r"_\d+$"]
+    cur = item_id
+    for _ in range(6):
+        mudou = False
+        for pat in sufixos:
+            y = re.sub(pat, "", cur)
+            if y != cur:
+                add(y); cur = y; mudou = True
+        if not mudou:
+            break
+
+    # troca o numero final por _01/_00, com ou sem underscore
+    # (GrapplingGun2 -> GrapplingGun; TreasureMap02 -> TreasureMap01)
+    for base in list(cands):
+        m = re.search(r"^(.*?)_?(\d+)$", base)
+        if m and m.group(1):
+            add(m.group(1))
+            for nn in ("01", "1", "00", "0"):
+                add(m.group(1) + "_" + nn)
+                add(m.group(1) + nn)
+
+    # reducao por prefixo: vai tirando o ultimo segmento e testando bases de arma
+    partes = item_id.split("_")
+    for k in range(len(partes) - 1, 0, -1):
+        p = "_".join(partes[:k])
+        add(p)
+        for suf in _SUF:
+            add(p + suf)
+    return cands
+
+
 def resolver(smap, item_id):
-    def tenta(x):
-        if x in smap:
-            return smap[x]
-        y = re.sub(r"_\d+$", "", x)             # tira o sufixo de tier (_2, _3...)
-        if y != x and y in smap:
-            return smap[y]
-        return None
-    r = tenta(item_id)
-    if r:
-        return r
-    if item_id.startswith("Blueprint_"):        # esquema usa o icone do item que constroi
-        r = tenta(item_id[len("Blueprint_"):])
+    ci = _CI_CACHE.get(id(smap))
+    if ci is None:
+        ci = {k.lower(): v for k, v in smap.items()}
+        _CI_CACHE[id(smap)] = ci
+
+    def achar(x):
+        return smap.get(x) or ci.get(x.lower())
+
+    for c in _cand_variantes(item_id):
+        r = achar(c)
         if r:
             return r
-    if item_id.startswith("SkillCard_"):        # card sem match exato: usa um card generico
-        return (smap.get("SkillCard_Fire") or smap.get("SkillCard_Grass")
+    if item_id.startswith("WorkSuitability_AddTicket_"):   # ticket -> icone do tipo de trabalho
+        r = achar("WorkRank_" + item_id[len("WorkSuitability_AddTicket_"):])
+        if r:
+            return r
+    if item_id.startswith("Blueprint_"):        # esquema de construcao: icone generico
+        for g in ("Blueprint_Building", "Blueprint"):
+            r = achar(g)
+            if r:
+                return r
+    if item_id.startswith("SkillCard_"):        # card sem match exato: card generico
+        return (achar("SkillCard_Fire") or achar("SkillCard_Grass")
                 or next((v for k, v in smap.items() if k.startswith("SkillCard_")), None))
+    # ultimo recurso: casa por "termina em" nos dois sentidos
+    il = item_id.lower()
+    for k, v in smap.items():                    # item termina no nome da textura (CaveMushroom->Mushroom)
+        kl = k.lower()
+        if len(kl) >= 5 and il.endswith(kl):
+            return v
+    for c in _cand_variantes(item_id):           # textura termina num candidato bom
+        if len(c) < 5:
+            continue
+        cl = c.lower()
+        for k, v in smap.items():
+            if k.lower().endswith(cl):
+                return v
+    tok = item_id.split("_")[-1]
+    if len(tok) >= 5:
+        for k, v in smap.items():
+            if tok.lower() in k.lower():
+                return v
     return None
 
 
@@ -184,6 +260,7 @@ def gerar_cache(ids, tam=40, callback=None):
     smap = _mapa_icones(idx)
     outdir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dados", "icones")
     os.makedirs(outdir, exist_ok=True)
+    dir_pals = os.path.join(os.path.dirname(outdir), "icones_pals")
     ok = falta = 0
     for i, sid in enumerate(ids):
         alvo = os.path.join(outdir, sid + ".png")
@@ -191,6 +268,17 @@ def gerar_cache(ids, tam=40, callback=None):
             ok += 1; continue
         chave = resolver(smap, sid)
         if chave is None:
+            # SkillUnlock_<Pal>: usa o icone do proprio Pal, que ja temos
+            if sid.startswith("SkillUnlock_"):
+                pi = os.path.join(dir_pals, sid[len("SkillUnlock_"):] + ".png")
+                if os.path.exists(pi):
+                    try:
+                        import shutil; shutil.copy2(pi, alvo); ok += 1
+                    except Exception:
+                        falta += 1
+                    if callback:
+                        callback(i + 1, len(ids))
+                    continue
             falta += 1; continue
         try:
             img = extrair_icone(t, idx[chave], tam)

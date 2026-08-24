@@ -7,10 +7,9 @@ extracao_local.json
 # ferramenta de extracao (pesada, do usuario)
 fmodel/
 
-# conteudo extraido do jogo que e propriedade da Pocketpair:
-# icones (arte do jogo) ficam de fora; a traducao (nomes) e mantida por escolha.
-dados/icones/
-dados/icones_pals/
+# Os icones e a traducao (arte/nomes da Pocketpair) sao versionados de proposito,
+# para o app ja vir completo ao baixar, sem precisar do jogo nem do FModel.
+# Ferramenta nao oficial; veja NOTICE.md. So o cache de teste fica de fora:
 dados/teste_icones/
 
 # Python

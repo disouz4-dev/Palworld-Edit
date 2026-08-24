@@ -1025,7 +1025,7 @@ class TelaPals(Tela):
         self.v_hp = tk.StringVar(value=str(p.talento("Talent_HP")))
         self.v_at = tk.StringVar(value=str(p.talento("Talent_Shot")))
         self.v_df = tk.StringVar(value=str(p.talento("Talent_Defense")))
-        self.v_rk = tk.StringVar(value=str(p.rank))
+        self.v_rk = tk.StringVar(value=str(max(0, p.rank - 1)))   # mostra estrelas (0-4)
         lin = 2
         def campo(rot, var, larg=8, combo=None):
             nonlocal lin
@@ -1040,7 +1040,7 @@ class TelaPals(Tela):
         campo("IV Vida (0-100)", self.v_hp)
         campo("IV Ataque (0-100)", self.v_at)
         campo("IV Defesa (0-100)", self.v_df)
-        campo("Rank alma (1-5)", self.v_rk)
+        campo("Estrelas de condensacao (0-4)", self.v_rk, 6)
 
         ttk.Label(self.ed, text="Passivas:", font=("Segoe UI", 10, "bold")).grid(
             row=lin, column=0, columnspan=3, sticky="w", pady=(10, 2)); lin += 1
@@ -1097,7 +1097,7 @@ class TelaPals(Tela):
             p.set_talento("Talent_HP", int(self.v_hp.get()))
             p.set_talento("Talent_Shot", int(self.v_at.get()))
             p.set_talento("Talent_Defense", int(self.v_df.get()))
-            p.set_rank(int(self.v_rk.get()))
+            p.set_rank(max(0, min(int(self.v_rk.get()), 4)) + 1)   # estrelas 0-4 -> Rank 1-5
             ids = []
             for var in self.v_pass:
                 nome = var.get().strip()
