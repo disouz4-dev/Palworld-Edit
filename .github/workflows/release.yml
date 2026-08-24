@@ -1,0 +1,30 @@
+name: release
+
+# Cria um Release automaticamente sempre que o arquivo VERSION muda no main.
+on:
+  push:
+    branches: [main]
+    paths: ["VERSION"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Criar release a partir do VERSION
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V=$(tr -d '[:space:]' < VERSION)
+          if [ -z "$V" ]; then echo "VERSION vazio"; exit 1; fi
+          if gh release view "v$V" >/dev/null 2>&1; then
+            echo "release v$V ja existe, nada a fazer"; exit 0
+          fi
+          gh release create "v$V" \
+            --title "Palworld Editor v$V" \
+            --generate-notes
