@@ -79,6 +79,32 @@ Get-ChildItem -Force $origem | Where-Object { $ignorar -notcontains $_.Name } | 
 Get-ChildItem -Path $destino -Recurse -Force -Directory -Filter "__pycache__" -ErrorAction SilentlyContinue |
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
+# 3b) Oodle (para editar pontos de tecnologia): procura um DLL ja existente
+#     (FModel do usuario, ou um oo2core de jogo Unreal) e copia para dentro do app,
+#     assim o editor le o save do jogador sem o usuario ter que apontar nada.
+Write-Host "Procurando Oodle (para pontos de tecnologia)..." -ForegroundColor Cyan
+$oodleAlvo = Join-Path $destino "oodle"
+$fontes = @(
+    (Join-Path $origem "fmodel"),
+    (Join-Path $env:LOCALAPPDATA "FModel")
+)
+$dll = $null
+foreach ($f in $fontes) {
+    if (Test-Path $f) {
+        $dll = Get-ChildItem -Path $f -Recurse -Force -ErrorAction SilentlyContinue `
+                 -Include "oodle-data-shared.dll", "oo2core_9_win64.dll", "oo2core_8_win64.dll" |
+               Select-Object -First 1
+        if ($dll) { break }
+    }
+}
+if ($dll) {
+    New-Item -ItemType Directory -Force -Path $oodleAlvo | Out-Null
+    Copy-Item $dll.FullName -Destination (Join-Path $oodleAlvo $dll.Name) -Force
+    Write-Host "Oodle copiado: $($dll.Name)" -ForegroundColor Green
+} else {
+    Write-Host "Oodle nao encontrado - pontos de tecnologia pedirao o DLL uma vez." -ForegroundColor Yellow
+}
+
 $alvo    = Join-Path $destino "PalSaveEditor.pyw"
 $ico     = Join-Path $destino "assets\logo.ico"
 $pythonw = (& $exe $arg -c "import sys,os;print(os.path.join(os.path.dirname(sys.executable),'pythonw.exe'))").Trim()

@@ -3,6 +3,21 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.2 — 2026-08-25
+### 🇧🇷 Português
+- **Pontos de tecnologia sem caçar DLL.** O instalador agora encontra o Oodle
+  (do seu FModel) automaticamente e copia pra dentro do app. Então os campos
+  **Pontos de tecnologia** e **Tecnologia antiga** já aparecem prontos na tela
+  **Personagem** — é só digitar quanto você quer ter, igual aos itens. (Os pontos
+  ficam no save do jogador, que é comprimido com Oodle; por isso o app precisa de um
+  Oodle para ler — agora resolvido no instalador.)
+### 🇺🇸 English
+- **Technology points without hunting for a DLL.** The installer now auto-finds the
+  Oodle library (from your FModel) and copies it into the app. So the **Technology
+  points** and **Ancient technology** fields show up ready on the **Character** screen
+  — just type the amount you want, like items. (These points live in the player save,
+  which is Oodle-compressed; the app needs an Oodle to read it — now handled by the installer.)
+
 ## v1.7.1 — 2026-08-25
 ### Correção crítica: saves concorrentes / concurrent saves
 - O salvar-automático da v1.7.0 podia disparar **vários saves ao mesmo tempo** (ex.:
