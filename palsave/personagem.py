@@ -317,6 +317,10 @@ def moldes(pals):
                          if c in p.sp and p.sp[c]["value"]["values"]), None)
         else:
             m[c] = next((p.sp[c] for p in pals if c in p.sp), None)
+    # Rank (condensacao) e um ByteProperty simples: se NENHUM Pal tem (save sem
+    # nenhum condensado), montamos o molde do zero para a condensacao sempre valer.
+    if m["Rank"] is None:
+        m["Rank"] = {"id": None, "value": {"type": "None", "value": 1}, "type": "ByteProperty"}
     return m
 
 

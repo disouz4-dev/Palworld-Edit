@@ -3,6 +3,14 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.9 — 2026-08-25
+### Correção: condensação 4 estrelas não aplicava
+- Se o save **não tinha nenhum Pal já condensado**, o editor não conseguia criar o
+  campo de condensação (faltava um "molde") e a condensação **falhava em silêncio**
+  (IVs e passivas aplicavam, mas nenhum Pal ficava com estrelas). Agora o molde de
+  condensação é **criado do zero** quando necessário — a condensação 4★ sempre vale.
+  _Fix: 4-star condensation now applies even when no pal was condensed yet._
+
 ## v1.6.8 — 2026-08-25
 ### Restaurar backup mais forte contra a nuvem
 - Ao **restaurar um backup**, o editor agora marca o save restaurado como o **mais
