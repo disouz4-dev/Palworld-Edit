@@ -3,6 +3,17 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.0 — 2026-08-25
+### Toda confirmação salva no jogo na hora / every confirm now saves
+- Acabou o passo separado de "SALVAR NO JOGO": **qualquer coisa que você confirma**
+  (aplicar item, adicionar item, guardar Pal, igualar níveis, otimizar em massa,
+  guardar personagem) **grava no save na mesma hora**, com backup automático. O botão
+  "SALVAR NO JOGO" vira só um salvar manual opcional. _Every apply/confirm now writes
+  to the game save immediately; no separate save step._
+- O aviso da nuvem do Xbox aparece **uma vez por sessão** (não a cada gravação), e os
+  backups automáticos são **limitados** (não cria um a cada clique). _Cloud note shown
+  once per session; auto-backups throttled._
+
 ## v1.6.11 — 2026-08-25
 ### O otimizador agora oferece salvar na hora
 - Depois de aplicar a otimização em massa, o editor **pergunta se quer SALVAR NO JOGO

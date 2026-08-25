@@ -82,6 +82,8 @@ class App(tk.Tk):
         self.map_mundo = {}
         self.nome_mundo = {}
         self._reparo_ofer = set()   # mundos onde ja oferecemos corrigir itens fora do lugar
+        self._nuvem_avisada = False  # aviso da nuvem do Xbox mostrado so uma vez
+        self._ultimo_bkp = 0.0       # throttle dos backups automaticos
         self.pendentes = {}       # {guid: {sid: qtd}}  (itens, aplicados ao salvar)
         self.dirty = False        # edicoes de pal/personagem ja aplicadas ao level
         self.catalogo = self._carregar_catalogo()
@@ -410,22 +412,25 @@ class App(tk.Tk):
     def n_pendencias(self):
         return sum(len(v) for v in self.pendentes.values())
 
-    def salvar(self):
+    def salvar(self, confirmar=True):
+        """Grava direto no save. As acoes de editar chamam com confirmar=False
+        (a propria acao ja foi a confirmacao); o botao manual usa confirmar=True."""
         if not self.n_pendencias() and not self.dirty:
-            messagebox.showinfo("Nada a fazer", "Nenhuma alteracao pendente.")
+            if confirmar:
+                messagebox.showinfo("Nada a fazer", "Nenhuma alteracao pendente.")
             return
-        if not messagebox.askyesno("Salvar",
-                                   "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
-                                   "Um backup e feito automaticamente antes.\n\n"
-                                   "(Depois de salvar, veja as instrucoes sobre a nuvem do Xbox -\n"
-                                   "abrir o jogo OFFLINE evita que a nuvem restaure o save antigo.)"):
+        if confirmar and not messagebox.askyesno(
+                "Salvar no jogo",
+                "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
+                "Um backup e feito automaticamente antes."):
             return
-        self.btn_salvar.configure(state="disabled"); self.pb.start(12); self.status("salvando...")
+        self.btn_salvar.configure(state="disabled"); self.pb.start(12); self.status("salvando no jogo...")
         threading.Thread(target=self._salvar_th, daemon=True).start()
 
     def _salvar_th(self):
         try:
-            self.bm.create("antes de editar")
+            if time.time() - self._ultimo_bkp > 45:      # nao cria backup a cada clique
+                self.bm.create("auto"); self._ultimo_bkp = time.time()
             porg = {c.guid: c for c in self.level.containers}
             for guid, itens in self.pendentes.items():
                 c = porg.get(guid)
@@ -442,20 +447,18 @@ class App(tk.Tk):
 
     def _salvo(self):
         self.pb.stop(); self.btn_salvar.configure(state="normal")
-        self.status("salvo com sucesso no arquivo local!", "#7fe0a0")
-        messagebox.showinfo(
-            "Gravado no save local",
-            "As alteracoes foram gravadas no save LOCAL (confirmado byte a byte).\n\n"
-            "IMPORTANTE - nuvem do Xbox/Game Pass:\n"
-            "Se ao abrir o jogo as mudancas NAO aparecerem, a sincronizacao na nuvem\n"
-            "restaurou o save antigo por cima. Para evitar:\n\n"
-            "1) Feche o Palworld por completo.\n"
-            "2) DESCONECTE a internet (modo aviao).\n"
-            "3) Abra o jogo OFFLINE e carregue o mundo (agora ele usa o save editado).\n"
-            "4) Jogue/salve alguns segundos e saia.\n"
-            "5) Reconecte a internet - assim o save editado sobe para a nuvem.\n\n"
-            "Se algo der errado, use Inicio > Restaurar backup.")
-        self.carregar_mundo()
+        self.pendentes.clear(); self.dirty = False
+        self.status("✓ salvo no jogo!", "#7fe0a0")
+        if not self._nuvem_avisada:
+            self._nuvem_avisada = True
+            messagebox.showinfo(
+                "Salvo no jogo (leia uma vez)",
+                "Tudo o que voce confirmar e gravado no jogo NA HORA (com backup automatico).\n"
+                "Edite sempre com o Palworld FECHADO.\n\n"
+                "IMPORTANTE - nuvem do Xbox/Game Pass:\n"
+                "Se ao abrir o jogo as mudancas nao aparecerem, a nuvem restaurou o save antigo.\n"
+                "Para evitar: feche o jogo, espere ~1-2 min apos salvar (a nuvem sobe o local),\n"
+                "e so entao abra o Palworld. Se der errado, use Inicio > Restaurar backup.")
 
     # ---------- backups ----------
     def criar_backup(self):
@@ -850,7 +853,8 @@ class TelaItens(Tela):
         if self.container is None:            # estava no modo TODOS: passa a mostrar o inventario
             self.container = alvo
             self.render_cont()
-        self.render_item(); self.app.status("%d alteracao(oes) pendente(s)" % self.app.n_pendencias(), "#e0c060")
+        self.render_item()
+        self.app.salvar(confirmar=False)          # salva no jogo na hora
 
     def aplicar_todos(self):
         if self.container is None:
@@ -858,11 +862,13 @@ class TelaItens(Tela):
         its = list(self.map_item.values())
         if not its or self._q() is None:
             return
-        if not messagebox.askyesno("Confirmar", "Definir %d itens para %d?" % (len(its), self._q())):
+        if not messagebox.askyesno("Confirmar", "Definir %d itens para %d e salvar no jogo?"
+                                   % (len(its), self._q())):
             return
         for sid in its:
             self.pend()[sid] = self._q()
         self.render_item()
+        self.app.salvar(confirmar=False)
 
     def desfazer(self):
         self.app.pendentes.clear(); self.render_item(); self.app.status("alteracoes de item descartadas")
@@ -987,8 +993,8 @@ class TelaPersonagem(Tela):
             self.p.set_pontos_livres(int(self.v_livres.get())); self.p.gravar()
         except Exception as ex:
             messagebox.showerror("Erro", str(ex)); return
-        self.app.marcar_sujo(); self.app.status("personagem alterado - clique em SALVAR NO JOGO", "#e0c060")
-        messagebox.showinfo("Guardado", "Alteracoes preparadas. Clique em SALVAR NO JOGO.")
+        self.app.marcar_sujo()
+        self.app.salvar(confirmar=False)          # salva no jogo na hora
 
 
 # ---------------------------------------------------------------------------
@@ -1161,9 +1167,9 @@ class TelaPals(Tela):
             p.gravar()
         self.app.marcar_sujo()
         self.render()
-        self.app.status("todos os Pals no nivel %d - clique em SALVAR NO JOGO" % n, "#e0c060")
-        messagebox.showinfo("Pronto", "Os %d Pals foram ajustados para o nivel %d.\n"
-                                      "Clique em SALVAR NO JOGO." % (len(self.pals), n))
+        self.app.salvar(confirmar=False)          # salva no jogo na hora
+        messagebox.showinfo("Pronto", "Os %d Pals foram ajustados para o nivel %d e salvos no jogo."
+                            % (len(self.pals), n))
 
     def _painel_vazio(self):
         for w in self.ed.winfo_children():
@@ -1298,8 +1304,7 @@ class TelaPals(Tela):
             messagebox.showerror("Erro", str(ex)); return
         self.app.marcar_sujo()
         self.tv.item(self.tv.selection()[0], values=(p.nivel, p.genero))
-        self.app.status("Pal alterado - clique em SALVAR NO JOGO", "#e0c060")
-        messagebox.showinfo("Guardado", "Alteracoes deste Pal preparadas. Clique em SALVAR NO JOGO.")
+        self.app.salvar(confirmar=False)          # salva no jogo na hora
 
 
 # ---------------------------------------------------------------------------
@@ -1641,16 +1646,13 @@ class JanelaOtimizar(tk.Toplevel):
             self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
                            values=(self.ROTULO[papel], "✓ feito", self._antes(p)),
                            tags=("feito",), **kw)
-        self.lbl.configure(text="✓ %d Pals modificados - FALTA clicar em SALVAR NO JOGO" % total)
-        self.app.status("%d Pals modificados - FALTA SALVAR NO JOGO" % total, "#e0c060")
-        if messagebox.askyesno(
-                "Modificado - falta salvar!",
-                "%d Pals modificados (a coluna 'Depois' mostra o estado real: 4 estrelas, IVs, "
-                "passivas).\n\nATENCAO: isso ainda NAO foi gravado no save! Preciso SALVAR NO JOGO.\n\n"
-                "Salvar no jogo AGORA?\n(O Palworld precisa estar FECHADO; um backup e feito antes.)"
-                % total, parent=self):
-            self.destroy()
-            self.app.salvar()
+        self.lbl.configure(text="✓ %d Pals modificados e salvos no jogo" % total)
+        self.app.salvar(confirmar=False)          # salva direto no jogo
+        messagebox.showinfo(
+            "Pronto",
+            "%d Pals modificados e SALVOS no jogo (a coluna 'Depois' mostra o estado real de "
+            "cada um: 4 estrelas, IVs, passivas).\n\nEdite com o jogo FECHADO; apos salvar, "
+            "espere ~1-2 min antes de abrir o Palworld (nuvem do Xbox)." % total, parent=self)
 
 
 # ===========================================================================
@@ -1707,7 +1709,7 @@ class JanelaAdicionar(tk.Toplevel):
             d[self.map[i]] = q
         self.tela.container = self.alvo
         self.tela.render_cont(); self.tela.render_item()
-        self.app.status("%d item(ns) marcados" % self.app.n_pendencias(), "#e0c060")
+        self.app.salvar(confirmar=False)          # salva no jogo na hora
 
 
 class JanelaRestaurar(tk.Toplevel):
