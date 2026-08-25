@@ -3,6 +3,14 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.1 — 2026-08-25
+### Correção crítica: saves concorrentes / concurrent saves
+- O salvar-automático da v1.7.0 podia disparar **vários saves ao mesmo tempo** (ex.:
+  inserindo itens rápido), o que corrompia o save. Agora há **trava (um save por vez)**
+  e **debounce**: edições em rajada viram **um único save** ~1,5s após a última. Muito
+  menos gravações e nenhuma concorrência. _Critical fix: auto-save is now single-flight
+  and debounced (rapid edits collapse into one save), preventing corruption._
+
 ## v1.7.0 — 2026-08-25
 ### Toda confirmação salva no jogo na hora / every confirm now saves
 - Acabou o passo separado de "SALVAR NO JOGO": **qualquer coisa que você confirma**

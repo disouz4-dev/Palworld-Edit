@@ -84,6 +84,9 @@ class App(tk.Tk):
         self._reparo_ofer = set()   # mundos onde ja oferecemos corrigir itens fora do lugar
         self._nuvem_avisada = False  # aviso da nuvem do Xbox mostrado so uma vez
         self._ultimo_bkp = 0.0       # throttle dos backups automaticos
+        self._salvando = False       # trava: um save por vez (evita corromper)
+        self._save_after_id = None   # debounce dos saves automaticos
+        self._save_pendente = False  # chegaram mudancas durante um save em andamento
         self.pendentes = {}       # {guid: {sid: qtd}}  (itens, aplicados ao salvar)
         self.dirty = False        # edicoes de pal/personagem ja aplicadas ao level
         self.catalogo = self._carregar_catalogo()
@@ -402,7 +405,8 @@ class App(tk.Tk):
             pass
 
     def _erro(self, titulo, tb):
-        self.pb.stop(); self.status(titulo, "#ff8080")
+        self._salvando = False
+        self.pb.stop(); self.btn_salvar.configure(state="normal"); self.status(titulo, "#ff8080")
         messagebox.showerror(titulo, tb[-1500:])
 
     # ---------- salvar ----------
@@ -413,17 +417,42 @@ class App(tk.Tk):
         return sum(len(v) for v in self.pendentes.values())
 
     def salvar(self, confirmar=True):
-        """Grava direto no save. As acoes de editar chamam com confirmar=False
-        (a propria acao ja foi a confirmacao); o botao manual usa confirmar=True."""
+        """Grava no save. As acoes de editar chamam com confirmar=False (a acao ja foi
+        a confirmacao) e usam DEBOUNCE (agrupa edicoes rapidas num save so). O botao
+        manual usa confirmar=True e salva na hora. Nunca ha dois saves ao mesmo tempo."""
         if not self.n_pendencias() and not self.dirty:
             if confirmar:
                 messagebox.showinfo("Nada a fazer", "Nenhuma alteracao pendente.")
             return
-        if confirmar and not messagebox.askyesno(
-                "Salvar no jogo",
-                "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
-                "Um backup e feito automaticamente antes."):
+        if confirmar:
+            if not messagebox.askyesno(
+                    "Salvar no jogo",
+                    "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
+                    "Um backup e feito automaticamente antes."):
+                return
+            self._disparar_salvar()
+        else:
+            self._agendar_salvar()
+
+    def _agendar_salvar(self):
+        # debounce: cada edicao reagenda; o save so roda ~1.5s depois da ULTIMA edicao,
+        # agrupando varias insercoes num unico save (menos churn de nuvem, sem concorrencia).
+        if self._save_after_id is not None:
+            try:
+                self.after_cancel(self._save_after_id)
+            except Exception:
+                pass
+        self.status("alteracao feita - salvando em instantes...", "#e0c060")
+        self._save_after_id = self.after(1500, self._disparar_salvar)
+
+    def _disparar_salvar(self):
+        self._save_after_id = None
+        if not self.n_pendencias() and not self.dirty:
             return
+        if self._salvando:                       # ja tem um save rodando -> repete depois
+            self._save_pendente = True
+            return
+        self._salvando = True
         self.btn_salvar.configure(state="disabled"); self.pb.start(12); self.status("salvando no jogo...")
         threading.Thread(target=self._salvar_th, daemon=True).start()
 
@@ -448,7 +477,11 @@ class App(tk.Tk):
     def _salvo(self):
         self.pb.stop(); self.btn_salvar.configure(state="normal")
         self.pendentes.clear(); self.dirty = False
+        self._salvando = False
         self.status("✓ salvo no jogo!", "#7fe0a0")
+        if self._save_pendente:                  # chegaram edicoes durante o save
+            self._save_pendente = False
+            self._agendar_salvar()
         if not self._nuvem_avisada:
             self._nuvem_avisada = True
             messagebox.showinfo(
