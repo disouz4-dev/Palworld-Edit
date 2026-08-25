@@ -156,30 +156,26 @@ class Perfil(object):
             return {"sp": 10, "hp": 10, "atk": 10}
         return {"atk": 10, "hp": 10}          # combate
 
-    # ---- escala pelo "tier" do Pal (raridade): inicio de jogo fica mais fraco
-    #      que fim de jogo, mesmo com o upgrade ----
     def tier(self, esp):
         r = self.rarity.get(self._norm(esp), 5)
         return max(0.1, min(int(r), 10) / 10.0)      # 0.1 (comum) .. 1.0 (lendario)
 
+    # Upgrade UNIVERSAL: base e combate precisam de stats altos. A diferenca de
+    # poder entre inicio e fim de jogo vem dos stats-BASE do Pal (um comum 4 estrelas
+    # ainda e muito mais fraco que um lendario 4 estrelas), nao de nerfar o upgrade.
     def ivs_alvo(self, esp):
-        """IVs (Vida/Ataque/Defesa) escalados: comuns ~55, lendarios ~100."""
+        """IVs altos e variados (90-100) -- 'sem cara de cheat', mas fortes."""
         import random
-        cap = int(round(50 + 50 * self.tier(esp)))
-        lo = max(0, cap - 12)
-        return {k: random.randint(lo, cap) for k in ("hp", "atk", "def")}
+        return {k: random.randint(90, 100) for k in ("hp", "atk", "def")}
 
     def estrelas_alvo(self, esp):
-        """Condensacao (0-4) escalada: comuns ~1 estrela, lendarios 4."""
-        return max(0, min(4, int(round(self.tier(esp) * 4 + 0.4))))
+        return 4                                      # condensacao maxima para todos
 
     def almas_alvo(self, papel, esp):
-        """Almas com valor escalado pelo tier (1 nos comuns, 10 nos lendarios)."""
-        v = max(1, int(round(10 * self.tier(esp))))
-        return {k: v for k in self.almas(papel)}
+        return {k: 10 for k in self.almas(papel)}     # almas no maximo (conservador)
 
     def apt_rank(self, esp):
-        return max(1, int(round(3 * self.tier(esp))))
+        return 3
 
     def plano(self, individuos):
         """individuos: lista de (especie, id_unico). Agrupa por especie e, para os

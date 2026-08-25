@@ -3,6 +3,17 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.6 — 2026-08-25
+### Ajustes no upgrade em massa
+- **Condensação 4 estrelas e IVs altos (90-100) para TODOS** (base e combate precisam
+  de stats altos). A diferença de poder entre início e fim de jogo vem naturalmente
+  dos **stats-base** do Pal, não de nerfar o upgrade. _Condensation 4★ and high IVs are
+  now universal; the power gap comes from base stats._
+- **Modo automático respeita o local**: Pals na **equipe** viram **combate** (nunca
+  recebem Artesão Transcendental nem outra passiva de trabalho); Pals nas **bases**
+  viram **trabalho**; na caixa, decide pela análise. _Auto mode: party = combat (no
+  work passives), bases = work._
+
 ## v1.6.5 — 2026-08-25
 ### Upgrade em massa proporcional ao tier / power scaled by tier
 - O otimizador agora **escala o upgrade pela raridade/tier** de cada Pal: os de

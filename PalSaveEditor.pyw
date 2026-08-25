@@ -1198,8 +1198,8 @@ class TelaPals(Tela):
         self.v_hp.set(str(iv["hp"])); self.v_at.set(str(iv["atk"])); self.v_df.set(str(iv["def"]))
         self.v_rk.set(str(est))
         self.lbl_sug.configure(text=self.lbl_sug.cget("text") +
-                               "\n\n(passivas + IVs ~%d + %d estrelas, conforme o tier "
-                               "do Pal - revise e Guardar)" % (max(iv.values()), est))
+                               "\n\n(passivas + IVs altos (90-100) + condensacao 4 estrelas "
+                               "aplicados - revise e Guardar)")
         self.b_aplicar_sug.configure(state="disabled")
 
     def _guardar(self):
@@ -1466,11 +1466,7 @@ class JanelaOtimizar(tk.Toplevel):
         op = self.op
         nv = self.tela.nivel_jogador if op["nivel"].get() else p.nivel
         est = self.pf.estrelas_alvo(p.especie) if op["cond"].get() else self._estrelas(p)
-        if op["ivs"].get():
-            cap = int(round(50 + 50 * self.pf.tier(p.especie)))
-            iv = "IV~%d" % cap
-        else:
-            iv = "IV atual"
+        iv = "IV~90-100" if op["ivs"].get() else "IV atual"
         partes = ["Nv%d" % nv, "%d★" % est, iv]
         if op["passivas"].get():
             nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
@@ -1487,8 +1483,19 @@ class JanelaOtimizar(tk.Toplevel):
         pals = self._pals_do_escopo()
         modo = self.v_modo.get()
         if modo.startswith("Automatica"):
-            plano = self.pf.plano([(p.especie, id(p)) for p in pals])
-            self.plano = {id(p): plano.get(id(p), "combate") for p in pals}
+            # respeita o LOCAL: quem esta com o personagem (equipe) e combate e nao
+            # recebe passiva de trabalho; quem esta nas bases e trabalho; na caixa,
+            # decide pela analise (dividindo repetidos).
+            base_plano = self.pf.plano([(p.especie, id(p)) for p in pals])
+            self.plano = {}
+            for p in pals:
+                cat = self.tela.cat_cont.get(self.tela._cont_de(p))
+                if cat == "party":
+                    self.plano[id(p)] = "combate"
+                elif cat == "base":
+                    self.plano[id(p)] = "trabalho"
+                else:
+                    self.plano[id(p)] = base_plano.get(id(p), "combate")
         else:
             fix = ("combate" if "Combate" in modo else
                    "trabalho" if "Trabalho" in modo else "montaria")
