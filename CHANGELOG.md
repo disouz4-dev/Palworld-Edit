@@ -3,6 +3,19 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.4 — 2026-08-25
+### Correção automática dos itens invisíveis / auto-repair of invisible items
+- Ao abrir o save, se houver itens normais parados no container de **itens-chave**
+  (deixados por um bug **já corrigido**), o editor **oferece movê-los para a mochila**
+  uma única vez — assim o que só contava **peso** volta a **aparecer**. Sem botão
+  permanente; os itens-chave de verdade não são tocados. _One-time auto-repair on load._
+### Passivas com variedade por Pal / more varied passives
+- A sugestão de combate agora **muda conforme o Pal**: tanques recebem build
+  **defensiva** (Casca de Aço), Pals frágeis e fortes recebem **dano puro**
+  (Brutamontes), rápidos ganham **mobilidade**, e todos recebem o **boost do próprio
+  elemento** (Regente de Fogo/Gelo/Raio…). _Combat passives now vary by the pal's
+  stats and element instead of being identical._
+
 ## v1.6.3 — 2026-08-25
 ### Correções importantes / Important fixes
 - **Itens agora vão para a mochila visível certa.** O app estava mirando o container

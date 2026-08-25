@@ -116,15 +116,26 @@ class Perfil(object):
         return "ElementBoost_Normal_2_PAL"
 
     def passivas(self, esp, papel):
-        """As 4 melhores passivas (IDs internos) para o Pal naquela funcao."""
+        """As 4 melhores passivas (IDs internos) para o Pal naquela funcao.
+        No combate, varia conforme os stats do Pal (tanque / dano / mobilidade)."""
         boost = self._boost_elemento(esp)
         if papel == "trabalho":
-            # velocidade de trabalho + all-round, ainda aguentando defender a base
             return ["CraftSpeed_up3", "Rare", "Legend", "PAL_ALLAttack_up3"]
         if papel == "montaria":
             return ["Legend", "MoveSpeed_up_3", boost, "PAL_ALLAttack_up3"]
-        # combate (equipe): dano maximo, com boost do elemento do Pal
-        return ["Legend", "PAL_ALLAttack_up3", boost, "Noukin"]
+        # combate: escolhe o perfil pelas caracteristicas reais do Pal
+        s = self._stats(esp)
+        atk = max(s.get("Melee Attack", 0), s.get("Shot Attack", 0))
+        tank = s.get("Defense", 0) + s.get("HP", 0)
+        vel = s.get("Sprinting Speed", 0)
+        if atk and tank:
+            if tank >= atk * 1.9:            # resistente -> build defensiva
+                return ["Legend", "Deffence_up3", boost, "PAL_ALLAttack_up3"]
+            if atk >= tank * 1.15:           # frágil e forte -> dano puro
+                return ["Legend", "PAL_ALLAttack_up3", boost, "Noukin"]
+        if vel >= 1400:                      # muito veloz -> mobilidade + dano
+            return ["Legend", "PAL_ALLAttack_up3", boost, "MoveSpeed_up_3"]
+        return ["Legend", "PAL_ALLAttack_up3", boost, "Rare"]   # equilibrado
 
     def aptidoes_enum(self, esp, rank=3):
         """{enum_do_save: rank} para as aptidoes que o Pal JA tem (para reforca-las)."""

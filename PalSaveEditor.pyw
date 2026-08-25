@@ -81,6 +81,7 @@ class App(tk.Tk):
         self.nomes = {}
         self.map_mundo = {}
         self.nome_mundo = {}
+        self._reparo_ofer = set()   # mundos onde ja oferecemos corrigir itens fora do lugar
         self.pendentes = {}       # {guid: {sid: qtd}}  (itens, aplicados ao salvar)
         self.dirty = False        # edicoes de pal/personagem ja aplicadas ao level
         self.catalogo = self._carregar_catalogo()
@@ -374,7 +375,61 @@ class App(tk.Tk):
         nome = self.nome_mundo.get(self.cb_mundo.get(), "")
         self.title("Palworld - Editor de Save - %s" % nome)
         self.status('"%s" carregado.' % nome, "#7fe0a0")
+        self._reparar_itens_perdidos()
         self.mostrar("inicio")
+
+    # correcao unica: itens normais que um bug antigo deixou no container de
+    # itens-chave (pesavam sem aparecer). A causa ja foi corrigida; isto so limpa
+    # o estrago que ja estava no save. Sem botao permanente.
+    CHAVE_PREFIX = ("KeySphere", "SkillUnlock", "Blueprint", "TechnologyBook",
+                    "AncientTechnologyBook", "PassiveSkill", "Note_", "Map_")
+
+    def _reparar_itens_perdidos(self):
+        try:
+            chave = self.entry_atual["name"] if self.entry_atual else ""
+            if chave in self._reparo_ofer:
+                return
+            ess = next((c for c in self.containers
+                        if self.nomes.get(c.guid, ("", ""))[0].startswith("Personagem: Itens-chave")), None)
+            inv = next((c for c in self.containers
+                        if self.nomes.get(c.guid, ("", ""))[0] == "Personagem: INVENTARIO PRINCIPAL"), None)
+            perdidos = [s for s in list(ess.slots)
+                        if not s.static_id.startswith(self.CHAVE_PREFIX)] if ess else []
+            fant = [(c, s) for c in self.containers
+                    if self.nomes.get(c.guid, ("", ""))[1] == "personagem"
+                    for s in list(c.slots) if s.index >= c.capacity]
+            if not perdidos and not fant:
+                return
+            self._reparo_ofer.add(chave)
+            if inv is None:
+                return
+            lista = "\n".join("  - %s x%d" % (traducao.nome_item(s.static_id), s.count)
+                              for s in perdidos[:12]) or "  (slots invalidos)"
+            if len(perdidos) > 12:
+                lista += "\n  ... e mais %d" % (len(perdidos) - 12)
+            if not messagebox.askyesno(
+                    "Corrigir itens fora do lugar",
+                    "Encontrei itens que uma versao ANTIGA (bug ja corrigido) deixou no "
+                    "container de itens-chave -- eles pesam mas nao aparecem na mochila:\n\n%s\n\n"
+                    "Mover para a sua mochila agora? Depois e so clicar em SALVAR NO JOGO."
+                    % lista):
+                return
+            movidos = 0
+            for s in perdidos:
+                sid, qt = s.static_id, s.count
+                if len(inv.slots) >= inv.capacity and sid not in inv.items:
+                    continue
+                ess.remove_slot(s)
+                self.level.set_quantity(inv, sid, inv.items.get(sid, 0) + qt)
+                movidos += 1
+            for c, s in fant:
+                c.remove_slot(s)
+            if movidos or fant:
+                self.marcar_sujo()
+                self.status("%d itens movidos para a mochila (correcao) - clique em SALVAR NO JOGO"
+                            % movidos, "#e0c060")
+        except Exception:
+            pass
 
     def _erro(self, titulo, tb):
         self.pb.stop(); self.status(titulo, "#ff8080")
