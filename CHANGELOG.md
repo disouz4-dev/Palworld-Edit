@@ -3,6 +3,15 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.7 — 2026-08-25
+### Pontos de tecnologia / technology points
+- Novo na tela **Personagem**: editar **Pontos de tecnologia** e **Pontos de
+  tecnologia antiga**. Esses pontos ficam no save do JOGADOR, que é comprimido com
+  **Oodle** — o editor lê com um Oodle opcional (aponte uma vez o `oodle-data-shared.dll`
+  do FModel, ou um `oo2core_*.dll`) e **regrava como zlib**, que o jogo também lê.
+  Sem Oodle, o resto do editor funciona normalmente. _New: edit Technology and Ancient
+  Technology points (player save is Oodle-compressed; needs an Oodle DLL once to read)._
+
 ## v1.6.6 — 2026-08-25
 ### Ajustes no upgrade em massa
 - **Condensação 4 estrelas e IVs altos (90-100) para TODOS** (base e combate precisam

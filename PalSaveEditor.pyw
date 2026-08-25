@@ -352,6 +352,7 @@ class App(tk.Tk):
             return
         self.entry_atual = self.map_mundo[rot]
         self.pendentes.clear(); self.dirty = False
+        self._tech_g = None; self._tech_meta = None; self._tech_entry = None
         self.btn_salvar.configure(state="disabled")
         self.pb.start(12); self.status("lendo e descomprimindo o save...")
         threading.Thread(target=self._carregar_th, daemon=True).start()
@@ -498,6 +499,64 @@ class App(tk.Tk):
 
     def abrir_pasta_backup(self):
         os.makedirs(BACKUP_DIR, exist_ok=True); webbrowser.open(BACKUP_DIR)
+
+    # ---------- pontos de tecnologia (ficam no save do JOGADOR, comprimido com Oodle) ----------
+    def _wid_atual(self):
+        return self.entry_atual["name"].split("-")[0] if self.entry_atual else ""
+
+    def tech_carregar(self):
+        """(ok, tech, antiga, motivo). motivo='sem_oodle' quando falta o DLL."""
+        from palsave import oodle, jogador
+        if getattr(self, "_tech_g", None) is not None:
+            t, a = jogador.pontos(self._tech_g); return True, t, a, ""
+        op = self.cfg.get("oodle")
+        if not oodle.disponivel(op):
+            return False, 0, 0, "sem_oodle"
+        ent = jogador.entrada_jogador(self.index, self._wid_atual())
+        if ent is None:
+            return False, 0, 0, "Nao achei o save do jogador."
+        try:
+            g, meta = jogador.ler(self.root_wgs, ent, op)
+        except Exception as ex:
+            return False, 0, 0, str(ex)[:200]
+        self._tech_g, self._tech_meta, self._tech_entry = g, meta, ent
+        t, a = jogador.pontos(g); return True, t, a, ""
+
+    def tech_apontar_oodle(self):
+        d = filedialog.askopenfilename(
+            title="Selecione um DLL do Oodle (ex.: oodle-data-shared.dll do FModel, ou oo2core_9_win64.dll)",
+            filetypes=[("DLL", "*.dll"), ("Todos", "*.*")])
+        if not d:
+            return False
+        from palsave import oodle as _o
+        _o._dll = None                       # forca recarregar
+        if not _o.disponivel(d):
+            messagebox.showerror("Oodle", "Esse arquivo nao serviu como Oodle."); return False
+        self.cfg["oodle"] = d; _gravar_config(self.cfg)
+        return True
+
+    def tech_salvar(self, tech, antiga, cb):
+        from palsave import jogador
+        if getattr(self, "_tech_g", None) is None:
+            cb(False, "Carregue a tecnologia primeiro."); return
+        jogador.set_pontos(self._tech_g, tech, antiga)
+        self.pb.start(12); self.status("salvando tecnologia...")
+
+        def th():
+            try:
+                self.bm.create("antes de editar tecnologia")
+                jogador.gravar(self.root_wgs, self.index, self._tech_entry,
+                               self._tech_g, self._tech_meta)
+                self._na_ui(self._tech_salvo, cb, True, "")
+            except Exception:
+                self._na_ui(self._tech_salvo, cb, False, traceback.format_exc()[-800:])
+        threading.Thread(target=th, daemon=True).start()
+
+    def _tech_salvo(self, cb, ok, msg):
+        self.pb.stop()
+        self.status("tecnologia salva!" if ok else "falha ao salvar tecnologia",
+                    "#7fe0a0" if ok else "#ff8080")
+        cb(ok, msg)
 
     # ---------- atualizacao (GitHub) ----------
     def verificar_atualizacao(self):
@@ -874,6 +933,11 @@ class TelaPersonagem(Tela):
             ttk.Label(top, text=rot + ":").grid(row=1, column=c * 2, sticky="e", padx=(0, 4), pady=6)
             ttk.Entry(top, textvariable=var, width=12).grid(row=1, column=c * 2 + 1, sticky="w", padx=(0, 14))
 
+        # tecnologia (fica no save do jogador, comprimido com Oodle)
+        self.tech_box = ttk.Labelframe(self, text="Tecnologia", padding=8)
+        self.tech_box.pack(fill="x", pady=(8, 0))
+        self._montar_tech()
+
         ttk.Label(self, text="Pontos por atributo (duplo clique aplica o valor abaixo):",
                   style="Sub.TLabel").pack(anchor="w", pady=(8, 2))
         self.tv = ttk.Treeview(self, columns=("pts",), show="tree headings", height=16)
@@ -891,6 +955,49 @@ class TelaPersonagem(Tela):
         ttk.Entry(f, textvariable=self.v_val, width=8).pack(side="left", padx=4)
         ttk.Button(f, text="Aplicar ao selecionado", command=self.editar).pack(side="left")
         ttk.Button(f, text="Guardar alteracoes do personagem", command=self.guardar).pack(side="right")
+
+    def _montar_tech(self):
+        for w in self.tech_box.winfo_children():
+            w.destroy()
+        ok, tech, antiga, motivo = self.app.tech_carregar()
+        if ok:
+            self.v_tech = tk.StringVar(value=str(tech))
+            self.v_tech_ant = tk.StringVar(value=str(antiga))
+            ttk.Label(self.tech_box, text="Pontos de tecnologia:").grid(row=0, column=0, sticky="e", padx=(0, 4))
+            ttk.Entry(self.tech_box, textvariable=self.v_tech, width=10).grid(row=0, column=1, sticky="w", padx=(0, 14))
+            ttk.Label(self.tech_box, text="Tecnologia antiga:").grid(row=0, column=2, sticky="e", padx=(0, 4))
+            ttk.Entry(self.tech_box, textvariable=self.v_tech_ant, width=10).grid(row=0, column=3, sticky="w", padx=(0, 14))
+            ttk.Button(self.tech_box, text="Guardar tecnologia", command=self._guardar_tech).grid(row=0, column=4, padx=6)
+        elif motivo == "sem_oodle":
+            ttk.Label(self.tech_box, justify="left", wraplength=560, style="Sub.TLabel", text=(
+                "Os pontos de tecnologia ficam no save do jogador, que e comprimido com Oodle. "
+                "Para editar, aponte uma vez um DLL do Oodle (o oodle-data-shared.dll do FModel, "
+                "ou um oo2core_9_win64.dll de algum jogo Unreal).")
+            ).grid(row=0, column=0, columnspan=3, sticky="w")
+            ttk.Button(self.tech_box, text="Apontar DLL do Oodle...",
+                       command=lambda: self._montar_tech() if self.app.tech_apontar_oodle() else None
+                       ).grid(row=1, column=0, sticky="w", pady=(6, 0))
+        else:
+            ttk.Label(self.tech_box, style="Sub.TLabel",
+                      text="Tecnologia indisponivel: %s" % motivo).grid(row=0, column=0, sticky="w")
+
+    def _guardar_tech(self):
+        try:
+            t = int(self.v_tech.get()); a = int(self.v_tech_ant.get())
+        except ValueError:
+            messagebox.showwarning("Invalido", "Digite numeros."); return
+        if not messagebox.askyesno("Guardar tecnologia",
+                                   "Gravar os pontos de tecnologia no save do jogador?\n\n"
+                                   "O JOGO PRECISA ESTAR FECHADO. Um backup e feito antes."):
+            return
+
+        def feito(ok, msg):
+            if ok:
+                messagebox.showinfo("Pronto", "Tecnologia gravada.\n\nSe nao aparecer no jogo, "
+                                              "use o passo do modo aviao (nuvem do Xbox).")
+            else:
+                messagebox.showerror("Erro", msg)
+        self.app.tech_salvar(t, a, feito)
 
     @staticmethod
     def _n(v):
