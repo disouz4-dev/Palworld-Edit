@@ -1,6 +1,7 @@
 # Changelog — Palworld Editor
 
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
+_All notable changes per version._
 
 ## v1.6.10 — 2026-08-25
 ### Fim do aviso repetido de "itens fora do lugar"
@@ -8,7 +9,6 @@ Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
   itens-chave (ele flagava itens legitimos como Lanterna/AutoMealPouch). A causa
   raiz ja estava corrigida; agora so remove, em silencio, slots realmente invalidos.
   _No more repeated "misplaced items" prompt on every launch._
-_All notable changes per version._
 
 ## v1.6.9 — 2026-08-25
 ### Correção: condensação 4 estrelas não aplicava
