@@ -3,6 +3,13 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.8 — 2026-08-25
+### Restaurar backup mais forte contra a nuvem
+- Ao **restaurar um backup**, o editor agora marca o save restaurado como o **mais
+  recente** (atualiza os filetimes do índice), para a sincronização da nuvem do Xbox
+  **subir** o save restaurado em vez de reverter o local para a versão antiga/quebrada.
+  _Restore now marks the save as newest so Xbox cloud sync uploads it instead of reverting._
+
 ## v1.6.7 — 2026-08-25
 ### Pontos de tecnologia / technology points
 - Novo na tela **Personagem**: editar **Pontos de tecnologia** e **Pontos de

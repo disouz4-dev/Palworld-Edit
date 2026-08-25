@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Backup e restauracao dos saves. Copia a pasta inteira da conta WGS."""
-import os, shutil, time, json
+import os, shutil, time, json, struct
 
 class BackupManager(object):
     def __init__(self, wgs_root, store):
@@ -71,3 +71,22 @@ class BackupManager(object):
                 shutil.copytree(s, d)
             else:
                 shutil.copy2(s, d)
+        # marca o save restaurado como o MAIS NOVO, para a nuvem do Xbox SUBIR ele
+        # (e nao reverter o local para a versao antiga/quebrada da nuvem).
+        self._marcar_recente()
+
+    def _marcar_recente(self):
+        ipath = os.path.join(self.wgs_root, "containers.index")
+        if not os.path.isfile(ipath):
+            return
+        try:
+            from palsave import wgs
+            b = bytearray(open(ipath, "rb").read())
+            idx = wgs.parse_index(self.wgs_root)
+            agora = int((time.time() + 11644473600) * 10_000_000)
+            for e in idx["entries"]:
+                struct.pack_into("<q", b, e["filetime_off"], agora)
+            with open(ipath, "wb") as f:
+                f.write(bytes(b))
+        except Exception:
+            pass
