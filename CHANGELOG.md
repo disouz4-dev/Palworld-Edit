@@ -3,6 +3,16 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.5 — 2026-08-25
+### Upgrade em massa proporcional ao tier / power scaled by tier
+- O otimizador agora **escala o upgrade pela raridade/tier** de cada Pal: os de
+  **início de jogo** (Lamball, Cattiva…) recebem menos (≈1 estrela, IVs ~55, almas
+  baixas) e os de **fim de jogo/lendários** (Anubis, Shadowbeak, Frostallion) recebem
+  o **máximo** (4 estrelas, IVs ~100, almas altas). Assim os fracos não ficam tão
+  fortes quanto os lendários. _Mass upgrade now scales with each pal's rarity tier._
+- Pals de **base** agora recebem **Insônia** (não dormem, trabalham 24h) no conjunto
+  de passivas. _Base pals now get Insomniac (work 24h)._
+
 ## v1.6.4 — 2026-08-25
 ### Correção automática dos itens invisíveis / auto-repair of invisible items
 - Ao abrir o save, se houver itens normais parados no container de **itens-chave**

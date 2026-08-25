@@ -1192,14 +1192,14 @@ class TelaPals(Tela):
     def _aplicar_sug(self):
         for k in range(4):
             self.v_pass[k].set(self._sug_ids[k] if k < len(self._sug_ids) else "")
-        # IVs proximos de 100, mas variados (parece bem criado, sem cara de cheat)
-        self.v_hp.set(str(random.randint(90, 100)))
-        self.v_at.set(str(random.randint(90, 100)))
-        self.v_df.set(str(random.randint(90, 100)))
-        self.v_rk.set("4")   # condensacao no maximo (4 estrelas)
+        # IVs e condensacao escalados pelo tier do Pal (inicio de jogo fica mais fraco)
+        pf = perfil.carregar(); esp = self.atual.especie
+        iv = pf.ivs_alvo(esp); est = pf.estrelas_alvo(esp)
+        self.v_hp.set(str(iv["hp"])); self.v_at.set(str(iv["atk"])); self.v_df.set(str(iv["def"]))
+        self.v_rk.set(str(est))
         self.lbl_sug.configure(text=self.lbl_sug.cget("text") +
-                               "\n\n(passivas + IVs altos (90-100) + condensacao 4 estrelas "
-                               "aplicados - revise e Guardar)")
+                               "\n\n(passivas + IVs ~%d + %d estrelas, conforme o tier "
+                               "do Pal - revise e Guardar)" % (max(iv.values()), est))
         self.b_aplicar_sug.configure(state="disabled")
 
     def _guardar(self):
@@ -1465,8 +1465,12 @@ class JanelaOtimizar(tk.Toplevel):
     def _depois(self, p, papel):
         op = self.op
         nv = self.tela.nivel_jogador if op["nivel"].get() else p.nivel
-        est = 4 if op["cond"].get() else self._estrelas(p)
-        iv = "IV~90-100" if op["ivs"].get() else "IV atual"
+        est = self.pf.estrelas_alvo(p.especie) if op["cond"].get() else self._estrelas(p)
+        if op["ivs"].get():
+            cap = int(round(50 + 50 * self.pf.tier(p.especie)))
+            iv = "IV~%d" % cap
+        else:
+            iv = "IV atual"
         partes = ["Nv%d" % nv, "%d★" % est, iv]
         if op["passivas"].get():
             nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
@@ -1521,16 +1525,17 @@ class JanelaOtimizar(tk.Toplevel):
             if op["passivas"]:
                 p.set_passivas_f(self.pf.passivas(esp, papel), md["PassiveSkillList"])
             if op["ivs"]:
-                p.set_talento_f("Talent_HP", random.randint(90, 100), md["Talent_HP"])
-                p.set_talento_f("Talent_Shot", random.randint(90, 100), md["Talent_Shot"])
-                p.set_talento_f("Talent_Defense", random.randint(90, 100), md["Talent_Defense"])
+                iv = self.pf.ivs_alvo(esp)
+                p.set_talento_f("Talent_HP", iv["hp"], md["Talent_HP"])
+                p.set_talento_f("Talent_Shot", iv["atk"], md["Talent_Shot"])
+                p.set_talento_f("Talent_Defense", iv["def"], md["Talent_Defense"])
             if op["cond"]:
-                p.set_condensacao_estrelas(4, md["Rank"])
+                p.set_condensacao_estrelas(self.pf.estrelas_alvo(esp), md["Rank"])
             if op["almas"]:
-                for qual, val in self.pf.almas(papel).items():
+                for qual, val in self.pf.almas_alvo(papel, esp).items():
                     p.set_alma(qual, val)
             if op["aptidoes"] and papel == "trabalho":
-                ap = self.pf.aptidoes_enum(esp, 3)
+                ap = self.pf.aptidoes_enum(esp, self.pf.apt_rank(esp))
                 if ap:
                     p.set_aptidoes(ap, md["GotWorkSuitabilityAddRankList"])
             p.gravar()

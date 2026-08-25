@@ -44,9 +44,10 @@ _eng = None
 
 
 class Perfil(object):
-    def __init__(self, roles, elems):
+    def __init__(self, roles, elems, rarity=None):
         self.roles = roles            # {especie: {"work":{..}, "stats":{..}}}
         self.elems = elems            # {especie: [elementos]}
+        self.rarity = rarity or {}    # {especie: rarity 1..20}
         # distribuicao de combate para dar rotulo Forte/Medio/Fraco
         cs = sorted(self._combate_bruto(e) for e in roles) or [0]
         self._c_lo, self._c_hi = cs[0], cs[-1]
@@ -120,7 +121,8 @@ class Perfil(object):
         No combate, varia conforme os stats do Pal (tanque / dano / mobilidade)."""
         boost = self._boost_elemento(esp)
         if papel == "trabalho":
-            return ["CraftSpeed_up3", "Rare", "Legend", "PAL_ALLAttack_up3"]
+            # base 24h: Artesao (vel. trabalho) + Insonia (nao dorme) + Da Sorte + Lendario
+            return ["CraftSpeed_up3", "Nocturnal", "Rare", "Legend"]
         if papel == "montaria":
             return ["Legend", "MoveSpeed_up_3", boost, "PAL_ALLAttack_up3"]
         # combate: escolhe o perfil pelas caracteristicas reais do Pal
@@ -147,12 +149,37 @@ class Perfil(object):
         return out
 
     def almas(self, papel):
-        """{qual_alma: valor} conforme a funcao (valores conservadores, sem overpower)."""
+        """Quais almas importam por funcao (o VALOR e escalado por almas_alvo)."""
         if papel == "trabalho":
             return {"trabalho": 10, "hp": 10}
         if papel == "montaria":
             return {"sp": 10, "hp": 10, "atk": 10}
         return {"atk": 10, "hp": 10}          # combate
+
+    # ---- escala pelo "tier" do Pal (raridade): inicio de jogo fica mais fraco
+    #      que fim de jogo, mesmo com o upgrade ----
+    def tier(self, esp):
+        r = self.rarity.get(self._norm(esp), 5)
+        return max(0.1, min(int(r), 10) / 10.0)      # 0.1 (comum) .. 1.0 (lendario)
+
+    def ivs_alvo(self, esp):
+        """IVs (Vida/Ataque/Defesa) escalados: comuns ~55, lendarios ~100."""
+        import random
+        cap = int(round(50 + 50 * self.tier(esp)))
+        lo = max(0, cap - 12)
+        return {k: random.randint(lo, cap) for k in ("hp", "atk", "def")}
+
+    def estrelas_alvo(self, esp):
+        """Condensacao (0-4) escalada: comuns ~1 estrela, lendarios 4."""
+        return max(0, min(4, int(round(self.tier(esp) * 4 + 0.4))))
+
+    def almas_alvo(self, papel, esp):
+        """Almas com valor escalado pelo tier (1 nos comuns, 10 nos lendarios)."""
+        v = max(1, int(round(10 * self.tier(esp))))
+        return {k: v for k in self.almas(papel)}
+
+    def apt_rank(self, esp):
+        return max(1, int(round(3 * self.tier(esp))))
 
     def plano(self, individuos):
         """individuos: lista de (especie, id_unico). Agrupa por especie e, para os
@@ -181,11 +208,13 @@ def carregar():
     global _eng
     if _eng is None:
         roles = json.load(open(os.path.join(BASE, "dados", "pals_roles.json"), encoding="utf-8"))
+        elems, rarity = {}, {}
         try:
-            elems = {k: v.get("elements", [])
-                     for k, v in json.load(open(os.path.join(BASE, "dados", "breeding.json"),
-                                                 encoding="utf-8"))["pals"].items()}
+            pals = json.load(open(os.path.join(BASE, "dados", "breeding.json"),
+                                  encoding="utf-8"))["pals"]
+            elems = {k: v.get("elements", []) for k, v in pals.items()}
+            rarity = {k: v.get("rarity", 5) for k, v in pals.items()}
         except Exception:
-            elems = {}
-        _eng = Perfil(roles, elems)
+            pass
+        _eng = Perfil(roles, elems, rarity)
     return _eng
