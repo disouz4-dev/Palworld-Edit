@@ -381,54 +381,21 @@ class App(tk.Tk):
 
     # correcao unica: itens normais que um bug antigo deixou no container de
     # itens-chave (pesavam sem aparecer). A causa ja foi corrigida; isto so limpa
-    # o estrago que ja estava no save. Sem botao permanente.
-    CHAVE_PREFIX = ("KeySphere", "SkillUnlock", "Blueprint", "TechnologyBook",
-                    "AncientTechnologyBook", "PassiveSkill", "Note_", "Map_")
-
+    # o estrago que ja estava no save. Silencioso, SEM aviso, e so mexe no que
+    # e comprovadamente invalido (slot com indice alem da capacidade do container).
+    # Itens normais no container de itens-chave NAO sao tocados (podem ser legitimos).
     def _reparar_itens_perdidos(self):
         try:
-            chave = self.entry_atual["name"] if self.entry_atual else ""
-            if chave in self._reparo_ofer:
-                return
-            ess = next((c for c in self.containers
-                        if self.nomes.get(c.guid, ("", ""))[0].startswith("Personagem: Itens-chave")), None)
-            inv = next((c for c in self.containers
-                        if self.nomes.get(c.guid, ("", ""))[0] == "Personagem: INVENTARIO PRINCIPAL"), None)
-            perdidos = [s for s in list(ess.slots)
-                        if not s.static_id.startswith(self.CHAVE_PREFIX)] if ess else []
             fant = [(c, s) for c in self.containers
                     if self.nomes.get(c.guid, ("", ""))[1] == "personagem"
                     for s in list(c.slots) if s.index >= c.capacity]
-            if not perdidos and not fant:
+            if not fant:
                 return
-            self._reparo_ofer.add(chave)
-            if inv is None:
-                return
-            lista = "\n".join("  - %s x%d" % (traducao.nome_item(s.static_id), s.count)
-                              for s in perdidos[:12]) or "  (slots invalidos)"
-            if len(perdidos) > 12:
-                lista += "\n  ... e mais %d" % (len(perdidos) - 12)
-            if not messagebox.askyesno(
-                    "Corrigir itens fora do lugar",
-                    "Encontrei itens que uma versao ANTIGA (bug ja corrigido) deixou no "
-                    "container de itens-chave -- eles pesam mas nao aparecem na mochila:\n\n%s\n\n"
-                    "Mover para a sua mochila agora? Depois e so clicar em SALVAR NO JOGO."
-                    % lista):
-                return
-            movidos = 0
-            for s in perdidos:
-                sid, qt = s.static_id, s.count
-                if len(inv.slots) >= inv.capacity and sid not in inv.items:
-                    continue
-                ess.remove_slot(s)
-                self.level.set_quantity(inv, sid, inv.items.get(sid, 0) + qt)
-                movidos += 1
             for c, s in fant:
                 c.remove_slot(s)
-            if movidos or fant:
-                self.marcar_sujo()
-                self.status("%d itens movidos para a mochila (correcao) - clique em SALVAR NO JOGO"
-                            % movidos, "#e0c060")
+            self.marcar_sujo()
+            self.status("%d slot(s) invalido(s) removido(s) - clique em SALVAR NO JOGO"
+                        % len(fant), "#e0c060")
         except Exception:
             pass
 
@@ -1631,7 +1598,8 @@ class JanelaOtimizar(tk.Toplevel):
         md = personagem.moldes(self.tela.pals)
         n = self.tela.nivel_jogador
         op = {k: v.get() for k, v in self.op.items()}
-        for p in self.alvo:
+        total = len(self.alvo)
+        for i, p in enumerate(self.alvo, 1):
             papel = self.plano[id(p)]
             esp = p.especie
             if op["nivel"]:
@@ -1653,12 +1621,33 @@ class JanelaOtimizar(tk.Toplevel):
                 if ap:
                     p.set_aptidoes(ap, md["GotWorkSuitabilityAddRankList"])
             p.gravar()
+            if i % 15 == 0 or i == total:
+                self.lbl.configure(text="modificando %d/%d..." % (i, total))
+                self.update_idletasks()
         self.app.marcar_sujo()
         self.tela.render()
-        self.app.status("%d Pals modificados em massa - clique em SALVAR NO JOGO" % len(self.alvo), "#e0c060")
-        messagebox.showinfo("Pronto", "%d Pals foram modificados.\nClique em SALVAR NO JOGO." % len(self.alvo),
-                            parent=self)
-        self.destroy()
+        self._confirmar_visual(total)
+
+    def _confirmar_visual(self, total):
+        """Re-renderiza a tabela mostrando o estado REAL de cada Pal apos aplicar,
+        para dar confirmacao pal a pal (a coluna Depois mostra o que ficou gravado)."""
+        for i in self.tv.get_children():
+            self.tv.delete(i)
+        self.tv.tag_configure("feito", foreground="#7fe0a0")
+        for p in self.alvo:
+            papel = self.plano[id(p)]
+            ico = icones_rt.pal(p.especie)
+            kw = {"image": ico} if ico else {}
+            self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
+                           values=(self.ROTULO[papel], "✓ feito", self._antes(p)),
+                           tags=("feito",), **kw)
+        self.lbl.configure(text="✓ %d Pals modificados - confira a coluna 'Depois' e "
+                                "clique em SALVAR NO JOGO" % total)
+        self.app.status("%d Pals modificados - clique em SALVAR NO JOGO" % total, "#7fe0a0")
+        messagebox.showinfo("Pronto",
+                            "%d Pals modificados.\n\nA tabela agora mostra o ESTADO REAL de cada "
+                            "Pal (coluna 'Depois' = 4 estrelas, IVs, passivas). Role a lista para "
+                            "conferir.\n\nAgora clique em SALVAR NO JOGO." % total, parent=self)
 
 
 # ===========================================================================
