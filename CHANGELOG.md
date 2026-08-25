@@ -3,6 +3,22 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.3 — 2026-08-25
+### Correções importantes / Important fixes
+- **Itens agora vão para a mochila visível certa.** O app estava mirando o container
+  de **itens-chave** (Essential, o maior) em vez da mochila comum, então os itens
+  adicionados **contavam peso mas não apareciam** no inventário. Agora a mochila
+  principal é identificada pelo slot de **dinheiro (Money)**; o container de
+  itens-chave aparece separado. _Items now go to the real visible backpack (found by
+  the Money slot), not the key-items container._
+- **Respeita a capacidade real (`SlotNum`)** de cada inventário/baú: não cria mais
+  "slots fantasma" fora do limite (causa de itens invisíveis) e avisa quando o
+  container está **cheio**. Vale para o inventário e para **baús**. _Respects each
+  container's real capacity; no more phantom slots; warns when full._
+- **Editor individual de Pal** agora **injeta** os campos que faltam (condensação,
+  talentos, passivas) — antes a condensação/passivas não aplicavam em Pals que nunca
+  foram condensados. _Single-pal editor now injects missing fields (condensation etc.)._
+
 ## v1.6.2 — 2026-08-24
 ### Importante: nuvem do Xbox / Xbox cloud sync
 - Diagnóstico: quando as mudanças **não aparecem no jogo**, o editor **está gravando

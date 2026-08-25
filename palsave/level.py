@@ -43,6 +43,13 @@ def _parse_slot_raw(raw):
     return idx, cnt, sid, guid
 
 
+def _num(node):
+    if not isinstance(node, dict):
+        return None
+    v = node.get("value")
+    return v.get("value") if isinstance(v, dict) else v
+
+
 def _bytes_of(prop):
     return bytes(prop["value"]["values"])
 
@@ -75,11 +82,20 @@ class Container(object):
     def used_indices(self):
         return set(s.index for s in self.slots)
 
-    def add_slot(self, static_id, count, guid=ZERO_GUID, capacity=42):
+    @property
+    def capacity(self):
+        """Capacidade real (SlotNum). O jogo so MOSTRA slots com indice < capacity;
+        criar slot alem disso deixa o item invisivel (mas contando peso)."""
+        n = _num(self.node["value"].get("SlotNum"))
+        return int(n) if n and n > 0 else max(len(self.slots), 42)
+
+    def add_slot(self, static_id, count, guid=ZERO_GUID, capacity=None):
+        cap = self.capacity
         used = self.used_indices()
-        free = next((i for i in range(max(capacity, len(self.slots) + 1)) if i not in used), None)
+        free = next((i for i in range(cap) if i not in used), None)
         if free is None:
-            raise RuntimeError("container cheio")
+            raise RuntimeError("Este container esta cheio (%d/%d slots). "
+                               "Libere um espaco ou use outro bau." % (len(self.slots), cap))
         node = copy.deepcopy(self._values[0]) if self._values else None
         if node is None:
             raise RuntimeError("container sem slot modelo (nao da pra criar do zero)")

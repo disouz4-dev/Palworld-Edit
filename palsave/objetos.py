@@ -131,11 +131,37 @@ def mapear(level):
             rot = _perfil(c)
             out[c.guid] = (rot, "pal" if rot == "Equipamento de Pal" else "personagem")
 
-    # o maior container do personagem e, na pratica, a mochila principal
+    # A MOCHILA VISIVEL (CommonContainer) e a que guarda o dinheiro (Money).
+    # O maior container do jogador NAO e a mochila -- e o de itens-chave
+    # (Essential, SlotNum ~230); por isso itens adicionados la ficavam invisiveis
+    # no jogo (contavam peso, mas nao apareciam na aba do inventario comum).
     do_jogador = [c for c in level.containers if out[c.guid][1] == "personagem"]
     if do_jogador:
-        maior = max(do_jogador, key=lambda c: len(c.slots))
-        out[maior.guid] = ("Personagem: INVENTARIO PRINCIPAL", "personagem")
+        def _slotnum(c):
+            v = c.node["value"].get("SlotNum")
+            if isinstance(v, dict):
+                vv = v.get("value")
+                return vv.get("value") if isinstance(vv, dict) else (vv or 0)
+            return 0
+
+        def _tem_money(c):
+            return any(s.static_id == "Money" for s in c.slots)
+
+        def _tem_chave(c):
+            return any(s.static_id.startswith(("KeySphere", "SkillUnlock", "Blueprint",
+                                               "TechnologyBook", "AncientTechnologyBook"))
+                       for s in c.slots)
+
+        principal = next((c for c in do_jogador if _tem_money(c)), None)
+        if principal is None:
+            # sem 'Money' a vista: escolhe a maior mochila "normal" (ignora o gigante essencial)
+            normais = [c for c in do_jogador if _slotnum(c) <= 120] or do_jogador
+            principal = max(normais, key=lambda c: _slotnum(c) or len(c.slots))
+        out[principal.guid] = ("Personagem: INVENTARIO PRINCIPAL", "personagem")
+        # rotula o container de itens-chave para nao confundir
+        for c in do_jogador:
+            if c.guid != principal.guid and (_slotnum(c) >= 150 or _tem_chave(c)):
+                out[c.guid] = ("Personagem: Itens-chave (essenciais)", "personagem")
     return out
 
 

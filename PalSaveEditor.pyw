@@ -1150,18 +1150,20 @@ class TelaPals(Tela):
     def _guardar(self):
         p = self.atual
         try:
-            p.set_nivel(int(self.v_nv.get()))
+            md = personagem.moldes(self.pals)     # para criar campos que o Pal nao tenha
+            p._garante("Level", md["Level"]); p.set_nivel(int(self.v_nv.get()))
             p.set_genero("F" if self.v_g.get().startswith("F") else "M")
-            p.set_talento("Talent_HP", int(self.v_hp.get()))
-            p.set_talento("Talent_Shot", int(self.v_at.get()))
-            p.set_talento("Talent_Defense", int(self.v_df.get()))
-            p.set_rank(max(0, min(int(self.v_rk.get()), 4)) + 1)   # estrelas 0-4 -> Rank 1-5
+            p.set_talento_f("Talent_HP", int(self.v_hp.get()), md["Talent_HP"])
+            p.set_talento_f("Talent_Shot", int(self.v_at.get()), md["Talent_Shot"])
+            p.set_talento_f("Talent_Defense", int(self.v_df.get()), md["Talent_Defense"])
+            # estrelas 0-4 -> Rank 1-5 (injeta o campo Rank se o Pal nunca foi condensado)
+            p.set_condensacao_estrelas(max(0, min(int(self.v_rk.get()), 4)), md["Rank"])
             ids = []
             for var in self.v_pass:
                 nome = var.get().strip()
                 if nome:
                     ids.append(self.pass_nome2id.get(nome, nome))
-            p.set_passivas(ids)
+            p.set_passivas_f(ids, md["PassiveSkillList"])
             p.gravar()
         except Exception as ex:
             messagebox.showerror("Erro", str(ex)); return
