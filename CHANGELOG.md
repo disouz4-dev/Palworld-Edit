@@ -3,6 +3,18 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.2 — 2026-08-24
+### Importante: nuvem do Xbox / Xbox cloud sync
+- Diagnóstico: quando as mudanças **não aparecem no jogo**, o editor **está gravando
+  certo no arquivo local** (confirmado byte a byte nos dados reais) — quem desfaz é a
+  **sincronização de save na nuvem** do Xbox/Game Pass, que restaura o save antigo ao
+  abrir o jogo. Agora o app **explica isso ao salvar** e ensina o passo a passo
+  (abrir o jogo **offline**). _The editor writes the local save correctly; Xbox cloud
+  sync can restore the old save — the app now explains the offline workaround._
+- A lista de mundos agora mostra a **data da última jogada** e abre por padrão o
+  **mundo jogado mais recentemente** (evita editar o mundo errado). _World list shows
+  last-played date and defaults to the most recent world._
+
 ## v1.6.1 — 2026-08-24
 ### Correções / Fixes
 - O botão **APLICAR otimização** do otimizador em massa agora fica **sempre visível**

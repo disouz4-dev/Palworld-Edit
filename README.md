@@ -53,9 +53,15 @@ from Windows Settings (or with `uninstall.ps1`). Your backups and settings live 
 
 ### Usage
 1. **Close Palworld** before saving (the game overwrites the save on exit).
-2. Open the app, pick your world.
+2. Open the app, pick your world (it defaults to the **most recently played** one).
 3. Edit in **Items / Character / Pals**, then click **SAVE TO GAME**.
 4. If anything goes wrong in-game, use **Restore backup** on the home screen.
+
+> **⚠️ Xbox/Game Pass cloud sync:** if your changes **don't show up** in-game, cloud sync
+> restored the old save over your edit. Fix: close the game, **go offline (airplane mode)**,
+> launch Palworld **offline** and load the world (it now uses the edited save), play/save a few
+> seconds, exit, then **reconnect** so the edited save uploads. The editor always writes the
+> local file correctly; this step just stops the cloud from undoing it.
 
 ### How it works
 The Xbox save is four nested layers, all decoded from scratch in Python:
@@ -111,9 +117,16 @@ Depois é só abrir o **Palworld Editor** pelo Menu Iniciar (Todos os programas)
 
 ### Como usar
 1. **Feche o Palworld** antes de salvar (o jogo reescreve o save ao sair).
-2. Abra o app e escolha o seu mundo.
+2. Abra o app e escolha o seu mundo (o app já abre o **jogado mais recentemente**).
 3. Edite em **Itens / Personagem / Pals** e clique em **SALVAR NO JOGO**.
 4. Se algo der errado no jogo, use **Restaurar backup** na tela inicial.
+
+> **⚠️ Nuvem do Xbox/Game Pass:** se ao abrir o jogo as mudanças **não aparecerem**, a
+> sincronização na nuvem restaurou o save antigo por cima. Solução: feche o jogo,
+> **desconecte a internet (modo avião)**, abra o Palworld **offline** e carregue o mundo
+> (agora ele usa o save editado), jogue/salve alguns segundos, saia e **reconecte** — assim
+> o save editado sobe para a nuvem. O editor sempre grava certo no arquivo local; esse passo
+> só impede a nuvem de desfazer.
 
 ### Como funciona
 O save do Xbox tem quatro camadas, todas decodificadas na mão em Python:

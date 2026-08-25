@@ -4,7 +4,7 @@
 Janela unica com menus: Inicio -> Itens / Personagem / Caixa de Pals / Breeding.
 Le e grava o Level.sav de dentro dos containers WGS, com backup automatico.
 """
-import os, sys, json, queue, random, shutil, threading, traceback, webbrowser
+import os, sys, json, queue, random, shutil, threading, time, traceback, webbrowser
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import sv_ttk
@@ -292,18 +292,39 @@ class App(tk.Tk):
                     except Exception:
                         pass
                 nome = info["mundo"] or ("mundo " + wid[:8])
-                rot = "%s  (%s%.1f MB)" % (nome, (info["jogador"] + " - ") if info["jogador"] else "",
-                                           lvl["size"] / 1048576.0)
+                ep = self._epoch_jogada(lvl); lvl["_epoca"] = ep
+                quando = time.strftime("%d/%m %H:%M", time.localtime(ep)) if ep > 0 else "?"
+                rot = "%s  (%s%.1f MB - jogado %s)" % (
+                    nome, (info["jogador"] + " - ") if info["jogador"] else "",
+                    lvl["size"] / 1048576.0, quando)
                 if rot in map_mundo:
                     rot += "  [%s]" % wid[:8]
                 opcoes.append(rot); map_mundo[rot] = lvl; nome_mundo[rot] = nome
             if not opcoes:
                 self._na_ui(self._iniciar_falhou, "Nenhum mundo com Level.sav legivel.")
                 return
-            opcoes.sort(key=lambda r: -map_mundo[r]["size"])
+            # o mundo JOGADO MAIS RECENTEMENTE vem primeiro (e vira o padrao) --
+            # editar o mundo errado e o motivo classico de "nada mudou no jogo".
+            opcoes.sort(key=lambda r: -map_mundo[r].get("_epoca", 0))
             self._na_ui(self._iniciar_pronto, opcoes, map_mundo, nome_mundo)
         except Exception:
             self._na_ui(self._iniciar_falhou, traceback.format_exc()[-1500:])
+
+    def _epoch_jogada(self, lvl):
+        """Quando o mundo foi salvo por ultimo (segundos epoch): usa o filetime do
+        indice e o mtime dos arquivos do container, o que for mais recente."""
+        ep = 0.0
+        ft = lvl.get("filetime", 0)
+        if ft:
+            ep = ft / 1e7 - 11644473600
+        try:
+            folder = os.path.join(self.root_wgs, lvl["folder"])
+            mt = max(os.path.getmtime(os.path.join(folder, a)) for a in os.listdir(folder))
+            ep = max(ep, mt)
+        except Exception:
+            pass
+        agora = time.time()
+        return ep if 0 < ep < agora + 172800 else 0.0
 
     def _iniciar_falhou(self, msg):
         self.pb.stop(); self.status("falha ao abrir o save", "#ff8080")
@@ -372,7 +393,9 @@ class App(tk.Tk):
             return
         if not messagebox.askyesno("Salvar",
                                    "Gravar as alteracoes no save?\n\nO JOGO PRECISA ESTAR FECHADO.\n"
-                                   "Um backup e feito automaticamente antes."):
+                                   "Um backup e feito automaticamente antes.\n\n"
+                                   "(Depois de salvar, veja as instrucoes sobre a nuvem do Xbox -\n"
+                                   "abrir o jogo OFFLINE evita que a nuvem restaure o save antigo.)"):
             return
         self.btn_salvar.configure(state="disabled"); self.pb.start(12); self.status("salvando...")
         threading.Thread(target=self._salvar_th, daemon=True).start()
@@ -396,9 +419,19 @@ class App(tk.Tk):
 
     def _salvo(self):
         self.pb.stop(); self.btn_salvar.configure(state="normal")
-        self.status("salvo com sucesso!", "#7fe0a0")
-        messagebox.showinfo("Pronto", "Alteracoes gravadas.\n\nSe algo der errado no jogo, "
-                                       "use Inicio > Backups > Restaurar.")
+        self.status("salvo com sucesso no arquivo local!", "#7fe0a0")
+        messagebox.showinfo(
+            "Gravado no save local",
+            "As alteracoes foram gravadas no save LOCAL (confirmado byte a byte).\n\n"
+            "IMPORTANTE - nuvem do Xbox/Game Pass:\n"
+            "Se ao abrir o jogo as mudancas NAO aparecerem, a sincronizacao na nuvem\n"
+            "restaurou o save antigo por cima. Para evitar:\n\n"
+            "1) Feche o Palworld por completo.\n"
+            "2) DESCONECTE a internet (modo aviao).\n"
+            "3) Abra o jogo OFFLINE e carregue o mundo (agora ele usa o save editado).\n"
+            "4) Jogue/salve alguns segundos e saia.\n"
+            "5) Reconecte a internet - assim o save editado sobe para a nuvem.\n\n"
+            "Se algo der errado, use Inicio > Restaurar backup.")
         self.carregar_mundo()
 
     # ---------- backups ----------
@@ -1294,7 +1327,7 @@ class JanelaOtimizar(tk.Toplevel):
         self.app = app; self.tela = tela
         self.pf = perfil.carregar()
         self.title("Otimizar / modificar Pals em massa")
-        self.geometry("860x640"); self.minsize(720, 500); self.transient(app)
+        self.geometry("980x660"); self.minsize(780, 520); self.transient(app)
         try:
             self.iconbitmap(default=os.path.join(BASE, "assets", "logo.ico"))
         except Exception:
@@ -1326,7 +1359,8 @@ class JanelaOtimizar(tk.Toplevel):
                               ("Aptidoes no max. (base)", "aptidoes", True),
                               ("Igualar nivel ao personagem", "nivel", True)]:
             self.op[key] = tk.BooleanVar(value=val)
-            ttk.Checkbutton(opf, text=txt, variable=self.op[key]).pack(side="left", padx=6)
+            ttk.Checkbutton(opf, text=txt, variable=self.op[key],
+                            command=self.calcular).pack(side="left", padx=6)
 
         # rodape fixo no fundo PRIMEIRO, para o botao APLICAR ficar sempre visivel
         rod = ttk.Frame(self, padding=10); rod.pack(side="bottom", fill="x")
@@ -1336,12 +1370,12 @@ class JanelaOtimizar(tk.Toplevel):
         ttk.Button(rod, text="Fechar", command=self.destroy).pack(side="right", padx=6)
 
         mid = ttk.Frame(self); mid.pack(side="top", fill="both", expand=True)
-        self.tv = ttk.Treeview(mid, columns=("papel", "det"), show="tree headings",
+        self.tv = ttk.Treeview(mid, columns=("papel", "antes", "depois"), show="tree headings",
                                height=12, style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("papel", text="Funcao")
-        self.tv.heading("det", text="Motivo / detalhe")
-        self.tv.column("#0", width=230); self.tv.column("papel", width=140, stretch=False)
-        self.tv.column("det", width=380)
+        self.tv.heading("antes", text="Antes"); self.tv.heading("depois", text="Depois")
+        self.tv.column("#0", width=190); self.tv.column("papel", width=120, stretch=False)
+        self.tv.column("antes", width=200, stretch=False); self.tv.column("depois", width=250)
         self.tv.tag_configure("base", foreground="#4aa3df")
         self.tv.tag_configure("combate", foreground="#e08a3c")
         sc = ttk.Scrollbar(mid, orient="vertical", command=self.tv.yview)
@@ -1362,6 +1396,30 @@ class JanelaOtimizar(tk.Toplevel):
                 out.append(p)
         return out
 
+    def _estrelas(self, p):
+        return max(0, (personagem._get_num(p.sp.get("Rank")) or 1) - 1)
+
+    def _antes(self, p):
+        return "Nv%d %d★ IV %d/%d/%d %dpass" % (
+            p.nivel, self._estrelas(p),
+            p.talento("Talent_HP"), p.talento("Talent_Shot"), p.talento("Talent_Defense"),
+            len(p.passivas))
+
+    def _depois(self, p, papel):
+        op = self.op
+        nv = self.tela.nivel_jogador if op["nivel"].get() else p.nivel
+        est = 4 if op["cond"].get() else self._estrelas(p)
+        iv = "IV~90-100" if op["ivs"].get() else "IV atual"
+        partes = ["Nv%d" % nv, "%d★" % est, iv]
+        if op["passivas"].get():
+            nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
+            partes.append(nomes[0] + " +%d" % (len(nomes) - 1))
+        if op["almas"].get():
+            partes.append("almas")
+        if op["aptidoes"].get() and papel == "trabalho":
+            partes.append("aptidoes+")
+        return " ".join(partes)
+
     def calcular(self):
         for i in self.tv.get_children():
             self.tv.delete(i)
@@ -1379,18 +1437,14 @@ class JanelaOtimizar(tk.Toplevel):
         nc = len(pals) - nb
         for p in pals:
             papel = self.plano[id(p)]
-            a = self.pf.analisar(p.especie)
-            if papel == "trabalho":
-                det = "aptidoes: " + (", ".join("%s Lv%d" % (n, v) for n, v in a["works"]) or "-")
-                tag = "base"
-            else:
-                det = "combate: %s" % a["combate_lbl"]
-                tag = "combate"
+            tag = "base" if papel == "trabalho" else "combate"
             ico = icones_rt.pal(p.especie)
             kw = {"image": ico} if ico else {}
             self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
-                           values=(self.ROTULO[papel], det), tags=(tag,), **kw)
-        self.lbl.configure(text="%d Pals   |   %d para base, %d para combate" % (len(pals), nb, nc))
+                           values=(self.ROTULO[papel], self._antes(p), self._depois(p, papel)),
+                           tags=(tag,), **kw)
+        self.lbl.configure(text="%d Pals   |   %d para base, %d para combate  (revise Antes/Depois)"
+                           % (len(pals), nb, nc))
 
     def aplicar(self):
         if not self.alvo:
