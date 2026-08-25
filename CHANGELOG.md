@@ -3,6 +3,13 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.6.11 — 2026-08-25
+### O otimizador agora oferece salvar na hora
+- Depois de aplicar a otimização em massa, o editor **pergunta se quer SALVAR NO JOGO
+  agora** — antes, "aplicar" só preparava as mudanças em memória e era fácil fechar a
+  janela sem gravar (aí "nada aparecia no jogo"). Agora é um passo só. _The mass
+  optimizer now offers to save to the game immediately after applying._
+
 ## v1.6.10 — 2026-08-25
 ### Fim do aviso repetido de "itens fora do lugar"
 - O editor nao mostra mais, a cada abertura, o aviso de itens no container de

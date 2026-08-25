@@ -1641,13 +1641,16 @@ class JanelaOtimizar(tk.Toplevel):
             self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
                            values=(self.ROTULO[papel], "✓ feito", self._antes(p)),
                            tags=("feito",), **kw)
-        self.lbl.configure(text="✓ %d Pals modificados - confira a coluna 'Depois' e "
-                                "clique em SALVAR NO JOGO" % total)
-        self.app.status("%d Pals modificados - clique em SALVAR NO JOGO" % total, "#7fe0a0")
-        messagebox.showinfo("Pronto",
-                            "%d Pals modificados.\n\nA tabela agora mostra o ESTADO REAL de cada "
-                            "Pal (coluna 'Depois' = 4 estrelas, IVs, passivas). Role a lista para "
-                            "conferir.\n\nAgora clique em SALVAR NO JOGO." % total, parent=self)
+        self.lbl.configure(text="✓ %d Pals modificados - FALTA clicar em SALVAR NO JOGO" % total)
+        self.app.status("%d Pals modificados - FALTA SALVAR NO JOGO" % total, "#e0c060")
+        if messagebox.askyesno(
+                "Modificado - falta salvar!",
+                "%d Pals modificados (a coluna 'Depois' mostra o estado real: 4 estrelas, IVs, "
+                "passivas).\n\nATENCAO: isso ainda NAO foi gravado no save! Preciso SALVAR NO JOGO.\n\n"
+                "Salvar no jogo AGORA?\n(O Palworld precisa estar FECHADO; um backup e feito antes.)"
+                % total, parent=self):
+            self.destroy()
+            self.app.salvar()
 
 
 # ===========================================================================
