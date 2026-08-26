@@ -1576,7 +1576,10 @@ class JanelaOtimizar(tk.Toplevel):
 
     def _depois(self, p, papel):
         op = self.op
-        nv = self.tela.nivel_jogador if op["nivel"].get() else p.nivel
+        if op["nivel"].get():
+            nv = max(1, self.tela.nivel_jogador - 2) if papel == "trabalho" else self.tela.nivel_jogador
+        else:
+            nv = p.nivel
         est = self.pf.estrelas_alvo(p.especie) if op["cond"].get() else self._estrelas(p)
         iv = "IV~90-100" if op["ivs"].get() else "IV atual"
         partes = ["Nv%d" % nv, "%d★" % est, iv]
@@ -1641,7 +1644,10 @@ class JanelaOtimizar(tk.Toplevel):
             papel = self.plano[id(p)]
             esp = p.especie
             if op["nivel"]:
-                p._garante("Level", md["Level"]); p.set_nivel(n)
+                # Pals de base ficam 2 niveis abaixo dos de combate, para os de
+                # combate aparecerem primeiro ao ordenar por forca/nivel.
+                nv = max(1, n - 2) if papel == "trabalho" else n
+                p._garante("Level", md["Level"]); p.set_nivel(nv)
             if op["passivas"]:
                 p.set_passivas_f(self.pf.passivas(esp, papel), md["PassiveSkillList"])
             if op["ivs"]:

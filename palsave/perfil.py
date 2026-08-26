@@ -125,19 +125,26 @@ class Perfil(object):
             return ["CraftSpeed_up3", "Nocturnal", "Rare", "Legend"]
         if papel == "montaria":
             return ["Legend", "MoveSpeed_up_3", boost, "PAL_ALLAttack_up3"]
-        # combate: escolhe o perfil pelas caracteristicas reais do Pal
+        # combate: build inteligente pelo perfil de stat DOMINANTE, com as melhores
+        # passivas (Corpo de Diamante, Vampiro, Imortalidade, Sadico, etc.) + elemento.
         s = self._stats(esp)
-        atk = max(s.get("Melee Attack", 0), s.get("Shot Attack", 0))
-        tank = s.get("Defense", 0) + s.get("HP", 0)
-        vel = s.get("Sprinting Speed", 0)
+        melee = s.get("Melee Attack", 0); shot = s.get("Shot Attack", 0)
+        defe = s.get("Defense", 0); hp = s.get("HP", 0); vel = s.get("Sprinting Speed", 0)
+        atk = max(melee, shot); tank = defe + hp
+        r = (tank / atk) if atk else 2.0     # ~2.0 e o normal; >2.4 tanque; <1.5 fragil
         if atk and tank:
-            if tank >= atk * 1.9:            # resistente -> build defensiva
-                return ["Legend", "Deffence_up3", boost, "PAL_ALLAttack_up3"]
-            if atk >= tank * 1.15:           # frágil e forte -> dano puro
-                return ["Legend", "PAL_ALLAttack_up3", boost, "Noukin"]
-        if vel >= 1400:                      # muito veloz -> mobilidade + dano
-            return ["Legend", "PAL_ALLAttack_up3", boost, "MoveSpeed_up_3"]
-        return ["Legend", "PAL_ALLAttack_up3", boost, "Rare"]   # equilibrado
+            if r >= 2.4:                     # TANQUE: Corpo de Diamante + Const. Peculiar
+                return ["Legend", "Deffence_up3", boost, "MutationPal_Mutant"]
+            if vel >= 1600:                  # VELOZ/montaria: mobilidade + dano
+                return ["Legend", "MoveSpeed_up_3", boost, "PAL_ALLAttack_up3"]
+            if r <= 1.5:                     # GLASS CANNON: dano maximo (Sadico)
+                return ["Legend", "PAL_ALLAttack_up3", boost, "PAL_sadist"]
+            if melee > shot * 1.15:          # BRUISER corpo-a-corpo: dano + Vampiro (roubo de vida)
+                return ["Legend", "Vampire", boost, "PAL_ALLAttack_up3"]
+            if shot > melee * 1.15:          # ATIRADOR: dano empilhado
+                return ["Legend", "PAL_ALLAttack_up3", boost, "PAL_ALLAttack_up2"]
+        # equilibrado: dano + sobrevivencia (Imortalidade)
+        return ["Legend", "PAL_ALLAttack_up3", boost, "MutationPal_Immortal"]
 
     def aptidoes_enum(self, esp, rank=3):
         """{enum_do_save: rank} para as aptidoes que o Pal JA tem (para reforca-las)."""

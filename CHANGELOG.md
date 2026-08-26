@@ -3,6 +3,24 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.3 — 2026-08-25
+### 🇧🇷 Português
+- **Passivas de combate mais inteligentes e variadas.** Em vez do mesmo conjunto pra
+  todos, agora cada Pal recebe um build pelo seu **perfil de stat**: **Tanque** (Corpo de
+  Diamante + Constituição Peculiar), **Glass cannon** (Deus Inclemente + Sádico),
+  **Bruiser** corpo-a-corpo (Vampiro/roubo de vida), **Atirador**, **Veloz/montaria**
+  (Vertiginoso) e **Equilibrado** (Deus Inclemente + Imortalidade) — sempre com o **boost
+  do elemento** do Pal. (Fontes: paldb.cc / palworld.gg.)
+- **Pals de base ficam 2 níveis abaixo dos de combate**, então ao ordenar por nível/força
+  os de combate aparecem primeiro.
+### 🇺🇸 English
+- **Smarter, more varied combat passives.** Instead of the same set for everyone, each pal
+  now gets a build based on its **stat profile**: **Tank** (Diamond Body + Peculiar
+  Constitution), **Glass cannon** (Ferocious + Sadist), melee **Bruiser** (Vampiric
+  lifesteal), **Ranged**, **Speedster/mount** (Swift) and **Balanced** (Ferocious +
+  Immortal) — always with the pal's **element boost**.
+- **Base pals are 2 levels below combat pals**, so sorting by level/power lists combat pals first.
+
 ## v1.7.2 — 2026-08-25
 ### 🇧🇷 Português
 - **Pontos de tecnologia sem caçar DLL.** O instalador agora encontra o Oodle
