@@ -3,6 +3,17 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.7 — 2026-08-25
+### 🇧🇷 Português
+- **Barra de progresso no otimizador em massa.** Ela avança **Pal por Pal**: primeiro
+  aplicando as mudanças, depois **verificando cada Pal** (conta quantos ficaram ok), e
+  por fim animando durante a gravação. Mostra "modificando X/N", "verificando X/N (K ok)"
+  e "gravando...". O save também mostra as fases (backup / compactando / gravando).
+### 🇺🇸 English
+- **Progress bar in the mass optimizer.** It advances **pal by pal**: applying, then
+  **verifying each pal** (counts how many are ok), then animating while writing. Shows
+  "modifying X/N", "verifying X/N (K ok)" and "saving...". The save also shows its phases.
+
 ## v1.7.6 — 2026-08-25
 ### 🇧🇷 Português
 - **Correção: edições podiam não ser gravadas.** As ações grandes (otimizador em massa,

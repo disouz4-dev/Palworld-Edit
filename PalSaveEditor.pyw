@@ -478,6 +478,7 @@ class App(tk.Tk):
     def _salvar_th(self):
         try:
             if time.time() - self._ultimo_bkp > 45:      # nao cria backup a cada clique
+                self._na_ui(self.status, "salvando: backup...", "#e0c060")
                 self.bm.create("auto"); self._ultimo_bkp = time.time()
             porg = {c.guid: c for c in self.level.containers}
             for guid, itens in self.pendentes.items():
@@ -487,7 +488,9 @@ class App(tk.Tk):
                 cap = max(42, len(c.slots))
                 for sid, q in itens.items():
                     self.level.set_quantity(c, sid, q, capacity=cap)
+            self._na_ui(self.status, "salvando: compactando o save...", "#e0c060")
             blob = palz.compress(self.level.to_bytes(), self.meta_comp)
+            self._na_ui(self.status, "salvando: gravando no jogo...", "#e0c060")
             wgs.write_blob(self.root_wgs, self.index, self.entry_atual, blob)
             self._na_ui(self._salvo)
         except Exception:
@@ -1552,10 +1555,12 @@ class JanelaOtimizar(tk.Toplevel):
 
         # rodape fixo no fundo PRIMEIRO, para o botao APLICAR ficar sempre visivel
         rod = ttk.Frame(self, padding=10); rod.pack(side="bottom", fill="x")
-        self.lbl = ttk.Label(rod, text="", style="Sub.TLabel"); self.lbl.pack(side="left")
         ttk.Button(rod, text="APLICAR otimizacao", style="Accent.TButton",
                    command=self.aplicar).pack(side="right")
         ttk.Button(rod, text="Fechar", command=self.destroy).pack(side="right", padx=6)
+        self.lbl = ttk.Label(rod, text="", style="Sub.TLabel"); self.lbl.pack(side="left")
+        self.pbar = ttk.Progressbar(rod, mode="determinate", length=260)
+        self.pbar.pack(side="left", padx=12)
 
         mid = ttk.Frame(self); mid.pack(side="top", fill="both", expand=True)
         self.tv = ttk.Treeview(mid, columns=("papel", "antes", "depois"), show="tree headings",
@@ -1664,6 +1669,8 @@ class JanelaOtimizar(tk.Toplevel):
         n = self.tela.nivel_jogador
         op = {k: v.get() for k, v in self.op.items()}
         total = len(self.alvo)
+        self.pbar.configure(maximum=total, value=0)
+        # ---- 1) aplica Pal por Pal (barra avanca a cada Pal) ----
         for i, p in enumerate(self.alvo, 1):
             papel = self.plano[id(p)]
             esp = p.especie
@@ -1689,14 +1696,37 @@ class JanelaOtimizar(tk.Toplevel):
                 if ap:
                     p.set_aptidoes(ap, md["GotWorkSuitabilityAddRankList"])
             p.gravar()
-            if i % 15 == 0 or i == total:
-                self.lbl.configure(text="modificando %d/%d..." % (i, total))
+            self.pbar["value"] = i
+            if i % 5 == 0 or i == total:
+                self.lbl.configure(text="modificando %d/%d..." % (i, total)); self.update_idletasks()
+        # ---- 2) verifica Pal por Pal (barra reinicia e avanca a cada verificacao) ----
+        self.pbar.configure(value=0)
+        ok = 0
+        for i, p in enumerate(self.alvo, 1):
+            if self._verificar(p, op):
+                ok += 1
+            self.pbar["value"] = i
+            if i % 5 == 0 or i == total:
+                self.lbl.configure(text="verificando %d/%d... (%d ok)" % (i, total, ok))
                 self.update_idletasks()
         self.app.marcar_sujo()
         self.tela.render()
-        self._confirmar_visual(total)
+        self._confirmar_visual(total, ok)
 
-    def _confirmar_visual(self, total):
+    def _verificar(self, p, op):
+        """Confere que o Pal recebeu o que devia (usado para o progresso de verificacao)."""
+        try:
+            if op["cond"] and (personagem._get_num(p.sp.get("Rank")) or 1) != 5:
+                return False
+            if op["ivs"] and p.talento("Talent_HP") < 85:
+                return False
+            if op["passivas"] and not p.passivas:
+                return False
+            return True
+        except Exception:
+            return False
+
+    def _confirmar_visual(self, total, ok=None):
         """Re-renderiza a tabela mostrando o estado REAL de cada Pal apos aplicar,
         para dar confirmacao pal a pal (a coluna Depois mostra o que ficou gravado)."""
         for i in self.tv.get_children():
@@ -1709,12 +1739,15 @@ class JanelaOtimizar(tk.Toplevel):
             self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
                            values=(self.ROTULO[papel], "✓ feito", self._antes(p)),
                            tags=("feito",), **kw)
-        self.lbl.configure(text="✓ %d Pals modificados - salvando no jogo..." % total)
+        conf = "" if ok is None else " (%d/%d verificados)" % (ok, total)
+        self.lbl.configure(text="✓ %d Pals modificados%s - gravando no jogo..." % (total, conf))
+        self.pbar.configure(mode="indeterminate"); self.pbar.start(12)
         self.app.salvar(confirmar=False, imediato=True)   # salva na hora (acao grande)
         self.update_idletasks()
         while self.app._salvando:                 # espera terminar antes de avisar "salvo"
             self.app.update(); time.sleep(0.05)
-        self.lbl.configure(text="✓ %d Pals modificados e SALVOS no jogo" % total)
+        self.pbar.stop(); self.pbar.configure(mode="determinate", value=self.pbar["maximum"])
+        self.lbl.configure(text="✓ %d Pals modificados e SALVOS no jogo%s" % (total, conf))
         messagebox.showinfo(
             "Pronto",
             "%d Pals modificados e SALVOS no jogo (a coluna 'Depois' mostra o estado real de "
