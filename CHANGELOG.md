@@ -3,6 +3,41 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.9.0 — 2026-08-26
+### 🇧🇷 Português
+- **CORREÇÃO CRÍTICA de corrupção do save.** A causa real foi encontrada escovando os
+  bits do `containers.index`: o serviço **GamingServices do Xbox** reescreve o índice do
+  save em segundo plano (sincronização). O editor guardava uma cópia **velha** desse
+  índice na memória e a regravava inteira a cada save — apagando as mudanças do serviço e
+  deixando o índice apontando para blobs que já tinham sido rotacionados → o jogo lia como
+  save quebrado. **Não era a nuvem revertendo.**
+  - Agora o editor **relê o `containers.index` do disco no instante da gravação**, mescla a
+    alteração na versão mais nova (concorrência otimista) e **verifica** no fim que o índice
+    aponta para o blob novo. Testado: uma mudança do serviço feita entre o load e o save é
+    **preservada** (antes era apagada).
+  - Grava os flags de sincronização como o jogo faz (estado da entrada **e** do índice =
+    "Modificado"), e o campo de tamanho passa a somar **todos** os blobs do container. Base:
+    engenharia reversa do formato WGS/GDK (libNOM.io, do editor de No Man's Sky).
+- **Trava de segurança:** o editor agora **recusa salvar com o Palworld aberto** ou durante
+  a sincronização (container pendente), com aviso claro. As edições ficam guardadas para
+  gravar quando o jogo fechar — nada é escrito no meio do sync.
+### 🇺🇸 English
+- **CRITICAL save-corruption fix.** Root cause found at the byte level in `containers.index`:
+  the Xbox **GamingServices** background service rewrites the save index (sync). The editor
+  held a **stale** copy of that index in memory and rewrote it wholesale on every save,
+  wiping the service's changes and leaving the index pointing at rotated-away blobs → the
+  game read it as corrupted. **It was not the cloud reverting.**
+  - The editor now **re-reads `containers.index` from disk at write time**, merges the change
+    onto the newest version (optimistic concurrency), and **verifies** afterward that the
+    index points to the new blob. Tested: a service change made between load and save is now
+    **preserved** (it used to be clobbered).
+  - Writes the sync flags like the game does (entry **and** index state = "Modified"), and the
+    size field now sums **all** of a container's blobs. Based on WGS/GDK format reverse
+    engineering (libNOM.io, from the No Man's Sky editor).
+- **Safety lock:** the editor now **refuses to save while Palworld is open** or during sync
+  (pending container), with a clear message. Your edits are kept to write once the game is
+  closed — nothing is written mid-sync.
+
 ## v1.8.1 — 2026-08-26
 ### 🇧🇷 Português
 - **Verificação Pal por Pal no "Equiparar níveis".** Agora abre uma **barra de progresso**

@@ -55,6 +55,20 @@ def _now_filetime():
     """FILETIME do Windows: intervalos de 100ns desde 1601-01-01 UTC."""
     return int((time.time() + 11644473600) * 10_000_000)
 
+def jogo_rodando():
+    """True se o Palworld estiver aberto AGORA. Editar o save com o jogo aberto e a
+    principal causa de corrupcao (o jogo reescreve o containers.index em paralelo)."""
+    alvos = ("Palworld-Win64-Shipping.exe", "Palworld.exe")
+    try:
+        import subprocess
+        out = subprocess.run(["tasklist", "/FO", "CSV", "/NH"],
+                             capture_output=True, text=True, timeout=8,
+                             creationflags=0x08000000).stdout  # CREATE_NO_WINDOW
+        low = out.lower()
+        return any(a.lower() in low for a in alvos)
+    except Exception:
+        return False
+
 def find_wgs_root(wgs_dir):
     """Retorna a pasta da conta (a que contem containers.index)."""
     for d in sorted(os.listdir(wgs_dir)):
@@ -79,7 +93,10 @@ def parse_index(root):
         return f.read(n * 2).decode("utf-16-le") if n > 0 else ""
 
     ver, = rd("<i"); cnt, = rd("<i"); rd("<i")
-    pkg = rstr(); rd("<q"); rd("<i"); rstr(); rd("<q")
+    pkg = rstr()
+    gfiletime_off = f.tell(); rd("<q")   # FILETIME global do indice (libNOM: =agora ao salvar)
+    gstate_off = f.tell(); rd("<i")      # estado global do indice (libNOM: =2 Modified ao salvar)
+    rstr(); rd("<q")
 
     entries = []
     for _ in range(cnt):
@@ -99,7 +116,8 @@ def parse_index(root):
                             seq_off=seq_off, state_off=state_off, filetime_off=ft_off))
     if f.tell() != len(data):
         raise ValueError("containers.index nao foi lido ate o fim (%d de %d)" % (f.tell(), len(data)))
-    return dict(version=ver, pkg=pkg, entries=entries, raw=data, path=path)
+    return dict(version=ver, pkg=pkg, entries=entries, raw=data, path=path,
+                gfiletime_off=gfiletime_off, gstate_off=gstate_off)
 
 def set_entry_size(index, entry, new_size):
     """Corrige o tamanho de uma entrada dentro dos bytes do indice (em memoria)."""
@@ -159,16 +177,44 @@ def _escrever_container_file(path, ver, blobs):
         out += nome + g1 + g2
     _atomic_write(path, out)
 
-def write_blob(root, index, entry, data):
-    """Grava o save do jeito que o Xbox/GDK espera: copy-on-write.
+SYNC_MODIFIED = 2      # estado "modificado/pendente de upload" (libNOM MicrosoftBlobSyncStateEnum)
 
-    Em vez de sobrescrever o arquivo de dados no lugar (o que o GDK detecta como
-    corrupcao), cria um NOVO blob com GUID novo, um novo container.N+1 apontando
-    para ele, e atualiza o indice (seq++, filetime=agora, tamanho). Assim cada
-    edicao vira uma nova versao, exatamente como o proprio jogo faz ao salvar.
+
+def _tam_total_blobs(folder, blobs):
+    """Soma o tamanho de TODOS os blobs que o container referencia (data+meta...),
+    como o libNOM grava no campo 'size' do indice -- nao so o blob principal."""
+    vistos, total = set(), 0
+    for _nome, g1, g2 in blobs:
+        for g in (g1, g2):
+            fp = os.path.join(folder, _guid_str(g))
+            if fp not in vistos and os.path.isfile(fp):
+                vistos.add(fp); total += os.path.getsize(fp)
+    return total
+
+
+def write_blob(root, index, entry, data):
+    """Grava o save do jeito que o Xbox/GDK espera: copy-on-write, SEM sobrescrever
+    a versao antiga da nuvem/servico.
+
+    IMPORTANTE (correcao de corrupcao): o servico GamingServices do Xbox reescreve o
+    containers.index em segundo plano (sincronizacao). Se a gente gravar por cima de
+    uma copia VELHA do indice que carregamos na memoria, apagamos as mudancas do
+    servico e o indice passa a apontar para blobs que ja foram rotacionados -> o jogo
+    le como save quebrado. Por isso aqui RELEMOS o indice do disco na hora, mesclamos
+    nossa alteracao na versao mais nova, marcamos o estado como 'Modified' (pra nossa
+    versao vencer o sync, em vez da nuvem sobrescrever) e VERIFICAMOS no final.
     """
-    folder = os.path.join(root, entry["folder"])
-    seq = entry["seq"]
+    nome_entrada = entry["name"]
+    # (a) RELE o indice do disco AGORA -- nao confia na copia da memoria
+    fresh = parse_index(root)
+    fe = next((e for e in fresh["entries"] if e["name"] == nome_entrada), None)
+    if fe is None:
+        raise RuntimeError("A entrada '%s' sumiu do containers.index (o jogo/servico "
+                           "Xbox reescreveu o save). Feche o Palworld, espere a "
+                           "sincronizacao e recarregue o save antes de editar." % nome_entrada)
+
+    folder = os.path.join(root, fe["folder"])
+    seq = fe["seq"]
     cont_atual = os.path.join(folder, "container.%d" % seq)
     if not os.path.isfile(cont_atual):
         cands = sorted(x for x in os.listdir(folder) if x.startswith("container."))
@@ -179,7 +225,10 @@ def write_blob(root, index, entry, data):
 
     ver, blobs = _ler_container_file(cont_atual)
     if not blobs:
-        raise ValueError("container.N sem blobs")
+        # container.N com 0 blobs = versao PENDENTE do servico (sync em andamento).
+        raise RuntimeError("O save esta em sincronizacao pelo servico do Xbox agora "
+                           "(container pendente). Feche o Palworld, espere ~1-2 min e "
+                           "tente de novo -- gravar durante o sync corrompe.")
 
     # 1) novo blob com GUID novo
     novo_guid = _guid_bytes()
@@ -191,22 +240,40 @@ def write_blob(root, index, entry, data):
     for i, (nome, g1, g2) in enumerate(blobs):
         if i == 0:
             guids_antigos.extend([g1, g2])
-            blobs[i] = [nome, novo_guid, novo_guid]   # cloud==file, como num container sincronizado
-    novo_seq = seq + 1
-    if novo_seq > 255:
-        novo_seq = 1
+            blobs[i] = [nome, novo_guid, novo_guid]   # slot2 = blob vivo (o que o jogo carrega)
+    novo_seq = 1 if seq >= 255 else seq + 1
     novo_cont = os.path.join(folder, "container.%d" % novo_seq)
     _escrever_container_file(novo_cont, ver, blobs)
 
-    # 3) atualiza o indice: seq, filetime (agora), tamanho
-    b = bytearray(index["raw"])
-    b[entry["seq_off"]] = novo_seq & 0xFF
-    struct.pack_into("<q", b, entry["filetime_off"], _now_filetime())
-    struct.pack_into("<q", b, entry["size_off"], len(data))
-    index["raw"] = bytes(b)
-    entry["seq"] = novo_seq
-    entry["size"] = len(data)
-    save_index(index)
+    # 3) atualiza o indice FRESCO: seq, filetime, tamanho(soma dos blobs), estado=Modified
+    b = bytearray(fresh["raw"])
+    b[fe["seq_off"]] = novo_seq & 0xFF
+    struct.pack_into("<q", b, fe["filetime_off"], _now_filetime())
+    struct.pack_into("<q", b, fe["size_off"], _tam_total_blobs(folder, blobs))
+    struct.pack_into("<i", b, fe["state_off"], SYNC_MODIFIED)       # entrada = modificada
+    # cabecalho global do indice: filetime=agora e estado=Modified (como o libNOM faz)
+    struct.pack_into("<q", b, fresh["gfiletime_off"], _now_filetime())
+    struct.pack_into("<i", b, fresh["gstate_off"], SYNC_MODIFIED)
+    fresh["raw"] = bytes(b)
+    _atomic_write(fresh["path"], fresh["raw"])
+
+    # (b) VERIFICA: relê o indice e confirma que aponta pro nosso container/blob novos
+    conf = parse_index(root)
+    ce = next((e for e in conf["entries"] if e["name"] == nome_entrada), None)
+    if ce is None or ce["seq"] != novo_seq:
+        raise RuntimeError("Verificacao falhou: o indice nao ficou na versao nova (o "
+                           "servico do Xbox pode ter reescrito no meio). Recarregue o "
+                           "save e tente com o Palworld fechado.")
+    if not blob_files(root, ce):
+        raise RuntimeError("Verificacao falhou: o indice novo nao aponta para um blob "
+                           "valido. Restaure um backup pelo editor.")
+
+    # sincroniza a copia em memoria do chamador com o que ficou no disco
+    index["raw"] = conf["raw"]; index["entries"] = conf["entries"]
+    index["gfiletime_off"] = conf["gfiletime_off"]; index["gstate_off"] = conf["gstate_off"]
+    for campo in ("seq", "size", "folder", "state", "filetime",
+                  "seq_off", "state_off", "filetime_off", "size_off"):
+        entry[campo] = ce[campo]
 
     # 4) limpeza: remove o container.N antigo e os blobs antigos
     try:

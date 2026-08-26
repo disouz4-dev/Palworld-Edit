@@ -477,6 +477,13 @@ class App(tk.Tk):
 
     def _salvar_th(self):
         try:
+            if wgs.jogo_rodando():                        # jogo aberto = corrupcao na certa
+                self._na_ui(self._save_bloqueado,
+                            "O Palworld esta ABERTO. Feche o jogo (e espere ~1-2 min a "
+                            "sincronizacao terminar) antes de salvar -- gravar com o jogo "
+                            "aberto corrompe o save. Suas edicoes ficaram guardadas e serao "
+                            "gravadas quando voce mandar salvar de novo.")
+                return
             if time.time() - self._ultimo_bkp > 45:      # nao cria backup a cada clique
                 self._na_ui(self.status, "salvando: backup...", "#e0c060")
                 self.bm.create("auto"); self._ultimo_bkp = time.time()
@@ -493,8 +500,18 @@ class App(tk.Tk):
             self._na_ui(self.status, "salvando: gravando no jogo...", "#e0c060")
             wgs.write_blob(self.root_wgs, self.index, self.entry_atual, blob)
             self._na_ui(self._salvo)
+        except RuntimeError as ex:                        # mensagens claras do write_blob (sync/pendente)
+            self._na_ui(self._save_bloqueado, str(ex))
         except Exception:
             self._na_ui(self._erro, "Falha ao salvar", traceback.format_exc())
+
+    def _save_bloqueado(self, msg):
+        """Save abortado com seguranca (jogo aberto / sync em andamento). Mantem as
+        edicoes pendentes para gravar depois -- nada foi escrito no save."""
+        self.pb.stop(); self.btn_salvar.configure(state="normal")
+        self._salvando = False; self._save_pendente = False
+        self.status("save adiado: feche o jogo e salve de novo", "#e0c060")
+        messagebox.showwarning("Feche o Palworld antes de salvar", msg)
 
     def _salvo(self):
         self.pb.stop(); self.btn_salvar.configure(state="normal")
@@ -508,12 +525,13 @@ class App(tk.Tk):
             self._nuvem_avisada = True
             messagebox.showinfo(
                 "Salvo no jogo (leia uma vez)",
-                "Tudo o que voce confirmar e gravado no jogo NA HORA (com backup automatico).\n"
-                "Edite sempre com o Palworld FECHADO.\n\n"
-                "IMPORTANTE - nuvem do Xbox/Game Pass:\n"
-                "Se ao abrir o jogo as mudancas nao aparecerem, a nuvem restaurou o save antigo.\n"
-                "Para evitar: feche o jogo, espere ~1-2 min apos salvar (a nuvem sobe o local),\n"
-                "e so entao abra o Palworld. Se der errado, use Inicio > Restaurar backup.")
+                "Tudo o que voce confirmar e gravado no jogo NA HORA (com backup automatico).\n\n"
+                "REGRA DE OURO: edite sempre com o Palworld FECHADO.\n"
+                "O servico do Xbox (GamingServices) reescreve o save em segundo plano; se voce\n"
+                "editar com o jogo aberto, as duas gravacoes colidem e o save quebra. O editor\n"
+                "agora RE-LE o indice na hora de gravar e recusa salvar com o jogo aberto ou\n"
+                "durante a sincronizacao -- mas o mais seguro e: feche o jogo, espere ~1-2 min,\n"
+                "edite, e so entao reabra o Palworld. Se algo der errado: Inicio > Restaurar backup.")
 
     # ---------- backups ----------
     def criar_backup(self):
@@ -569,6 +587,11 @@ class App(tk.Tk):
 
         def th():
             try:
+                if wgs.jogo_rodando():
+                    self._na_ui(self._tech_salvo, cb, False,
+                                "O Palworld esta ABERTO. Feche o jogo, espere ~1-2 min e "
+                                "salve de novo (gravar com o jogo aberto corrompe o save).")
+                    return
                 self.bm.create("antes de editar tecnologia")
                 jogador.gravar(self.root_wgs, self.index, self._tech_entry,
                                self._tech_g, self._tech_meta)
