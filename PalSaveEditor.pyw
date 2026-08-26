@@ -1218,23 +1218,55 @@ class TelaPals(Tela):
             return pf.papel_de(p.especie)
         nb = sum(1 for p in self.pals if papel(p) == "trabalho")
         nc = len(self.pals) - nb
+        nbase = max(1, n - 2)
         if not messagebox.askyesno(
                 "Equiparar niveis",
                 "Equiparar os niveis dos %d Pals?\n\n"
                 "- Combate: nivel %d (o do personagem)  -> %d Pals\n"
                 "- Base: nivel %d (2 abaixo)  -> %d Pals\n\n"
-                "Salva no jogo na hora (com backup)." % (len(self.pals), n, nc, max(1, n - 2), nb)):
+                "Salva no jogo na hora (com backup)." % (len(self.pals), n, nc, nbase, nb)):
             return
         md = personagem.moldes(self.pals)
-        for p in self.pals:
-            nv = n if papel(p) == "combate" else max(1, n - 2)
-            p._garante("Level", md["Level"]); p.set_nivel(nv)
-            p.gravar()
-        self.app.marcar_sujo()
-        self.render()
+        total = len(self.pals)
+        # janela de progresso com verificacao pal a pal (igual ao otimizador)
+        prog = tk.Toplevel(self.app); prog.title("Equiparando niveis")
+        prog.geometry("420x120"); prog.transient(self.app); prog.grab_set()
+        ttk.Label(prog, text="Aplicando niveis Pal por Pal...").pack(anchor="w", padx=12, pady=(12, 4))
+        pbar = ttk.Progressbar(prog, mode="determinate", length=380, maximum=total)
+        pbar.pack(padx=12); plbl = ttk.Label(prog, text="", style="Sub.TLabel")
+        plbl.pack(anchor="w", padx=12, pady=(6, 0))
+        alvos = []   # (p, nv) para verificar depois
+        # ---- 1) aplica nivel Pal por Pal (barra avanca a cada Pal) ----
+        for i, p in enumerate(self.pals, 1):
+            nv = n if papel(p) == "combate" else nbase
+            p._garante("Level", md["Level"]); p.set_nivel(nv); p.gravar()
+            alvos.append((p, nv))
+            pbar["value"] = i
+            if i % 5 == 0 or i == total:
+                plbl.configure(text="aplicando %d/%d..." % (i, total)); prog.update_idletasks()
+        # ---- 2) verifica Pal por Pal (barra reinicia; conta os que ficaram certos) ----
+        pbar.configure(value=0); ok = 0
+        for i, (p, nv) in enumerate(alvos, 1):
+            try:
+                if p.nivel == nv:
+                    ok += 1
+            except Exception:
+                pass
+            pbar["value"] = i
+            if i % 5 == 0 or i == total:
+                plbl.configure(text="verificando %d/%d... (%d ok)" % (i, total, ok)); prog.update_idletasks()
+        # ---- 3) grava no jogo (barra indeterminada ate terminar o save) ----
+        self.app.marcar_sujo(); self.render()
+        plbl.configure(text="%d/%d verificados - gravando no jogo..." % (ok, total))
+        pbar.configure(mode="indeterminate"); pbar.start(12); prog.update_idletasks()
         self.app.salvar(confirmar=False, imediato=True)
-        messagebox.showinfo("Pronto", "Niveis equiparados: %d de combate no %d, %d de base no %d. "
-                            "Salvo no jogo." % (nc, n, nb, max(1, n - 2)))
+        while self.app._salvando:
+            self.app.update(); time.sleep(0.05)
+        pbar.stop(); pbar.configure(mode="determinate", value=total)
+        prog.destroy()
+        messagebox.showinfo("Pronto", "Niveis equiparados e verificados: %d de combate no %d, "
+                            "%d de base no %d.\n%d/%d Pals conferidos com o nivel certo. "
+                            "Salvo no jogo." % (nc, n, nb, nbase, ok, total))
 
     def _painel_vazio(self):
         for w in self.ed.winfo_children():

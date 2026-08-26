@@ -3,6 +3,19 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.8.1 — 2026-08-26
+### 🇧🇷 Português
+- **Verificação Pal por Pal no "Equiparar níveis".** Agora abre uma **barra de progresso**
+  que avança Pal por Pal: primeiro **aplicando** o nível, depois **verificando** que cada
+  Pal ficou com o nível certo (mostra "K ok"), e por fim anima durante a **gravação no
+  jogo**. No fim informa quantos foram conferidos (ex.: "497/499 conferidos"). Mesmo
+  raciocínio de verificação do otimizador em massa.
+### 🇺🇸 English
+- **Pal-by-pal verification on "Equiparar níveis".** Now shows a **progress bar** that
+  advances pal by pal: first **applying** the level, then **verifying** each pal ended up
+  at the right level ("K ok"), then animating during the **save to the game**. Reports how
+  many were verified at the end. Same verification approach as the mass optimizer.
+
 ## v1.8.0 — 2026-08-26
 ### 🇧🇷 Português
 - **Botão "Equiparar níveis"** (antes "Igualar nível"): agora **diferencia** — Pals de
