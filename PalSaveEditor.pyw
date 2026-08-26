@@ -1496,7 +1496,7 @@ class JanelaOtimizar(tk.Toplevel):
         self.app = app; self.tela = tela
         self.pf = perfil.carregar()
         self.title("Otimizar / modificar Pals em massa")
-        self.geometry("980x660"); self.minsize(780, 520); self.transient(app)
+        self.geometry("1120x680"); self.minsize(860, 520); self.transient(app)
         try:
             self.iconbitmap(default=os.path.join(BASE, "assets", "logo.ico"))
         except Exception:
@@ -1543,8 +1543,8 @@ class JanelaOtimizar(tk.Toplevel):
                                height=12, style="Big.Treeview")
         self.tv.heading("#0", text="Pal"); self.tv.heading("papel", text="Funcao")
         self.tv.heading("antes", text="Antes"); self.tv.heading("depois", text="Depois")
-        self.tv.column("#0", width=190); self.tv.column("papel", width=120, stretch=False)
-        self.tv.column("antes", width=200, stretch=False); self.tv.column("depois", width=250)
+        self.tv.column("#0", width=170); self.tv.column("papel", width=110, stretch=False)
+        self.tv.column("antes", width=150, stretch=False); self.tv.column("depois", width=440)
         self.tv.tag_configure("base", foreground="#4aa3df")
         self.tv.tag_configure("combate", foreground="#e08a3c")
         sc = ttk.Scrollbar(mid, orient="vertical", command=self.tv.yview)
@@ -1583,14 +1583,15 @@ class JanelaOtimizar(tk.Toplevel):
         est = self.pf.estrelas_alvo(p.especie) if op["cond"].get() else self._estrelas(p)
         iv = "IV~90-100" if op["ivs"].get() else "IV atual"
         partes = ["Nv%d" % nv, "%d★" % est, iv]
-        if op["passivas"].get():
-            nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
-            partes.append(nomes[0] + " +%d" % (len(nomes) - 1))
         if op["almas"].get():
             partes.append("almas")
         if op["aptidoes"].get() and papel == "trabalho":
-            partes.append("aptidoes+")
-        return " ".join(partes)
+            partes.append("apt+")
+        cab = " ".join(partes)
+        if op["passivas"].get():
+            nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
+            cab += "  |  " + " · ".join(n[:9] for n in nomes)   # mostra as 4 passivas
+        return cab
 
     def calcular(self):
         for i in self.tv.get_children():

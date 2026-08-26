@@ -121,8 +121,19 @@ class Perfil(object):
         No combate, varia conforme os stats do Pal (tanque / dano / mobilidade)."""
         boost = self._boost_elemento(esp)
         if papel == "trabalho":
-            # base 24h: Artesao (vel. trabalho) + Insonia (nao dorme) + Da Sorte + Lendario
-            return ["CraftSpeed_up3", "Nocturnal", "Rare", "Legend"]
+            # base 24h: Artesao (vel. trabalho) + Insonia (nao dorme) SEMPRE; os outros
+            # 2 variam pelo perfil, para o Pal aguentar melhor as invasoes da base.
+            s = self._stats(esp)
+            atk = max(s.get("Melee Attack", 0), s.get("Shot Attack", 0))
+            tank = s.get("Defense", 0) + s.get("HP", 0)
+            r = (tank / atk) if atk else 2.0
+            if r >= 2.4:              # base resistente: aguenta invasao
+                extra = ["Deffence_up3", "Rare"]
+            elif r <= 1.5:            # base que bate: ajuda a defender atacando
+                extra = ["PAL_ALLAttack_up3", "Legend"]
+            else:                     # base padrao: all-round
+                extra = ["Rare", "Legend"]
+            return ["CraftSpeed_up3", "Nocturnal"] + extra
         if papel == "montaria":
             return ["Legend", "MoveSpeed_up_3", boost, "PAL_ALLAttack_up3"]
         # combate: build inteligente pelo perfil de stat DOMINANTE, com as melhores

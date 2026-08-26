@@ -3,6 +3,19 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.4 — 2026-08-25
+### 🇧🇷 Português
+- **Insônia em TODO Pal de base** (não dormem, trabalham 24h) — garantido no build de
+  trabalho. Os outros 2 espaços variam pelo perfil (base resistente ganha Corpo de
+  Diamante; base que apanha em invasão ganha ataque).
+- O otimizador em massa agora **mostra as 4 passivas** na coluna "Depois" (antes só
+  aparecia a primeira, então tudo parecia igual). Coluna e janela mais largas.
+### 🇺🇸 English
+- **Insomniac on EVERY base pal** (no sleep, 24h work) — always in the work build. The
+  other 2 slots vary by profile.
+- The mass optimizer now **shows all 4 passives** in the "Depois" column (it only showed
+  the first before, so builds looked identical). Wider column and window.
+
 ## v1.7.3 — 2026-08-25
 ### 🇧🇷 Português
 - **Passivas de combate mais inteligentes e variadas.** Em vez do mesmo conjunto pra
