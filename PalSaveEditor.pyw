@@ -100,6 +100,22 @@ class App(tk.Tk):
         self._shell()
         self.after(80, self._poll)
         self.after(200, self._iniciar)
+        self.protocol("WM_DELETE_WINDOW", self._ao_fechar)
+
+    def _ao_fechar(self):
+        """Ao fechar: garante que qualquer gravacao pendente/em andamento termine,
+        para nao perder edicoes nem interromper a gravacao no meio (corrompendo)."""
+        try:
+            if self._save_after_id is not None:      # havia save agendado (debounce)
+                self.after_cancel(self._save_after_id); self._save_after_id = None
+            if not self._salvando and (self.dirty or self.n_pendencias()):
+                self._disparar_salvar()
+            t0 = time.time()
+            while self._salvando and time.time() - t0 < 40:   # espera terminar
+                self.update(); time.sleep(0.05)
+        except Exception:
+            pass
+        self.destroy()
 
     # ---------- infra ----------
     def _carregar_catalogo(self):
@@ -416,10 +432,11 @@ class App(tk.Tk):
     def n_pendencias(self):
         return sum(len(v) for v in self.pendentes.values())
 
-    def salvar(self, confirmar=True):
+    def salvar(self, confirmar=True, imediato=False):
         """Grava no save. As acoes de editar chamam com confirmar=False (a acao ja foi
-        a confirmacao) e usam DEBOUNCE (agrupa edicoes rapidas num save so). O botao
-        manual usa confirmar=True e salva na hora. Nunca ha dois saves ao mesmo tempo."""
+        a confirmacao). imediato=True salva na hora (acoes grandes: Pal, otimizador);
+        imediato=False agrupa edicoes em rajada num save so (DEBOUNCE, p/ itens). O botao
+        manual usa confirmar=True. Nunca ha dois saves ao mesmo tempo."""
         if not self.n_pendencias() and not self.dirty:
             if confirmar:
                 messagebox.showinfo("Nada a fazer", "Nenhuma alteracao pendente.")
@@ -431,8 +448,10 @@ class App(tk.Tk):
                     "Um backup e feito automaticamente antes."):
                 return
             self._disparar_salvar()
+        elif imediato:
+            self._disparar_salvar()          # acoes grandes: salva na hora
         else:
-            self._agendar_salvar()
+            self._agendar_salvar()           # edicoes em rajada (itens): debounce
 
     def _agendar_salvar(self):
         # debounce: cada edicao reagenda; o save so roda ~1.5s depois da ULTIMA edicao,
@@ -1027,7 +1046,7 @@ class TelaPersonagem(Tela):
         except Exception as ex:
             messagebox.showerror("Erro", str(ex)); return
         self.app.marcar_sujo()
-        self.app.salvar(confirmar=False)          # salva no jogo na hora
+        self.app.salvar(confirmar=False, imediato=True)          # salva no jogo na hora
 
 
 # ---------------------------------------------------------------------------
@@ -1200,7 +1219,7 @@ class TelaPals(Tela):
             p.gravar()
         self.app.marcar_sujo()
         self.render()
-        self.app.salvar(confirmar=False)          # salva no jogo na hora
+        self.app.salvar(confirmar=False, imediato=True)          # salva no jogo na hora
         messagebox.showinfo("Pronto", "Os %d Pals foram ajustados para o nivel %d e salvos no jogo."
                             % (len(self.pals), n))
 
@@ -1337,7 +1356,7 @@ class TelaPals(Tela):
             messagebox.showerror("Erro", str(ex)); return
         self.app.marcar_sujo()
         self.tv.item(self.tv.selection()[0], values=(p.nivel, p.genero))
-        self.app.salvar(confirmar=False)          # salva no jogo na hora
+        self.app.salvar(confirmar=False, imediato=True)          # salva no jogo na hora
 
 
 # ---------------------------------------------------------------------------
@@ -1690,8 +1709,12 @@ class JanelaOtimizar(tk.Toplevel):
             self.tv.insert("", "end", text=" %s" % traducao.nome_pal(p.especie),
                            values=(self.ROTULO[papel], "✓ feito", self._antes(p)),
                            tags=("feito",), **kw)
-        self.lbl.configure(text="✓ %d Pals modificados e salvos no jogo" % total)
-        self.app.salvar(confirmar=False)          # salva direto no jogo
+        self.lbl.configure(text="✓ %d Pals modificados - salvando no jogo..." % total)
+        self.app.salvar(confirmar=False, imediato=True)   # salva na hora (acao grande)
+        self.update_idletasks()
+        while self.app._salvando:                 # espera terminar antes de avisar "salvo"
+            self.app.update(); time.sleep(0.05)
+        self.lbl.configure(text="✓ %d Pals modificados e SALVOS no jogo" % total)
         messagebox.showinfo(
             "Pronto",
             "%d Pals modificados e SALVOS no jogo (a coluna 'Depois' mostra o estado real de "

@@ -3,6 +3,19 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.6 — 2026-08-25
+### 🇧🇷 Português
+- **Correção: edições podiam não ser gravadas.** As ações grandes (otimizador em massa,
+  editar Pal, personagem, igualar níveis) agora **gravam na hora e esperam terminar**
+  antes de avisar "salvo" — antes o save era adiado 1,5s (debounce) e podia se perder se
+  você fechasse a janela/app antes. Ao **fechar o app**, ele agora espera qualquer
+  gravação pendente terminar (não interrompe no meio).
+### 🇺🇸 English
+- **Fix: edits could fail to save.** Big actions (mass optimizer, editing a Pal, character,
+  level-up) now **save immediately and wait for completion** before saying "saved" — the
+  save used to be debounced 1.5s and could be lost if you closed the window/app first. On
+  **app close**, it now waits for any pending save to finish (no mid-write interruption).
+
 ## v1.7.5 — 2026-08-25
 ### 🇧🇷 Português
 - O otimizador agora **mostra as aptidões de trabalho de cada Pal de base** na coluna
