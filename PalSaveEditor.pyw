@@ -1588,6 +1588,10 @@ class JanelaOtimizar(tk.Toplevel):
         if op["aptidoes"].get() and papel == "trabalho":
             partes.append("apt+")
         cab = " ".join(partes)
+        if papel == "trabalho":               # mostra as aptidoes que serao reforcadas
+            aps = self.pf.analisar(p.especie)["works"]
+            if aps:
+                cab += "  [apt: " + ", ".join("%s%d" % (n[:8], v) for n, v in aps) + "]"
         if op["passivas"].get():
             nomes = [self.tela.pass_id2nome.get(i, i) for i in self.pf.passivas(p.especie, papel)]
             cab += "  |  " + " · ".join(n[:9] for n in nomes)   # mostra as 4 passivas

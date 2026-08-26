@@ -3,6 +3,16 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.7.5 — 2026-08-25
+### 🇧🇷 Português
+- O otimizador agora **mostra as aptidões de trabalho de cada Pal de base** na coluna
+  "Depois" (ex.: `[apt: Garimpo6, Trab. manual6]`) e reforça essas aptidões. Os dados
+  são o mapeamento completo das 12 aptidões dos 284 Pals (minerado do palworld.gg).
+### 🇺🇸 English
+- The optimizer now **shows each base pal's work aptitudes** in the "Depois" column
+  (e.g. `[apt: Mining6, Handiwork6]`) and boosts them. Uses the full mapping of all 12
+  work suitabilities for 284 pals (mined from palworld.gg).
+
 ## v1.7.4 — 2026-08-25
 ### 🇧🇷 Português
 - **Insônia em TODO Pal de base** (não dormem, trabalham 24h) — garantido no build de
