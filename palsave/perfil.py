@@ -195,27 +195,16 @@ class Perfil(object):
     def apt_rank(self, esp):
         return 3
 
+    def papel_de(self, esp):
+        """QUALQUER Pal com aptidao de trabalho e 'base'; so os puramente de combate
+        (sem aptidao) sao 'combate'. Assim Pal de base nunca ganha nivel/passiva de
+        combate por engano."""
+        a = self.analisar(esp)
+        return "trabalho" if a["papel"] in ("trabalho", "ambos") else "combate"
+
     def plano(self, individuos):
-        """individuos: lista de (especie, id_unico). Agrupa por especie e, para os
-        Pals bons em base E combate, divide as copias -- a maioria para base.
-        Retorna lista de dicts por individuo: {especie, papel}."""
-        from collections import defaultdict
-        por_esp = defaultdict(list)
-        for esp, uid in individuos:
-            por_esp[esp].append(uid)
-        plano = {}
-        for esp, uids in por_esp.items():
-            a = self.analisar(esp)
-            if a["papel"] == "ambos" and len(uids) >= 2:
-                # foco maior em base: ceil(n*0.6) vao para base, resto combate
-                nbase = max(1, (len(uids) * 3 + 4) // 5)   # ~60%
-                for i, uid in enumerate(uids):
-                    plano[uid] = "trabalho" if i < nbase else "combate"
-            else:
-                papel = "trabalho" if a["papel"] in ("trabalho", "ambos") else "combate"
-                for uid in uids:
-                    plano[uid] = papel
-        return plano
+        """individuos: lista de (especie, id_unico) -> {id_unico: papel}."""
+        return {uid: self.papel_de(esp) for esp, uid in individuos}
 
 
 def carregar():

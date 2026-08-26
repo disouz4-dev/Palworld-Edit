@@ -1081,7 +1081,8 @@ class TelaPals(Tela):
 
         cab = ttk.Frame(self); cab.pack(fill="x", pady=(0, 6))
         ttk.Label(cab, text="Caixa de Pals  (%d)" % len(self.pals), style="Titulo.TLabel").pack(side="left")
-        ttk.Button(cab, text="Igualar nivel de todos ao personagem (Nv %d)" % self.nivel_jogador,
+        ttk.Button(cab, text="Equiparar niveis (combate Nv%d / base Nv%d)"
+                   % (self.nivel_jogador, max(1, self.nivel_jogador - 2)),
                    command=self.igualar_niveis).pack(side="right")
         ttk.Button(cab, text="Otimizar / modificar em massa...", style="Accent.TButton",
                    command=lambda: JanelaOtimizar(self.app, self)).pack(side="right", padx=(0, 6))
@@ -1202,29 +1203,38 @@ class TelaPals(Tela):
                 break
 
     def igualar_niveis(self):
-        import copy
+        """Equiparar niveis: Pals de COMBATE ficam no nivel do personagem; Pals de
+        BASE (qualquer um com aptidao de trabalho) ficam 2 niveis abaixo -- assim os
+        de combate aparecem primeiro ao ordenar por forca."""
         n = self.nivel_jogador
-        if not messagebox.askyesno("Confirmar",
-                                   "Colocar TODOS os %d Pals no nivel %d (o do personagem)?\n\n"
-                                   "So vale ao clicar em SALVAR NO JOGO depois." % (len(self.pals), n)):
+        pf = perfil.carregar()
+        # papel por Pal: equipe = combate; bases = trabalho; resto = pelas aptidoes
+        def papel(p):
+            cat = self.cat_cont.get(self._cont_de(p))
+            if cat == "party":
+                return "combate"
+            if cat == "base":
+                return "trabalho"
+            return pf.papel_de(p.especie)
+        nb = sum(1 for p in self.pals if papel(p) == "trabalho")
+        nc = len(self.pals) - nb
+        if not messagebox.askyesno(
+                "Equiparar niveis",
+                "Equiparar os niveis dos %d Pals?\n\n"
+                "- Combate: nivel %d (o do personagem)  -> %d Pals\n"
+                "- Base: nivel %d (2 abaixo)  -> %d Pals\n\n"
+                "Salva no jogo na hora (com backup)." % (len(self.pals), n, nc, max(1, n - 2), nb)):
             return
-        maxiv = messagebox.askyesno("IVs", "Tambem deixar os IVs (Vida/Ataque/Defesa) de todos altos "
-                                           "e variados (proximos de 100, sem cara de cheat)?")
-        molde = next((p.sp["Level"] for p in self.pals if "Level" in p.sp), None)
+        md = personagem.moldes(self.pals)
         for p in self.pals:
-            if "Level" not in p.sp and molde is not None:
-                p.sp["Level"] = copy.deepcopy(molde)   # Pals nivel 1 nao guardam o campo
-            p.set_nivel(n)
-            if maxiv:
-                p.set_talento("Talent_HP", random.randint(90, 100))
-                p.set_talento("Talent_Shot", random.randint(90, 100))
-                p.set_talento("Talent_Defense", random.randint(90, 100))
+            nv = n if papel(p) == "combate" else max(1, n - 2)
+            p._garante("Level", md["Level"]); p.set_nivel(nv)
             p.gravar()
         self.app.marcar_sujo()
         self.render()
-        self.app.salvar(confirmar=False, imediato=True)          # salva no jogo na hora
-        messagebox.showinfo("Pronto", "Os %d Pals foram ajustados para o nivel %d e salvos no jogo."
-                            % (len(self.pals), n))
+        self.app.salvar(confirmar=False, imediato=True)
+        messagebox.showinfo("Pronto", "Niveis equiparados: %d de combate no %d, %d de base no %d. "
+                            "Salvo no jogo." % (nc, n, nb, max(1, n - 2)))
 
     def _painel_vazio(self):
         for w in self.ed.winfo_children():

@@ -3,6 +3,24 @@
 Todas as mudanças notáveis por versão. As datas seguem AAAA-MM-DD.
 _All notable changes per version._
 
+## v1.8.0 — 2026-08-26
+### 🇧🇷 Português
+- **Botão "Equiparar níveis"** (antes "Igualar nível"): agora **diferencia** — Pals de
+  **combate** ficam no nível do personagem, Pals de **base** ficam **2 níveis abaixo**
+  (para os de combate aparecerem primeiro ao ordenar por força). Mostra a contagem de
+  cada grupo antes de aplicar.
+- **Qualquer Pal com aptidão de trabalho conta como BASE** (nível/passivas de base) —
+  antes a divisão automática mandava alguns Pals de trabalho para combate, e eles
+  apareciam no nível do personagem. Pals na equipe continuam combate; nas bases,
+  trabalho; na caixa, pela aptidão.
+### 🇺🇸 English
+- **"Equiparar níveis" button** (was "Igualar nível"): now **differentiates** — combat
+  pals get the player's level, base pals get **2 levels below**. Shows the count of each
+  group first.
+- **Any pal with a work aptitude counts as BASE** — the old auto-split sent some worker
+  pals to combat (player level); now work-capable pals are base. Party = combat, bases =
+  work, box = by aptitude.
+
 ## v1.7.7 — 2026-08-25
 ### 🇧🇷 Português
 - **Barra de progresso no otimizador em massa.** Ela avança **Pal por Pal**: primeiro
